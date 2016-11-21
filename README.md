@@ -1,2 +1,6 @@
 # caos_sampler
-Extension for sampling live.
+##Class: CaosSampler
+
+###This is intended to be a SuperCollider extension, easy to connect to CaosBox or stand-alone.
+
+
