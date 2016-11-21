@@ -8,7 +8,7 @@ o.device;
 // s.meter;
 // s.sampleRate;
 (
-s.waitForBoot {
+s.waitForBoot ({
 	//
 
 	var url = thisProcess.nowExecutingPath.dirname;
@@ -30,24 +30,23 @@ s.waitForBoot {
 
 	//init
 	{
-	var txt = "CaosSampler activado".asArray;
-	var letrero = Array.newClear(20);
+		var txt = "CaosSampler activado".asArray;
+		var letrero = Array.newClear(txt.size);
 
-	20.do{|i|
+		20.do{|i|
 
-		letrero.put(i, txt[i]);
+			letrero.put(i, txt[i]);
 
 			letrero[i].asString.post;
 
-		0.05.wait;
+			0.075.wait;
 
-	}
+		}
 	}.value;
 	//
-}
+},50,{666.do{|i=1|"Error " + i + " recompila tu librería.".inform;0.0125.wait}});
 );
 //termina waitForBoot
-///
 ////
 /////
 // corren sintes
