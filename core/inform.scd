@@ -1,21 +1,22 @@
-	//init
-	//textos de aviso
-	~inform = {|textoIn = "CaosSampler written by josecaos", tempoTexto = 0.075|
+//init
+//textos de aviso
+//args -> 'string',number
+~inform = {|imprime = "CaosSampler written by josecaos", tempoTexto = 0.075|
 
-		var txt = textoIn.asArray;
-		var texto = txt.size;
-		var letrero = Array.newClear(texto);
+	var txt = imprime.asArray;
+	var texto = txt.size;
+	var letrero = Array.newClear(texto);
 
-		texto.do({|i|
+	texto.do({|i|
 
-			letrero.put(i, txt[i]);
+		letrero.put(i, txt[i]);
 
-			letrero[i].asString.post;
+		letrero[i].asString.post;
 
-			tempoTexto.wait;
+		tempoTexto.wait;
 
 	})
-	};
-	//
+};
+//
 // ~inform.value;
-	// fork{~inform.value("esta es una prueba",0.125);}
+// fork{~inform.value("esta es una prueba",0.125);}

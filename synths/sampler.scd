@@ -8,7 +8,7 @@ SynthDef(\play,{|rate = 1, amp = #[1,1], out = 50, startPos = 0, loop = 0, reset
 
 	var sample;
 
-	sample = PlayBuf.ar(2,~track.bufnum,rate,BufRateScale.kr(~track.bufnum),startPos,loop,reset);
+	sample = PlayBuf.ar(2,~track,rate,BufRateScale.kr(~track),startPos,loop,reset);
 
 	Out.ar(out,Pan2.ar(sample),amp);
 
