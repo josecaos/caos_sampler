@@ -1,7 +1,7 @@
 //init
 //textos de aviso
 //args -> 'string',number
-~inform = {|imprime = "CaosSampler written by josecaos", tempoTexto = 0.075|
+~inform = {|imprime = "CaosSampler written by josecaos \n", tempoTexto = 0.075|
 
 	var txt = imprime.asArray;
 	var texto = txt.size;
@@ -18,5 +18,3 @@
 	})
 };
 //
-// ~inform.value;
-// fork{~inform.value("esta es una prueba",0.125);}

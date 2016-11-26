@@ -1,9 +1,10 @@
 //test
 CaosSampler.init;
+CaosSampler.init.path("sdsdfsdf/sdfsdf/");
 
 
 //
-CaosSampler.new;
+CaosSampler.browse;
 CaosSampler.asClass;
 CoasSampler.methods;
 //
