@@ -1,7 +1,7 @@
 //
 CaosSampler {
 
-	classvar <>coreurl, <>audiourl, <server;
+	classvar <server, <>coreurl, <>audioname, <bufread;
 
 
 	*new {
@@ -20,28 +20,41 @@ CaosSampler {
 
 		// revisa si el servidor esta corriendo
 		if(server.serverRunning != true ,{
-
+			// si no, enciendelo
 			server.boot;
-
 		});
 		//
 
-		// (coreurl +/+ "core/load-audio-file.scd").load;
-		// (coreurl +/+ "synths/sampler.scd").load;
 		// (coreurl +/+ "synths/synths.scd").load;
 		// (coreurl +/+ "midi/midiin.scd").load;
 
-		//return
-		^fork{2.wait;~inform.value("Wait",0.1);~inform.value(" ... ",0.5);0.01.wait;~inform.value("CaosSampler activated",0.1)}
+		//simula loading
+		^fork{1.wait;~inform.value("Wait",0.1);~inform.value(" ... ",0.25);0.01.wait;~inform.value("CaosSampler activated",0.1)}
 
 	}
 
-	*loadTrack {|name|
-		audiourl = coreurl +/+ "audios/";
+	*loadTrack {|name = "test-caos_sampler-115_bpm.wav", startFrame = 0|
 
-		fork{~inform.value(audiourl ++ name,0.05)};
-		// Buffer.read(s,fileurl +/+ name, 0, -1);
+		audioname = coreurl +/+ "audios/";
 
+		bufread = Buffer.read(server,audioname ++ name, startFrame, -1);
+
+		//pull synths
+		// (coreurl +/+ "synths/sampler.scd").load;
+
+		(
+			SynthDef(\play,{|rate = 1, amp = #[1,1], out = 50, startPos = 0, loop = 0, reset = 0|
+
+				var sample;
+
+				sample = PlayBuf.ar(2,bufread,rate,BufRateScale.kr(bufread),startPos,loop,reset);
+
+				Out.ar(out,Pan2.ar(sample),amp);
+
+			}).add;
+		);
+
+		^fork{~inform.value(audioname ++ name,0.05)};
 	}
 
 }

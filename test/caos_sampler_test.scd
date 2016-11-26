@@ -6,12 +6,11 @@ CaosSampler.new;
 c = CaosSampler;
 c.new;
 //files must be inside the 'audios' folder in CaosSampler repo folder
-//default loading + custom file loading
+//default loading + custom file loading by name
 c.loadTrack;
-c.loadTrack("mi amigo boox.wav");
+c.loadTrack("test-caos_sampler-115_bpm.wav");//track name
 
 
-CaosSampler.init.path("sdsdfsdf/sdfsdf/");
 
 // play{SinOsc.ar(45*Pulse.ar(4,0.1,60,120))}
 //
