@@ -1,9 +1,9 @@
 //init
 //textos de aviso
 //args -> 'string',number
-~inform = {|imprime = "CaosSampler written by josecaos \n", tempoTexto = 0.075|
+~inform = {|print = "CaosSampler written by josecaos \n", tempoTexto = 0.075, breakLine = true|
 
-	var txt = imprime.asArray;
+	var txt = print.asArray;
 	var texto = txt.size;
 	var letrero = Array.newClear(texto);
 
@@ -15,6 +15,13 @@
 
 		tempoTexto.wait;
 
-	})
+	});
+	//
+	if(breakLine == true, {
+
+		"\n".postln;
+
+	});
+
 };
 //

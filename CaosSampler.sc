@@ -1,7 +1,7 @@
 //
 CaosSampler {
 
-	classvar <server, <>coreurl, <>audioname, <bufread;
+	classvar <server, <>coreurl, <>audiourl, <bufread, <>run;
 
 
 	*new {
@@ -29,15 +29,15 @@ CaosSampler {
 		// (coreurl +/+ "midi/midiin.scd").load;
 
 		//simula loading
-		^fork{1.wait;~inform.value("Wait",0.1);~inform.value(" ... ",0.25);0.01.wait;~inform.value("CaosSampler activated",0.1)}
+		^fork{1.wait;~inform.value("Wait",0.05,false);~inform.value(" ... ",0.25,false);0.01.wait;~inform.value("CaosSampler activated",0.05)}
 
 	}
 
 	*loadTrack {|name = "test-caos_sampler-115_bpm.wav", startFrame = 0|
 
-		audioname = coreurl +/+ "audios/";
+		audiourl = coreurl +/+ "audios/";
 
-		bufread = Buffer.read(server,audioname ++ name, startFrame, -1);
+		bufread = Buffer.read(server,audiourl ++ name, startFrame, -1);
 
 		//pull synths
 		// (coreurl +/+ "synths/sampler.scd").load;
@@ -54,7 +54,21 @@ CaosSampler {
 			}).add;
 		);
 
-		^fork{~inform.value(audioname ++ name,0.05)};
+		^fork{~inform.value(audiourl ++ name,0.05)};
+	}
+
+	*play {
+
+		^run = Synth(\play);
+
+		// ^run.play;
+
+	}
+
+	*setToPlay {|args|
+
+		^run.set(args);
+
 	}
 
 }
