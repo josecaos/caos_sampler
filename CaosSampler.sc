@@ -7,11 +7,14 @@ CaosSampler {
 
 	*init {
 
-		var platform = Platform;
 		var s = Server.local;
+
+		var path = this.filenameSymbol.asString.dirname;//
 
 		// ~uri = PathName.new(Platform.userExtensionDir);
 
+			// ~uri = thisProcess.nowExecutingPath.dirname;
+			// ~uri = PathName.new(thisProcess.nowExecutingPath.dirname);
 
 		s.waitForBoot({
 
@@ -24,14 +27,12 @@ CaosSampler {
 			Platform.case(
 				\linux,     { "Estás usando Linux".postln},
 				// \windows,   { ~inform.value("Estás usando Windows".postln)},
-				\linux,     { "Estás usando Linux".postln},
+				\windows,     { "Estás usando Windows".postln},
 				// \linux,     { ~inform.value("Estás usando Linux".postln)},
 				\osx,       {"Estás usando OSX".postln},
 				// \osx,       { ~inform.value("Estás usando OSX".postln)},
 			);
 
-			// ~uri = thisProcess.nowExecutingPath.dirname;
-			// ~uri = PathName.new(thisProcess.nowExecutingPath.dirname);
 
 			/*~uri.folderName.postcln;
 			~uri.postcln;*/
@@ -55,11 +56,11 @@ CaosSampler {
 
 		);
 
+/*		platform.platformDir.postcln;
+		platform.classLibraryDir.postcln;*/
 
-		platform.platformDir.postcln;
-		platform.classLibraryDir.postcln;
-
-		^"hola caos sampler";
+		// ^"hola caos sampler";
+		^path;
 	}
 
 }
