@@ -5,14 +5,13 @@ s.boot;//CaosSampler checks if server is on
 // CaosSampler.new;
 c = CaosSampler;
 c.new;
-//files must be inside the 'audios' folder in CaosSampler repo folder
-//default loading + custom file loading by name
+//files must be inside the 'audios' folder in caos_sampler folder
 c.loadTrack;//load default
 c.loadTrack("test-caos_sampler-115_bpm.wav");//track name
 //
 c.play;//play instance
 //change instance parameters
-c.setToPlay(\out,0,\loop,1);
+c.setToPlay(\out,0,\loop,1\normalizer,false);
 
 
 //

@@ -1,7 +1,8 @@
 //
 CaosSampler {
 
-	classvar <server, <>coreurl, <>audiourl, <bufread, <>run;
+	classvar <server, <>coreurl, <>audiourl, <>run;
+	classvar <bufread, <>normalizeIn;
 
 
 	*new {
@@ -39,29 +40,41 @@ CaosSampler {
 
 		bufread = Buffer.read(server,audiourl ++ name, startFrame, -1);
 
+		normalizeIn = false;
+		//
 		//pull synths
 		// (coreurl +/+ "synths/sampler.scd").load;
+		SynthDef(\play,{|rate = 1, amp = #[1,1], out = 50, startPos = 0, loop = 0, reset = 0, normalizer, normLevel = 0.9|
 
-		(
-			SynthDef(\play,{|rate = 1, amp = #[1,1], out = 50, startPos = 0, loop = 0, reset = 0|
+			var sample;
 
-				var sample;
+			normalizer = normalizeIn;
 
-				sample = PlayBuf.ar(2,bufread,rate,BufRateScale.kr(bufread),startPos,loop,reset);
+			sample = PlayBuf.ar(2,bufread,rate,BufRateScale.kr(bufread),startPos,loop,reset);
 
-				Out.ar(out,Pan2.ar(sample),amp);
+			//
+			if(normalizer != true,{
 
-			}).add;
-		);
+					// sin normalizador
+					Out.ar(out,Pan2.ar(sample),amp);
 
-		^fork{~inform.value(audiourl ++ name,0.05)};
+				},{
+
+				// con normalizador
+				Out.ar(out,Normalizer.ar(Pan2.ar(sample),normLevel),amp);
+
+			});
+
+
+		}).add;
+		//
+
+		^fork{~inform.value("The file " ++ name ++ " has been loaded" ,0.05)};
 	}
 
 	*play {
 
 		^run = Synth(\play);
-
-		// ^run.play;
 
 	}
 
