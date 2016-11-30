@@ -46,11 +46,11 @@ CaosSampler {
 
 		//
 		//sinte
-		SynthDef(\play,{|rate = 1, amp = #[1,1], out = 50, startPos = 0, loop = 0, reset = 0|
+		SynthDef(\play,{|rate = 1, amp = #[1,1], trigger = 1, out = 50, startPos = 0, loop = 0, reset = 0|
 
 			var sample;
 
-			sample = PlayBuf.ar(2,bufread,rate,BufRateScale.kr(bufread),startPos,loop,reset);
+			sample = PlayBuf.ar(2, bufread, rate, trigger, startPos, loop, reset);
 
 				Out.ar(out,Pan2.ar(sample),amp);
 
