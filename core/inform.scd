@@ -1,6 +1,5 @@
 //init
 //textos de aviso
-//args -> 'string',number
 ~inform = {|print = "CaosSampler written by josecaos \n", tempoTexto = 0.075, breakLine = true|
 
 	var txt = print.asArray;
