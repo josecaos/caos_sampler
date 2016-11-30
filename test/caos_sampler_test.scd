@@ -9,9 +9,9 @@ c.new;
 c.loadTrack;//load default
 c.loadTrack("test-caos_sampler-115_bpm.wav");//track name
 //
-c.play;//play instance
+c.play;//play instance with defaults
 //change instance parameters
-c.setToPlay(\out,0,\loop,1,\rate,2,\trigger,1,\startPos,1000000);
+c.setToPlay(\out,0,\loop,0,\rate,1.27,\trigger,0,\startPos,0);
 
 
 //*viewWaveForm
