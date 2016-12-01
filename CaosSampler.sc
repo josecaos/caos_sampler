@@ -2,7 +2,8 @@
 CaosSampler {
 
 	classvar <server, <>coreurl, <>audiourl, <>run;
-	classvar <bufread;
+	classvar <bufread, <playname = "Generic name";
+
 
 
 	*new {
@@ -23,13 +24,13 @@ CaosSampler {
 		if(server.serverRunning != true ,{
 
 			// si no, enciendelo
-			server.boot;
+			// server.boot;
 
-			^fork{1.75.wait;~inform.value("Wait",0.025,false);~inform.value(" .... ",0.1,false);~inform.value("CaosSampler instance created",0.025)}
+			fork{1.75.wait;~inform.value("Wait",0.025,false);~inform.value(" .... ",0.1,false);~inform.value("CaosSampler instance created",0.025)}
 
 			}, {
 
-				^fork{~inform.value(" .... ",0.1,false);~inform.value("CaosSampler instance created",0.05)}
+				fork{~inform.value(" .... ",0.1,false);~inform.value("CaosSampler instance created",0.025)}
 
 		});
 		//
@@ -37,6 +38,7 @@ CaosSampler {
 		// (coreurl +/+ "synths/synths.scd").load;
 		// (coreurl +/+ "midi/midiin.scd").load;
 
+		^"";
 	}
 
 	*loadTrack {|name = "test-caos_sampler-115_bpm.wav", startFrame = 0|
@@ -66,82 +68,81 @@ CaosSampler {
 
 	*viewTrack {|position|
 
+		// El view del sampleo estara completo mas adelante
+		//
 		//waveform GUI
-		var y, x, w, a, f, much, string;
+		var y, x, w, a, f;
 
-		w = Window;
 		position = 0;//reset de posicion
 
 
-		w.new("CaosSampler instance soundfile", Rect(200, y, x, 100)).alwaysOnTop_(true);
-		y = Window.screenBounds.height - 50;
+		y = Window.screenBounds.height - 25;
 		x = Window.screenBounds.width;
-		a = SoundFileView.new(w, Rect(5,5, x, 90));
+		w = Window.new("CaosSampler instance soundfile", Rect(400, y, x, 220)).alwaysOnTop_(true);
+		a = SoundFileView.new(w, Rect(5,5, x, 210));
 		// bufread.inspect;
 
 		a.soundfile = bufread;
 		a.read(0, bufread.numFrames);
 		a.elasticMode = true;
 
-		a.readProgress;
-
 		a.timeCursorOn = true;
 		a.timeCursorColor = Color.red;
-		// a.timeCursorPosition = position;
 		a.drawsWaveForm = true;
 		a.gridOn = true;
 		a.gridResolution = 0.1;
 		// a.zoom(1).refresh;
 
-		//
-		string = "gui ".dup(24).join;
-		much = = 0.02;
 
-		w.drawFunc = Routine {
-			    var i = 0;
-			    var size = 40;
-			    var func = { |i, j| sin(i * 0.07 + (j * 0.0023) + 1.5pi) * much + 1 };
-			    var scale;
-			    var font = Font("Helvetica", 40).boldVariant;
-			    loop {
-				        i = i + 1;
-				        Pen.font = font;
-				        string.do { |char, j|
 
-					            scale = func.value(i, j).dup(6);
+		a.action = {|lecture|
+			/*
+			lecture = a.readProgress.postln;
 
-					            Pen.fillColor = Color.new255(0, 120, 120).vary;
-					            Pen.matrix = scale * #[1, 0, 0, 1, 1, 0];
-					            Pen.stringAtPoint(char.asString,
-						                ((size * (j % 9)) - 10) @ (size * (j div: 9))
-					            );
-				        };
-				        0.yield // stop here, return something unimportant
-			    }
+			a.timeCursorPosition  =  lecture;
+
+			a.timeCursorPosition.postcln;
+			*/
+
+			lecture.postcln;
+
 		};
 
-		{ while { w.isClosed.not } { w.refresh; 0.04.wait; } }.fork(AppClock);
-		//
-		//
 
 		^w.front;//imprime ventana
 
 
-		// fork{~inform.value(Window.allWindows)}
 
 	}
 
 
-	*play {
+	*play {|id = "Generic Name for Sampler"|
 
-		^run = Synth(\play);
+		playname = id;
 
+		run = Synth(\play);
+
+		run.defName;
+
+		fork{~inform.value("Synth: " + id + "running",0.01)};
+
+		^run;
 	}
 
 	*setToPlay {|args|
+
+		fork{~inform.value("Sampler: " + playname + "arguments modified", 0.01)};
 
 		^run.set(args);
 
 	}
 
+	*samplerName {
+
+		fork{~inform.value("Instance Name: " + playname, 0.01)};
+
+		^"";
+	}
+
 }
+

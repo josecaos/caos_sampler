@@ -14,6 +14,7 @@
 
 		tempoTexto.wait;
 
+		0.yield;//regresa un valor vacio, para evitar que se imprima en el post
 	});
 	//
 	if(breakLine == true, {
