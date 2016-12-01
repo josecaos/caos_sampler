@@ -1,10 +1,8 @@
 //
 CaosSampler {
 
-	classvar <server, <>coreurl, <>audiourl, <>run;
+	classvar <server, <>coreurl, <>audiourl, <>run, <ids;
 	classvar <bufread, <playname = "Generic name";
-
-
 
 	*new {
 
@@ -18,13 +16,15 @@ CaosSampler {
 
 		server = Server.local;
 
+		ids = Array.new(4);//array de ids de los sintes usados
+
 		(coreurl +/+ "core/inform.scd").load;
 
 		// revisa si el servidor esta corriendo
 		if(server.serverRunning != true ,{
 
 			// si no, enciendelo
-			// server.boot;
+			server.boot;
 
 			fork{1.75.wait;~inform.value("Wait",0.025,false);~inform.value(" .... ",0.1,false);~inform.value("CaosSampler instance created",0.025)}
 
@@ -51,13 +51,13 @@ CaosSampler {
 
 		//
 		//sinte
-		SynthDef(\play,{|rate = 1, amp = #[1,1], trigger = 0, out = 50, startPos = 0, loop = 0, reset = 0|
+		SynthDef(\play,{|rate = 1, amp = #[1,1], trigger = 0, out = 0, startPos = 0, loop = 1, reset = 0|
 
 			var sample;
 
 			sample = PlayBuf.ar(2, bufread, rate, trigger, startPos, loop, reset);
 
-			Out.ar(out,Pan2.ar(sample),amp);
+			Out.ar(out,Pan2.ar(sample,amp));
 
 		}).add;
 
@@ -118,31 +118,51 @@ CaosSampler {
 
 	*play {|id = "Generic Name for Sampler"|
 
+		var info;
+
 		playname = id;
 
-		run = Synth(\play);
-
-		run.defName;
 
 		fork{~inform.value("Synth: " + id + "running",0.01)};
 
+		run = Synth.new(\play, addAction:\addAfter);
+		//
+		info = [run.defName, id];//asocia nombre de sinte con nombre de argumento ID
+
+		ids.add(info);//agrega informacion a un array global para posterior iidentificacion
+
 		^run;
+
 	}
 
 	*setToPlay {|args|
 
+		var setted = run.set(args);
+
 		fork{~inform.value("Sampler: " + playname + "arguments modified", 0.01)};
 
-		^run.set(args);
+		^setted;
 
 	}
 
 	*samplerName {
 
-		fork{~inform.value("Instance Name: " + playname, 0.01)};
+		var name = ids.find();
+
+		fork{~inform.value("Instance Name: " + name + "||  All: " + ids, 0.01)};
+
 
 		^"";
+
 	}
 
+	*stopAll {
+
+		thisProcess.stop;
+
+		^"All CaosSampler Instances stopped";
+	}
+
+	//
 }
 
