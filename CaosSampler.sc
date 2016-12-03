@@ -1,8 +1,11 @@
 //
 CaosSampler {
 
-	classvar <server, <>coreurl, <>audiourl, <>run, <ids;
-	classvar <bufread, <playname = "Generic name";
+	classvar <run, <playname = "Generic name";
+
+	classvar <server, <>coreurl, <>audiourl, <ids, <id;
+	classvar <bufread;
+
 
 	*new {
 
@@ -17,6 +20,8 @@ CaosSampler {
 		server = Server.local;
 
 		ids = Array.new(4);//array de ids de los sintes usados
+
+		run = nil;
 
 		(coreurl +/+ "core/inform.scd").load;
 
@@ -96,15 +101,12 @@ CaosSampler {
 
 
 		a.action = {|lecture|
-			/*
-			lecture = a.readProgress.postln;
 
-			a.timeCursorPosition  =  lecture;
+			lecture = a.readProgress;
 
-			a.timeCursorPosition.postcln;
-			*/
+			a.timeCursorPosition.poll;
+			a.readProgress.poll;
 
-			lecture.postcln;
 
 		};
 
@@ -112,49 +114,55 @@ CaosSampler {
 		^w.front;//imprime ventana
 
 
-
 	}
 
-
-	*play {|id = "Generic Name for Sampler"|
+	*play {|id|
 
 		var info;
 
-		playname = id;
+		id = playname;
 
+		run = Synth.new(\play);
 
-		fork{~inform.value("Synth: " + id + "running",0.01)};
-
-		run = Synth.new(\play, addAction:\addAfter);
 		//
-		info = [run.defName, id];//asocia nombre de sinte con nombre de argumento ID
+		info = [run.defName, id, run.nodeID];//asocia nombre de sinte con nombre de argumento ID
 
 		ids.add(info);//agrega informacion a un array global para posterior iidentificacion
 
-		^run;
+		fork{~inform.value("Synth: " + id + "running",0.01)};
+
+		// ^run;
+		^"";
 
 	}
 
 	*setToPlay {|args|
 
-		var setted = run.set(args);
+		//inform copmentado por que tira error esoterico cuando carga mas de una dependencia a la vez
+		// fork{~inform.value("Sampler: " + playname + "arguments modified", 0.01)};
 
-		fork{~inform.value("Sampler: " + playname + "arguments modified", 0.01)};
-
-		^setted;
+		^run.set(args);
 
 	}
 
 	*samplerName {
 
-		var name = ids.find();
+		var name = playname;
 
-		fork{~inform.value("Instance Name: " + name + "||  All: " + ids, 0.01)};
+		fork{~inform.value("Instance Name: " + name + "||  All Instances: " + ids, 0.01)};
 
-
-		^"";
+		^name;
 
 	}
+
+	*stop {
+
+		this.stop;
+
+		^"CaosSampler Instances stopped";
+
+	}
+
 
 	*stopAll {
 
@@ -165,4 +173,4 @@ CaosSampler {
 
 	//
 }
-
+// 

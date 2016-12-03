@@ -1,6 +1,6 @@
 //init
 //textos de aviso
-~inform = {|print = "CaosSampler written by josecaos \n", tempoTexto = 0.075, breakLine = true|
+~inform = {|print = "CaosSampler written by @joseCao5 \n", tempoTexto = 0.025, breakLine = true|
 
 	var txt = print.asArray;
 	var texto = txt.size;
