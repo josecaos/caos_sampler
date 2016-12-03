@@ -1,10 +1,9 @@
 //
 CaosSampler {
 
-	classvar <run, <playname = "Generic name";
-
 	classvar <server, <>coreurl, <>audiourl, <ids, <id;
-	classvar <bufread;
+	classvar <bufread, <run1, <run2, <run3, <instances, <playname = "Generic name";
+	classvar <num = 1, >info;
 
 
 	*new {
@@ -20,8 +19,6 @@ CaosSampler {
 		server = Server.local;
 
 		ids = Array.new(4);//array de ids de los sintes usados
-
-		run = nil;
 
 		(coreurl +/+ "core/inform.scd").load;
 
@@ -55,14 +52,14 @@ CaosSampler {
 		bufread = Buffer.read(server,audiourl ++ name, startFrame, -1, informPositive);
 
 		//
-		//sinte
+		//sintes
 		SynthDef(\play,{|rate = 1, amp = #[1,1], trigger = 0, out = 0, startPos = 0, loop = 1, reset = 0|
 
 			var sample;
 
 			sample = PlayBuf.ar(2, bufread, rate, trigger, startPos, loop, reset);
 
-			Out.ar(out,Pan2.ar(sample,amp));
+			Out.ar(out,sample)*amp;
 
 		}).add;
 
@@ -110,65 +107,110 @@ CaosSampler {
 
 		};
 
-
 		^w.front;//imprime ventana
-
 
 	}
 
-	*play {|id|
+	*register {|name|
 
-		var info;
+		playname = name;
 
-		id = playname;
+		//tres instancias
+		run1 = Synth.newPaused(\play);
 
-		run = Synth.new(\play);
+		run2 = Synth.newPaused(\play);
+
+		run3 = Synth.newPaused(\play);
+
+		//Hack para tocar en vivo al rato
+
+		~hack1 = Synth.newPaused(\play);
+
+		~hack2 = Synth.newPaused(\play);
+
+		~hack3 = Synth.newPaused(\play);
 
 		//
-		info = [run.defName, id, run.nodeID];//asocia nombre de sinte con nombre de argumento ID
+
+
+		instances = [run1, run2, run3];
+
+		//
+		// info = [["Group name: ", name], ["Instance Nodes: ",instances[0].nodeID, instances[1].nodeID, instances[2].nodeID]];//asocia nombre de sinte con nombre de argumento ID + numero de nodo
+		info = [["Group name: ", name], ["Instance Nodes: ",~hack1.nodeID, ~hack2.nodeID, ~hack3.nodeID]];//asocia nombre de sinte con nombre de argumento ID + numero de nodo
 
 		ids.add(info);//agrega informacion a un array global para posterior iidentificacion
 
-		fork{~inform.value("Synth: " + id + "running",0.01)};
 
-		// ^run;
+		fork{~inform.value("Synth group: " + name + "registered",0.01)};
+
+		// ^instances.run;//sin correr
 		^"";
 
 	}
 
-	*setToPlay {|args|
+	*play {|paused = true|
 
-		//inform copmentado por que tira error esoterico cuando carga mas de una dependencia a la vez
-		// fork{~inform.value("Sampler: " + playname + "arguments modified", 0.01)};
+		if(paused != true, {
 
-		^run.set(args);
+			fork{~inform.value("Synth: " + playname + "paused",0.01)};
 
+
+			}, {
+
+				fork{~inform.value("Synth: " + playname + "running",0.01)};
+
+		});
+
+		// ^[instances[0].run(paused),instances[1].run(paused),instances[2].run(paused)];
+		^[~hack1.run(paused),~hack2.run(paused),~hack3.run(paused)];
+	}
+
+	//depende del metodo .instance
+	*setToPlay {|index, args|
+
+		var instanceinform = fork{~inform.value("Synth instance" + ids[0][1][num] + "affected",0.01)};
+
+		var setargs;
+args.postcln;
+
+		num = index;
+		//
+		if(num >= 4 || num == 0, {
+
+			fork{~inform.value("Use only numbers from '1 to 3 to set arguments for each instance",0.01)};
+
+			}, {
+
+				switch(num,
+					1,{instanceinform; run1.set(args)},
+					2,{instanceinform; ^instances[1].set(args)},
+					3,{instanceinform; ^instances[2].set(args)}
+				);
+
+		});
+		//
+
+		// ^setargs.set(args);
 	}
 
 	*samplerName {
 
 		var name = playname;
 
-		fork{~inform.value("Instance Name: " + name + "||  All Instances: " + ids, 0.01)};
+		fork{~inform.value("Instance Name: " + name + "||  All Instances: " + ids.join, 0.01)};
 
 		^name;
 
 	}
 
-	*stop {
-
-		this.stop;
-
-		^"CaosSampler Instances stopped";
-
-	}
-
-
 	*stopAll {
 
 		thisProcess.stop;
 
-		^"All CaosSampler Instances stopped";
+		fork{~inform.value("All Instances stopped ", 0.01)};
+
+		^"";
 	}
 
 	//
