@@ -53,13 +53,13 @@ CaosSampler {
 
 		//
 		//sintes
-		SynthDef(\play,{|rate = 1, amp = #[1,1], trigger = 0, out = 0, startPos = 0, loop = 1, reset = 0|
+		SynthDef(\playsample,{|rate = 1, pan = 0, amp = 1, trigger = 0, out = 50, startPos = 0, loop = 1, reset = 0|
 
 			var sample;
 
 			sample = PlayBuf.ar(2, bufread, rate, trigger, startPos, loop, reset);
 
-			Out.ar(out,sample)*amp;
+			Out.ar(out,Pan2.ar(sample,pan,amp));
 
 		}).add;
 
@@ -116,19 +116,19 @@ CaosSampler {
 		playname = name;
 
 		//tres instancias
-		run1 = Synth.newPaused(\play);
+		run1 = Synth.newPaused(\playsample);
 
-		run2 = Synth.newPaused(\play);
+		run2 = Synth.newPaused(\playsample);
 
-		run3 = Synth.newPaused(\play);
+		run3 = Synth.newPaused(\playsample);
 
 		//Hack para tocar en vivo al rato
 
-		~hack1 = Synth.newPaused(\play);
+		~hack1 = Synth.newPaused(\playsample);
 
-		~hack2 = Synth.newPaused(\play);
+		~hack2 = Synth.newPaused(\playsample);
 
-		~hack3 = Synth.newPaused(\play);
+		~hack3 = Synth.newPaused(\playsample);
 
 		//
 
@@ -139,7 +139,7 @@ CaosSampler {
 		// info = [["Group name: ", name], ["Instance Nodes: ",instances[0].nodeID, instances[1].nodeID, instances[2].nodeID]];//asocia nombre de sinte con nombre de argumento ID + numero de nodo
 		info = [["Group name: ", name], ["Instance Nodes: ",~hack1.nodeID, ~hack2.nodeID, ~hack3.nodeID]];//asocia nombre de sinte con nombre de argumento ID + numero de nodo
 
-		ids.add(info);//agrega informacion a un array global para posterior iidentificacion
+		ids.add(info);//agrega informacion a un array global para posterior identificacion
 
 
 		fork{~inform.value("Synth group: " + name + "registered",0.01)};
