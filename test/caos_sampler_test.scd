@@ -1,9 +1,8 @@
 //test
-//
 // create new instance
 // CaosSampler.new;
-//Samlerate same as input song file
-// s.options.sampleRate = 48000;
+//Samplerate same as input song file
+// o.options.sampleRate = 48000;
 s.boot;//CaosSampler checks if server is on
 s.scope(2,0);
 (//setup
@@ -18,8 +17,8 @@ s.scope(2,0);
 (
 // ~track2.new;
 ~track1.new;
-~track6.new;
 ~track2.new;
+~track3.new;
 ~track4.new;
 ~track5.new;
 ~track6.new;
@@ -43,7 +42,7 @@ s.scope(2,0);
 (
 ~track1.register("Bilocacion");//Name your instance + play instance with defaults
 ~track2.register("di3");//Name your instance + play instance with defaults
-~track1.register("booxito");//Name your instance + play instance with defaults
+~track3.register("su8");//Name your instance + play instance with defaults
 ~track4.register("booxito");//Name your instance + play instance with defaults
 ~track5.register("finale");//Name your instance + play instance with defaults
 ~track6.register("gran finale");//Name your instance + play instance with defaults
@@ -62,9 +61,9 @@ s.scope(2,0);
 //
 // Hack para set de Hoy en Pachuca
 (
-~hack1.set(\out,0,\loop,0,\rate,1,\trigger,0,\startPos,0,\amp,0.75);
-~hack2.set(\out,10,\loop,1,\rate,2,\trigger,0,\startPos,0,\amp,0.45);
-~hack3.set(\out,10,\loop,1,\rate,1,\trigger,0,\startPos,0,\amp,0.40);
+~hack1.set(\out,#[50,51],\loop,1,\rate,1,\trigger,0,\startPos,0,\amp,0.4);
+~hack2.set(\out,#[64,65],\loop,1,\rate,1,\trigger,0,\startPos,0,\amp,0.3);
+~hack3.set(\out,#[60,61],\loop,1,\rate,1,\trigger,0,\startPos,0,\amp,0.3);
 );
 s.scope;
 //change instance parameters
@@ -93,8 +92,8 @@ value{BufSamples(~track)}
 play{Out.ar(1,SinOsc.ar(60*LFPulse.ar(4,0.01,0.01,60,120),0,0.5))};
 
 
-s.scope;
 //
+s.scope(2,0);
 s.makeGui;
 Help.gui;
 //nota
