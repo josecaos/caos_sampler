@@ -123,12 +123,12 @@ CaosSampler {
 		run3 = Synth.newPaused(\playsample);
 
 		//Hack para tocar en vivo al rato
-
+/*
 		~hack1 = Synth.newPaused(\playsample);
 
 		~hack2 = Synth.newPaused(\playsample);
 
-		~hack3 = Synth.newPaused(\playsample);
+		~hack3 = Synth.newPaused(\playsample);*/
 
 		//
 
@@ -136,11 +136,11 @@ CaosSampler {
 		instances = [run1, run2, run3];
 
 		//
-		// info = [["Group name: ", name], ["Instance Nodes: ",instances[0].nodeID, instances[1].nodeID, instances[2].nodeID]];//asocia nombre de sinte con nombre de argumento ID + numero de nodo
-		info = [["Group name: ", name], ["Instance Nodes: ",~hack1.nodeID, ~hack2.nodeID, ~hack3.nodeID]];//asocia nombre de sinte con nombre de argumento ID + numero de nodo
+		 info = [["Group name: ", name], ["Instance Nodes: ",instances[0].nodeID, instances[1].nodeID, instances[2].nodeID]];//asocia nombre de sinte con nombre de argumento ID + numero de nodo
+		//info = [["Group name: ", name], ["Instance Nodes: ",~hack1.nodeID, ~hack2.nodeID, ~hack3.nodeID]];//asocia nombre de sinte con nombre de argumento ID + numero de nodo-hack
 
+		//
 		ids.add(info);//agrega informacion a un array global para posterior identificacion
-
 
 		fork{~inform.value("Synth group: " + name + "registered",0.01)};
 
@@ -162,32 +162,34 @@ CaosSampler {
 
 		});
 
-		// ^[instances[0].run(paused),instances[1].run(paused),instances[2].run(paused)];
-		^[~hack1.run(paused),~hack2.run(paused),~hack3.run(paused)];
+		^[instances[0].run(paused),instances[1].run(paused),instances[2].run(paused)];
+		// ^[~hack1.run(paused),~hack2.run(paused),~hack3.run(paused)];
 	}
 
 	//depende del metodo .instance
-	*setToPlay {|index, args|
+	*setToPlay {|index, args = #[]|
 
-		var instanceinform = fork{~inform.value("Synth instance" + ids[0][1][num] + "affected",0.01)};
+		var instanceinform;
 
 		var setargs;
-args.postcln;
 
 		num = index;
 		//
 		if(num >= 4 || num == 0, {
 
-			fork{~inform.value("Use only numbers from '1 to 3 to set arguments for each instance",0.01)};
+			fork{~inform.value("Use only numbers from '1 to 3 to choose instance",0.01)};
 
 			}, {
 
+				var i = num-1;
+
 				switch(num,
-					1,{instanceinform; run1.set(args)},
-					2,{instanceinform; ^instances[1].set(args)},
-					3,{instanceinform; ^instances[2].set(args)}
+					1,{/*instanceinform;*/ ^instances[i].set(args);},
+					2,{/*instanceinform;*/ ^instances[i].set(args);},
+					3,{/*instanceinform;*/ ^instances[i].set(args);}
 				);
 
+				fork{~inform.value("Synth instance" + instances[num-1].nodeID + "affected",0.01)};
 		});
 		//
 

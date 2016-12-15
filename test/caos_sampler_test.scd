@@ -4,7 +4,7 @@
 //Samplerate same as input song file
 /*
 Note:
-if CaosBox, must be playing first
+if CaosBox true, must be playing before all these
 */
 s.boot;//CaosSampler checks if server is on
 s.scope(2,0);
@@ -42,10 +42,10 @@ s.scope(2,0);
 ~track9.loadTrack("josecaos-xib4lb4-09-Glitchtlan.wav");//
 // ~track1.loadTrack("josecaos-xib4lb4-01-Bilocacion.wav");//track name not in repository folder
 
-//
+
 // ~track1.play;//play instance group with default name
 (
-~track1.register("Toh");//Name your instance + play instance with defaults
+~track1.register("Bilocacion");//Name your instance + play instance with defaults
 ~track2.register("di3");//Name your instance + play instance with defaults
 ~track3.register("su8");//Name your instance + play instance with defaults
 ~track4.register("booxito");//Name your instance + play instance with defaults
@@ -65,18 +65,18 @@ s.scope(2,0);
 ~track6.play(true);
 //
 // Hack para set de Hoy en Pachuca
-(
+/*(
 ~hack1.set(\out,#[50,53],\loop,1,\rate,1,\trigger,0,\startPos,0,\amp,0.7);
 ~hack2.set(\out,#[64,65],\loop,1,\rate,1,\trigger,0,\startPos,0,\amp,0.7);
 ~hack3.set(\out,#[60,61],\loop,1,\rate,1,\trigger,0,\startPos,0,\amp,0.4);
-);
+);*/
 s.scope;
 s.queryAllNodes;
 //change instance parameters
 //three default instances
-// ~track1.setToPlay(1, [\out,0,\loop,0,\rate,4,\trigger,0,\startPos,0]);
-// ~track1.setToPlay(2, [\out,0,\loop,0,\rate,6,\trigger,0,\startPos,0]);
-// ~track1.setToPlay(3, [\out,0,\loop,0,\rate,3,\trigger,0,\startPos,0]);
+~track1.setToPlay(1, \out,0,\loop,1,\rate,1,\trigger,0,\startPos,0,\amp,0.7);
+~track1.setToPlay(2, [\out,#[60,61],\loop,1,\rate,1,\trigger,0,\startPos,0,\amp,0.7]);
+~track1.setToPlay(3, [\out,#[64,65],\loop,1,\rate,1,\trigger,0,\startPos,0,\amp,0.7]);
 //
 //
 ~track1.stopAll;//no need of reload after this
