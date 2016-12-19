@@ -54,7 +54,7 @@ s.scope(2,0);
 // ~track2.register("Two");
 );
 //
-~track1.samplerName;//just to keep track of your instance;
+~track1.trackName;//just to keep track of your instance;
 // Synth(\play,[\rate,6]);
 
 ~track1.play(true);//false = paused

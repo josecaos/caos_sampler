@@ -2,7 +2,7 @@
 CaosSampler {
 
 	classvar <server, <>coreurl, <>audiourl, <ids, <id;
-	classvar <bufread, <run1, <run2, <run3, <instances, <playname = "Generic name";
+	classvar <bufread, <run1, <run2, <run3, <instances, <playname = "No name";
 	classvar <num = 1, >info;
 
 
@@ -149,7 +149,17 @@ CaosSampler {
 
 	}
 
-	*play {|paused = true|
+		*trackName {
+
+		var name = playname;
+
+		^fork{~inform.value("Instance Name: " + name + "||  All Instances: " + ids.join, 0.01)};
+
+		// ^name;
+
+	}
+
+	*play {|paused = true, args|
 
 		if(paused != true, {
 
@@ -169,7 +179,7 @@ CaosSampler {
 	//depende del metodo .instance
 	*setToPlay {|index, args|
 
-		var instanceinform = fork{~inform.value("Synth instance" + instances[index].nodeID + "affected",0.01)};
+		var instanceinform;
 
 		var setargs;
 
@@ -177,11 +187,13 @@ CaosSampler {
 		//
 		if(num >= 4 || num == 0, {
 
-			fork{~inform.value("Use only numbers from '1 to 3 to choose instance",0.01)};
+			fork{~inform.value("Use only numbers from '1 to 3 as first argument, to choose instance",0.01)};
 
 			}, {
 
 				var i = num-1;
+
+				instanceinform = fork{~inform.value("Synth instance" + instances[i].nodeID + "affected",0.01)};
 
 				switch(num,
 					1,{instanceinform; ^instances[i].set(args);},
@@ -190,18 +202,6 @@ CaosSampler {
 				);
 
 		});
-		//
-
-		// ^setargs.set(args);
-	}
-
-	*samplerName {
-
-		var name = playname;
-
-		fork{~inform.value("Instance Name: " + name + "||  All Instances: " + ids.join, 0.01)};
-
-		^name;
 
 	}
 
