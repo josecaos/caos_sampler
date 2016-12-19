@@ -74,7 +74,7 @@ s.scope;
 s.queryAllNodes;
 //change instance parameters
 //three default instances
-~track1.setToPlay(1, \out,0,\loop,1,\rate,1,\trigger,0,\startPos,0,\amp,0.7);
+~track1.setToPlay(1, [\out,#[0,1],\loop,1,\rate,1,\trigger,1,\startPos,0,\amp,0.7]);
 ~track1.setToPlay(2, [\out,#[60,61],\loop,1,\rate,1,\trigger,0,\startPos,0,\amp,0.7]);
 ~track1.setToPlay(3, [\out,#[64,65],\loop,1,\rate,1,\trigger,0,\startPos,0,\amp,0.7]);
 //

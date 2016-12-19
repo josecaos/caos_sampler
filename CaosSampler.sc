@@ -167,9 +167,9 @@ CaosSampler {
 	}
 
 	//depende del metodo .instance
-	*setToPlay {|index, args = #[]|
+	*setToPlay {|index, args|
 
-		var instanceinform;
+		var instanceinform = fork{~inform.value("Synth instance" + instances[index].nodeID + "affected",0.01)};
 
 		var setargs;
 
@@ -184,12 +184,11 @@ CaosSampler {
 				var i = num-1;
 
 				switch(num,
-					1,{/*instanceinform;*/ ^instances[i].set(args);},
-					2,{/*instanceinform;*/ ^instances[i].set(args);},
-					3,{/*instanceinform;*/ ^instances[i].set(args);}
+					1,{instanceinform; ^instances[i].set(args);},
+					2,{instanceinform; ^instances[i].set(args);},
+					3,{instanceinform; ^instances[i].set(args);}
 				);
 
-				fork{~inform.value("Synth instance" + instances[num-1].nodeID + "affected",0.01)};
 		});
 		//
 
