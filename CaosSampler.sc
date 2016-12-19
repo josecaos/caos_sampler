@@ -116,7 +116,7 @@ CaosSampler {
 		playname = name;
 
 		//tres instancias
-		run1 = Synth.newPaused(\playsample);
+		run1 = Synth.newPaused(\playsample,[\amp,0.95]);
 
 		run2 = Synth.newPaused(\playsample);
 
@@ -187,7 +187,7 @@ CaosSampler {
 		//
 		if(num >= 4 || num == 0, {
 
-			fork{~inform.value("Use only numbers from '1 to 3 as first argument, to choose instance",0.01)};
+			fork{~inform.value("Use only numbers from '1 to 3' as first argument, to choose instance",0.01)};
 
 			}, {
 
@@ -196,9 +196,9 @@ CaosSampler {
 				instanceinform = fork{~inform.value("Synth instance" + instances[i].nodeID + "affected",0.01)};
 
 				switch(num,
-					1,{instanceinform; ^instances[i].set(args);},
-					2,{instanceinform; ^instances[i].set(args);},
-					3,{instanceinform; ^instances[i].set(args);}
+					1,{instanceinform; ^instances[i].set(args)},
+					2,{instanceinform; ^instances[i].set(args)},
+					3,{instanceinform; ^instances[i].set(args)}
 				);
 
 		});
