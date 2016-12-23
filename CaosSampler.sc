@@ -112,7 +112,7 @@ CaosSampler {
 	}
 
 	// registra el numero de copias de el audio a tocar
-	*register {|name, copies = 1|
+	*register {|name, copies = 3|
 
 		var infoinstances;
 
@@ -131,22 +131,24 @@ CaosSampler {
 				switch(copies,
 
 					1,{run1 = Synth.newPaused(\playsample);
-						instances.add(run1);
-						infoinstances = run1},
+						instances = instances.put(0,run1);
+						infoinstances = instances[0].nodeID;
+					},
 
 					2,{run1 = Synth.newPaused(\playsample);run2 = Synth.newPaused(\playsample);
-						instances.add(run1);instances.add(run2);
-						infoinstances = [run1, run2].join(", ")},
+						instances = instances.put(0,run1);instances = instances.put(1,run2);
+						infoinstances = [instances[0].nodeID, instances[1].nodeID].join(", ");
+					},
 
 					3,{run1 = Synth.newPaused(\playsample);run2 = Synth.newPaused(\playsample);run3 = Synth.newPaused(\playsample);
-						instances.add(run1);instances.add(run2);instances.add(run3);
-					infoinstances = [run1,run2,run3].join(", ")}
+						instances = instances.put(0,run1);instances = instances.put(1,run2); instances = instances.put(2,run3);
+						infoinstances = [instances[0].nodeID,instances[1].nodeID,instances[2].nodeID].join(", ");
+					}
 
 				);
 
 
-
-				fork{~inform.value("There's " + copies + "track(s) running simultaneously",0.01)};
+				fork{~inform.value("You chose " + copies + "track(s) to run simultaneously",0.01)};
 
 		});
 
@@ -155,7 +157,7 @@ CaosSampler {
 
 
 		//
-		info = [["Track name: ", name], ["Instance Nodes: ", infoinstances]];//asocia nombre de sinte con nombre de
+		info = [["Track name: ", name], ["Instance Nodes: ", infoinstances].join(", ")];//asocia nombre de sinte con nombre de
 		//
 		ids.add(info);//agrega informacion a un array global para posterior identificacion
 

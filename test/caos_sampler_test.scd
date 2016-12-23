@@ -15,10 +15,9 @@ s.scope(2,0);
 ~track4 = CaosSampler;
 ~track5 = CaosSampler;
 ~track6 = CaosSampler;
-// ~track2 = CaosSampler;
 );
+//
 (
-// ~track2.new;
 ~track1.new;
 ~track2.new;
 ~track3.new;
@@ -42,10 +41,9 @@ s.scope(2,0);
 ~track9.loadTrack("josecaos-xib4lb4-09-Glitchtlan.wav");//
 // ~track1.loadTrack("josecaos-xib4lb4-01-Bilocacion.wav");//track name not in repository folder
 
-
 // ~track1.play;//play instance group with default name
 (
-~track1.register("Bilocacion");//Name your instance + play instance with defaults
+~track1.register("Bilocacion",3);//Name your instance + play instance with defaults
 ~track2.register("di3");//Name your instance + play instance with defaults
 ~track3.register("su8");//Name your instance + play instance with defaults
 ~track4.register("booxito");//Name your instance + play instance with defaults
