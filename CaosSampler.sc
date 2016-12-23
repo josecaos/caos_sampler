@@ -111,16 +111,29 @@ CaosSampler {
 
 	}
 
-	*register {|name|
+	// registra el numero de copias de el audio a tocar
+	*register {|name, copies = 1|
 
 		playname = name;
 
+
+		for(1, copies,{|i|
+
+			i.postcln;
+			copies.postcln
+
+			run + i = Synth.newPaused(\playsample);
+
+		});
+
+
+
 		//tres instancias
-		run1 = Synth.newPaused(\playsample,[\amp,0.95]);
-
-		run2 = Synth.newPaused(\playsample);
-
-		run3 = Synth.newPaused(\playsample);
+		// run1 = Synth.newPaused(\playsample,[\amp,0.95]);
+		//
+		// run2 = Synth.newPaused(\playsample);
+		//
+		// run3 = Synth.newPaused(\playsample);
 
 		//Hack para tocar en vivo al rato
 /*
