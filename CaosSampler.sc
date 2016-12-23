@@ -114,55 +114,59 @@ CaosSampler {
 	// registra el numero de copias de el audio a tocar
 	*register {|name, copies = 1|
 
+		var infoinstances;
+
 		playname = name;
 
+		instances = Array.newClear(copies);
 
-		for(1, copies,{|i|
 
-			i.postcln;
-			copies.postcln
+		if(copies >=4 || copies == 0,{
 
-			run + i = Synth.newPaused(\playsample);
+			fork{~inform.value("Only 1 to 3 simultaneous copies allowed",0.01)};
+
+			}, {
+
+
+				switch(copies,
+
+					1,{run1 = Synth.newPaused(\playsample);
+						instances.add(run1);
+						infoinstances = run1},
+
+					2,{run1 = Synth.newPaused(\playsample);run2 = Synth.newPaused(\playsample);
+						instances.add(run1);instances.add(run2);
+						infoinstances = [run1, run2].join(", ")},
+
+					3,{run1 = Synth.newPaused(\playsample);run2 = Synth.newPaused(\playsample);run3 = Synth.newPaused(\playsample);
+						instances.add(run1);instances.add(run2);instances.add(run3);
+					infoinstances = [run1,run2,run3].join(", ")}
+
+				);
+
+
+
+				fork{~inform.value("There's " + copies + "track(s) running simultaneously",0.01)};
 
 		});
 
+		// fix aun sin terminar
+		// la idea es poder controlar el numero de copias de un mismo audio
 
-
-		//tres instancias
-		// run1 = Synth.newPaused(\playsample,[\amp,0.95]);
-		//
-		// run2 = Synth.newPaused(\playsample);
-		//
-		// run3 = Synth.newPaused(\playsample);
-
-		//Hack para tocar en vivo al rato
-/*
-		~hack1 = Synth.newPaused(\playsample);
-
-		~hack2 = Synth.newPaused(\playsample);
-
-		~hack3 = Synth.newPaused(\playsample);*/
 
 		//
-
-
-		instances = [run1, run2, run3];
-
-		//
-		 info = [["Group name: ", name], ["Instance Nodes: ",instances[0].nodeID, instances[1].nodeID, instances[2].nodeID]];//asocia nombre de sinte con nombre de argumento ID + numero de nodo
-		//info = [["Group name: ", name], ["Instance Nodes: ",~hack1.nodeID, ~hack2.nodeID, ~hack3.nodeID]];//asocia nombre de sinte con nombre de argumento ID + numero de nodo-hack
-
+		info = [["Track name: ", name], ["Instance Nodes: ", infoinstances]];//asocia nombre de sinte con nombre de
 		//
 		ids.add(info);//agrega informacion a un array global para posterior identificacion
 
-		fork{~inform.value("Synth group: " + name + "registered",0.01)};
+		^fork{1.wait;~inform.value("Track Name: " + name + "registered",0.01)};
 
 		// ^instances.run;//sin correr
-		^"";
+		// ^"";
 
 	}
 
-		*trackName {
+	*trackName {
 
 		var name = playname;
 
