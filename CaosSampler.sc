@@ -157,14 +157,11 @@ CaosSampler {
 
 
 		//
-		info = [["Track name: ", name], ["Instance Nodes: ", infoinstances].join(", ")];//asocia nombre de sinte con nombre de
+		info = [["Track name", name].join(": "), ["Instance Nodes", infoinstances].join(": ")].join(" => ");//asocia nombre de sinte con nombre de
 		//
 		ids.add(info);//agrega informacion a un array global para posterior identificacion
 
 		^fork{1.wait;~inform.value("Track Name: " + name + "registered",0.01)};
-
-		// ^instances.run;//sin correr
-		// ^"";
 
 	}
 
