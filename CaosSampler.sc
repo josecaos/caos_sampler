@@ -121,12 +121,11 @@ CaosSampler {
 		instances = Array.newClear(copies);
 
 
-		if(copies >=4 || copies == 0,{
+		if( copies == 0 || copies < 0 || copies > 3,{
 
 			fork{~inform.value("Only 1 to 3 simultaneous copies allowed",0.01)};
 
 			}, {
-
 
 				switch(copies,
 
@@ -185,11 +184,14 @@ CaosSampler {
 
 		});
 
-		// ^[instances[0].run(paused),instances[1].run(paused),instances[2].run(paused)];
 		switch(instances.size,
-			1,{instances[0].run(paused)},
-			2,{[instances[0].run(paused),instances[1].run(paused)]},
-			3,{[instances[0].run(paused),instances[1].run(paused),instances[2].run(paused)]}
+
+			1,{^instances[0].run(paused)},
+
+			2,{^[instances[0].run(paused),instances[1].run(paused)]},
+
+			3,{^[instances[0].run(paused),instances[1].run(paused),instances[2].run(paused)]}
+
 		);
 	}
 
@@ -198,11 +200,11 @@ CaosSampler {
 
 		var instanceinform;
 
-		var setargs;
+		// var setargs;
 
 		num = index;
 		//
-		if(num >= 4 || num == 0, {
+		if(num == 0 || num < 0 || num > 3 , {
 
 			fork{~inform.value("Use only numbers from '1 to 3' as first argument, to choose instance",0.01)};
 
@@ -210,7 +212,11 @@ CaosSampler {
 
 				var i = num-1;
 
+
 				instanceinform = fork{~inform.value("Synth instance" + instances[i].nodeID + "affected",0.01)};
+
+				// debug
+				fork{~inform.value(i,1)};
 
 				switch(num,
 					1,{instanceinform; ^instances[i].set(args)},
