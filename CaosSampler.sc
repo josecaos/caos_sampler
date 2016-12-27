@@ -2,7 +2,7 @@
 CaosSampler {
 
 	classvar <server, <>coreurl, <>audiourl, <ids, <id;
-	classvar <bufread, <run1, <run2, <run3, <instances, <playname = "No name";
+	classvar <bufread, <run1, <run2, <run3, <>instances, <playname = "No name";
 	classvar <num = 1, >info;
 
 
@@ -150,28 +150,25 @@ CaosSampler {
 
 				fork{~inform.value("You chose " + copies + "track(s) to run simultaneously",0.01)};
 
+				////asocia nombre de sinte con instancias
+				info = [["Track name", name].join(": "), ["Instance Nodes", infoinstances].join(": ")].join(" => ");
+				//
+				ids.add(info);//agrega informacion a un array global para posterior identificacion
+
+				fork{1.wait;~inform.value("Track Name: " + name + "registered",0.01)};
+
 		});
 
-		// fix aun sin terminar
-		// la idea es poder controlar el numero de copias de un mismo audio
-
-
-		//
-		info = [["Track name", name].join(": "), ["Instance Nodes", infoinstances].join(": ")].join(" => ");//asocia nombre de sinte con nombre de
-		//
-		ids.add(info);//agrega informacion a un array global para posterior identificacion
-
-		^fork{1.wait;~inform.value("Track Name: " + name + "registered",0.01)};
-
+		^"";
 	}
 
 	*trackName {
 
 		var name = playname;
 
-		^fork{~inform.value("Instance Name: " + name + "||  All Instances: " + ids.join, 0.01)};
+		fork{~inform.value("Instance Name: " + name + "||  All Instances: " + ids.join, 0.01)};
 
-		// ^name;
+		^name;
 
 	}
 
@@ -188,8 +185,12 @@ CaosSampler {
 
 		});
 
-		^[instances[0].run(paused),instances[1].run(paused),instances[2].run(paused)];
-		// ^[~hack1.run(paused),~hack2.run(paused),~hack3.run(paused)];
+		// ^[instances[0].run(paused),instances[1].run(paused),instances[2].run(paused)];
+		switch(instances.size,
+			1,{instances[0].run(paused)},
+			2,{[instances[0].run(paused),instances[1].run(paused)]},
+			3,{[instances[0].run(paused),instances[1].run(paused),instances[2].run(paused)]}
+		);
 	}
 
 	//depende del metodo .instance
