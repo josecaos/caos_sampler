@@ -28,11 +28,11 @@ CaosSampler {
 			// si no, enciendelo
 			server.boot;
 
-			fork{1.75.wait;~inform.value("Wait",0.025,false);~inform.value(" .... ",0.1,false);~inform.value("CaosSampler instance created",0.025)}
+			fork{2.wait;~inform.value("Wait",0.015,false);~inform.value(" .... ",0.1,false);~inform.value("CaosSampler instance created",0.025)}
 
 			}, {
 
-				fork{~inform.value(" .... ",0.1,false);~inform.value("CaosSampler instance created",0.025)}
+				fork{~inform.value(" .... ",0.1,false);~inform.value("CaosSampler instance created",0.015)}
 
 		});
 		//
@@ -200,8 +200,6 @@ CaosSampler {
 
 		var instanceinform;
 
-		// var setargs;
-
 		num = index;
 		//
 		if(num == 0 || num < 0 || num > 3 , {
@@ -216,10 +214,11 @@ CaosSampler {
 				instanceinform = fork{~inform.value("Synth instance" + instances[i].nodeID + "affected",0.01)};
 
 				// debug
-				fork{~inform.value(i,1)};
+				fork{1.wait;~inform.value(i + ": " + args.join(", "),0.0001)};
+				//
 
 				switch(num,
-					1,{instanceinform; ^instances[i].set(args)},
+					1,{instanceinform; ^instances[i].set(args.asControlInput.join(", "))},
 					2,{instanceinform; ^instances[i].set(args)},
 					3,{instanceinform; ^instances[i].set(args)}
 				);
