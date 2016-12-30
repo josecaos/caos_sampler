@@ -186,19 +186,21 @@ CaosSampler {
 
 		switch(instances.size,
 
-			1,{^instances[0].run(paused)},
+			1,{instances[0].run(paused)},
 
-			2,{^[instances[0].run(paused),instances[1].run(paused)]},
+			2,{[instances[0].run(paused),instances[1].run(paused)]},
 
-			3,{^[instances[0].run(paused),instances[1].run(paused),instances[2].run(paused)]}
+			3,{[instances[0].run(paused),instances[1].run(paused),instances[2].run(paused)]}
 
 		);
+
+		^"";
 	}
 
 	//depende del metodo .instance
 	*setToPlay {|index, args|
 
-		var instanceinform;
+		var instanceinform, setargs;
 
 		num = index;
 		//
@@ -210,18 +212,20 @@ CaosSampler {
 
 				var i = num-1;
 
+				instanceinform = fork{~inform.value("Synth instance #" ++ num + "with node:" + instances[i].nodeID + "affected",0.01)};
 
-				instanceinform = fork{~inform.value("Synth instance" + instances[i].nodeID + "affected",0.01)};
+				setargs = args.join(",");
 
 				// debug
-				fork{1.wait;~inform.value(i + ": " + args.join(", "),0.0001)};
+				fork{1.wait;~inform.value(i + ": " + setargs,0.0001)};
+				^instances[0].set(setargs);
 				//
 
-				switch(num,
-					1,{instanceinform; ^instances[i].set(args.asControlInput.join(", "))},
-					2,{instanceinform; ^instances[i].set(args)},
-					3,{instanceinform; ^instances[i].set(args)}
-				);
+				// switch(num,
+				// 	1,{instanceinform; ^instances[i].set(setargs)},
+				// 	2,{instanceinform; ^instances[i].set(setargs)},
+				// 	3,{instanceinform; ^instances[i].set(setargs)}
+				// );
 
 		});
 
