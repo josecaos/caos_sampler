@@ -200,7 +200,7 @@ CaosSampler {
 	//depende del metodo .instance
 	*setToPlay {|index, args|
 
-		var instanceinform, setargs;
+		var instanceinform, keys, values, setargs;
 
 		num = index;
 		//
@@ -214,11 +214,21 @@ CaosSampler {
 
 				instanceinform = fork{~inform.value("Synth instance #" ++ num + "with node:" + instances[i].nodeID + "affected",0.01)};
 
-				setargs = args.join(",");
+				//division de argumentos por que da error
+				keys = args[0,2,4,6,8,10];
+				values = args[1,3,5,7,9,11];//.join(",");
+				setargs = [];
+
+				for(0, args.size, {|i|
+
+					setargs.put(i,keys[i].asSymbol);
+					setargs.put(i,values[i]);
+
+				});
 
 				// debug
-				fork{1.wait;~inform.value(i + ": " + setargs,0.0001)};
-				^instances[0].set(setargs);
+				fork{1.wait;~inform.value(i + ": " + setargs, 0.0001)};
+				// ^instances[i].set(setargs);
 				//
 
 				// switch(num,
