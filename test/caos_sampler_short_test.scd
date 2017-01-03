@@ -6,7 +6,7 @@
 ~track1.play(true);//false = paused
 //Change the instances you created, three default instances
 ~track1.setToPlay(1, [\out,0]);
-~track1.setToPlay(1, [\out,0,\loop,1,\rate,1,\trigger,0,\startPos,0,\amp,0.95]);
+~track1.setToPlay(1, [\out,0,\loop,1,\rate,2,\trigger,0,\startPos,0,\amp,0.95]);
 ~track1.setToPlay(2, [\out,0,\loop,1,\rate,1,\trigger,0,\startPos,0,\amp,0.33]);
 ~track1.setToPlay(3, [\out,0,\loop,1,\rate,1,\trigger,0,\startPos,0,\amp,0.33]);
 //

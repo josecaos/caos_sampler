@@ -201,6 +201,7 @@ CaosSampler {
 	*setToPlay {|index, args|
 
 		var instanceinform, keys, values, setargs;
+		var k = 0, v = 1;
 
 		num = index;
 		//
@@ -217,16 +218,19 @@ CaosSampler {
 				//division de argumentos por que da error
 				keys = args[0,2,4,6,8,10];
 				values = args[1,3,5,7,9,11];//.join(",");
-				setargs = [];
+				setargs = Array.newClear(args.size);
 
-				for(0, args.size, {|i|
+				for(0, 1, {|i|
 
-					setargs.put(i,keys[i].asSymbol);
-					setargs.put(i,values[i]);
+					setargs.put(k, keys[i]);
+					setargs.put(v, values[i]);
+					k = k + 2;
+					v = v + 2;
 
 				});
 
 				// debug
+				// setargs = args.asSymbol;
 				fork{1.wait;~inform.value(i + ": " + setargs, 0.0001)};
 				// ^instances[i].set(setargs);
 				//
