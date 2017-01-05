@@ -13,15 +13,6 @@
 // debug
 //el problema no es el acceso a la instancia, sino los valores key
 ~track1.instances[0].set(\out,0,\rate,1,\trigger,1,\startpos,0);
-d = [a: 5, b: 7, c: 1, d: 0];
-a.asKeyValuePairs;
-a = [\uno,1,\dos,2,\tres, 3];
-a.asOSCArgArray;
-a.asControlInput.join(',');
-a.asOSCArgBundle;
-a = a.collect({a[4].asSymbol});
-e = (freq: 340, amp: 0.001, strangeness: 0.85);
-a.use {[\uno, \dos].envirPairs;}
 //////////////
 ~track1.stopAll;//no need of reload after this
 //

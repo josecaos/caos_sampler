@@ -26,9 +26,11 @@ CaosSampler {
 		if(server.serverRunning != true ,{
 
 			// si no, enciendelo
-			server.boot;
+			server.waitForBoot{
 
-			fork{2.wait;~inform.value("Wait",0.015,false);~inform.value(" .... ",0.1,false);~inform.value("CaosSampler instance created",0.025)}
+			fork{~inform.value("Wait",0.015,false);~inform.value(" .... ",0.25,false);~inform.value("CaosSampler instance created",0.015)}
+
+			};
 
 			}, {
 
@@ -45,7 +47,7 @@ CaosSampler {
 
 	*loadTrack {|name = "test-caos_sampler-115_bpm.wav", startFrame = 0|
 
-		var informPositive = {fork{~inform.value("The file " ++ name ++ " has been loaded" ,0.025)}};
+		var informPositive = {fork{~inform.value("The file " ++ name ++ " has been loaded" ,0.015)}};
 
 		audiourl = coreurl +/+ "audios/";
 
@@ -198,47 +200,62 @@ CaosSampler {
 	}
 
 	//depende del metodo .instance
-	*setToPlay {|index, args|
+	*setToPlay {|index, params|
 
 		var instanceinform, keys, values, setargs;
-		var k = 0, v = 1;
 
 		num = index;
 		//
 		if(num == 0 || num < 0 || num > 3 , {
 
-			fork{~inform.value("Use only numbers from '1 to 3' as first argument, to choose instance",0.01)};
+			fork{~inform.value("Use only numbers between '1 and 3' as first argument, to choose instance",0.015)};
 
 			}, {
 
-				var i = num-1;
+				var inst = num-1;
 
-				instanceinform = fork{~inform.value("Synth instance #" ++ num + "with node:" + instances[i].nodeID + "affected",0.01)};
+				instanceinform = fork{~inform.value("Synth instance #" ++ num + "with node:" + instances[inst].nodeID + "affected",0.01)};
 
-				//division de argumentos por que da error
-				keys = args[0,2,4,6,8,10];
-				values = args[1,3,5,7,9,11];//.join(",");
-				setargs = Array.newClear(args.size);
 
-				for(0, 1, {|i|
+				// debug
+				fork{1.wait;~inform.value(inst + ": " + params + params.size, 0.0001)};
+				fork{2.wait;~inform.value(inst + ": " + setargs + setargs.size, 0.0001)};
+				//
 
-					setargs.put(k, keys[i]);
-					setargs.put(v, values[i]);
-					k = k + 2;
-					v = v + 2;
+
+				//division de argumentos
+				keys = params.copySeries(0,2,11);
+				values = params.copySeries(1,3,11);
+				setargs = Array.newClear(params.size);
+				// debug
+				fork{3.wait;~inform.value(inst + ": " + keys + keys.size, 0.0001)};
+				fork{4.wait;~inform.value(inst + ": " + values + values.size, 0.0001)};
+				//
+				// primero los identificadores como simbolos
+				forBy(0, params.size-1, 2, {|i|
+
+					i.postln;
+					setargs.put(i, keys[i].asSymbol);
+
+				});
+				// Luego su valor
+				forBy(0, params.size-1, 2, {|i|
+
+				i.postln;
+					setargs.put(i, values[i]);
 
 				});
 
+
 				// debug
-				// setargs = args.asSymbol;
-				fork{1.wait;~inform.value(i + ": " + setargs, 0.0001)};
+				// fork{3.wait;~inform.value(inst + ": " + setargs, 0.0001)};
 				// ^instances[i].set(setargs);
 				//
 
 				// switch(num,
-				// 	1,{instanceinform; ^instances[i].set(setargs)},
-				// 	2,{instanceinform; ^instances[i].set(setargs)},
-				// 	3,{instanceinform; ^instances[i].set(setargs)}
+				// 	1,{instanceinform; ^instances[inst].set(setargs)},
+				// 	2,{instanceinform; ^instances[inst].set(setargs)},
+				// 	3,{instanceinform; ^instances[inst].set(setargs)}
 				// );
 
 		});
