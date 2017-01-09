@@ -28,7 +28,7 @@ CaosSampler {
 			// si no, enciendelo
 			server.waitForBoot{
 
-			fork{~inform.value("Wait",0.015,false);~inform.value(" .... ",0.25,false);~inform.value("CaosSampler instance created",0.015)}
+				fork{~inform.value("Wait",0.015,false);~inform.value(" .... ",0.25,false);~inform.value("CaosSampler instance created",0.015)}
 
 			};
 
@@ -200,63 +200,38 @@ CaosSampler {
 	}
 
 	//depende del metodo .instance
-	*setToPlay {|index, params|
+	*setToPlay {|number, params|
 
-		var instanceinform, keys, values, setargs;
+		var instanceinform, values;
 
-		num = index;
+		num = number;
 		//
 		if(num == 0 || num < 0 || num > 3 , {
 
 			fork{~inform.value("Use only numbers between '1 and 3' as first argument, to choose instance",0.015)};
 
+			^"";
+
 			}, {
 
 				var inst = num-1;
+				var variables;
 
 				instanceinform = fork{~inform.value("Synth instance #" ++ num + "with node:" + instances[inst].nodeID + "affected",0.01)};
-
-
-				// debug
-				fork{1.wait;~inform.value(inst + ": " + params + params.size, 0.0001)};
-				fork{2.wait;~inform.value(inst + ": " + setargs + setargs.size, 0.0001)};
 				//
 
-
-				//division de argumentos
-				keys = params.copySeries(0,2,11);
+				//iguala los argumentos necesarios
 				values = params.copySeries(1,3,11);
-				setargs = Array.newClear(params.size);
-				// debug
-				fork{3.wait;~inform.value(inst + ": " + keys + keys.size, 0.0001)};
-				fork{4.wait;~inform.value(inst + ": " + values + values.size, 0.0001)};
-				//
-				// primero los identificadores como simbolos
-				forBy(0, params.size-1, 2, {|i|
+				variables = Array.newClear(6);//numero de argumentos
 
-					i.postln;
-					setargs.put(i, keys[i].asSymbol);
+				for(0,(params.size/2)-1, {|i|
 
-				});
-				// Luego su valor
-				forBy(0, params.size-1, 2, {|i|
-
-				i.postln;
-					setargs.put(i, values[i]);
+					variables[i] = values[i];//asignacion de valor de argumento
 
 				});
 
-
-				// debug
-				// fork{3.wait;~inform.value(inst + ": " + setargs, 0.0001)};
-				// ^instances[i].set(setargs);
 				//
-
-				// switch(num,
-				// 	1,{instanceinform; ^instances[inst].set(setargs)},
-				// 	2,{instanceinform; ^instances[inst].set(setargs)},
-				// 	3,{instanceinform; ^instances[inst].set(setargs)}
-				// );
+				^instances[inst].set(\out,variables[0],\loop,variables[1],\rate,variables[2],\trigger,variables[3],\startPos,variables[4],\amp,variables[5]);
 
 		});
 
