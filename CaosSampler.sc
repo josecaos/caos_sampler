@@ -28,13 +28,13 @@ CaosSampler {
 			// si no, enciendelo
 			server.waitForBoot{
 
-				fork{~inform.value("Wait",0.015,false);~inform.value(" .... ",0.25,false);~inform.value("CaosSampler instance created",0.015)}
+				fork{~inform.value("Server boot .... CaosSampler instance created",0.015,false);}
 
 			};
 
 			}, {
 
-				fork{~inform.value(" .... ",0.1,false);~inform.value("CaosSampler instance created",0.015)}
+				fork{~inform.value(" .... CaosSampler instance created ",0.1,false)}
 
 		});
 		//
@@ -87,7 +87,8 @@ CaosSampler {
 		// bufread.inspect;
 
 		a.soundfile = bufread;
-		a.read(0, bufread.numFrames);
+		// a.read(0, bufread.numFrames);
+		a.readFile(bufread,0, bufread.numFrames);
 		a.elasticMode = true;
 
 		a.timeCursorOn = true;
@@ -98,14 +99,14 @@ CaosSampler {
 		// a.zoom(1).refresh;
 
 
-
+		// Esta funcion se evalua al ineractuar con la ventana, no al evaluarla
 		a.action = {|lecture|
 
-			lecture = a.readProgress;
-
-			a.timeCursorPosition.poll;
-			a.readProgress.poll;
-
+			//
+			// lecture = a.readProgress;
+			//
+			a.timeCursorPosition.postcln;
+			// a.readProgress.poll;
 
 		};
 
