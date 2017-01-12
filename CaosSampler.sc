@@ -34,7 +34,7 @@ CaosSampler {
 
 			}, {
 
-				fork{~inform.value(" .... CaosSampler instance created ",0.1,false)}
+				fork{~inform.value(" .... CaosSampler instance created ",0.015,false)}
 
 		});
 		//
@@ -87,9 +87,9 @@ CaosSampler {
 		// bufread.inspect;
 
 		a.soundfile = bufread;
-		// a.read(0, bufread.numFrames);
-		a.readFile(bufread,0, bufread.numFrames);
-		a.elasticMode = true;
+		// a.read(0, bufread.numFrames);todo el acrhivo
+		a.readFile(bufread,0, bufread.numFrames);//tambien todo el archivo
+		// a.elasticMode = true;
 
 		a.timeCursorOn = true;
 		a.timeCursorColor = Color.red;
@@ -105,9 +105,11 @@ CaosSampler {
 			//
 			// lecture = a.readProgress;
 			//
-			a.timeCursorPosition.postcln;
-			// a.readProgress.poll;
+			lecture.asString.postcln;
+			position.postcln;
+			a.timeCursorPosition.postcln;//muestra la posicion en frames del cursor
 
+			a.readProgress.poll;
 		};
 
 		^w.front;//imprime ventana

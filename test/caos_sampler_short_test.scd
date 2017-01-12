@@ -1,24 +1,28 @@
-~track1 = CaosSampler;
-~track1.new;
-~track1.loadTrack("josecaos-xib4lb4-01-Bilocacion.wav");//
-//debug soundFileView
-~track1.viewTrack(2000);
+//evalua una sola vez esta parte
+~track = CaosSampler;
+~track.new;
 //
-~track1.register("Bilocacion",1);//Name your instance + how many simultaneous copies 1 to 3
-~track1.trackName;//just to keep track of your instance;
-~track1.play(true);//false = paused
+// tracks a usar
+~track.loadTrack("josecaos-xib4lb4-01-Bilocacion.wav");//
+~track.loadTrack("josecaos-xib4lb4-02-Di3.wav");//
+// arreglar error de nombre de instancia
+~track.register("DI3",2);//Name your instance + how many simultaneous copies 1 to 3
+~track.trackName;//just to keep track of your instance;
+~track.play(true);//false = paused
 //Change the instances you created, max three default instances
-~track1.setToPlay(1, [\out,0,\loop,1,\rate,1,\trigger,1,\startPos,0,\amp,0.95]);
-~track1.setToPlay(2, [\out,0,\loop,1,\rate,1,\trigger,0,\startPos,0,\amp,0.33]);
-~track1.setToPlay(3, [\out,0,\loop,1,\rate,1,\trigger,0,\startPos,0,\amp,0.33]);
+
+~track.setToPlay(1, [\out,50,\loop,0,\rate,1,\trigger,0,\startPos,0,\amp,0.8]);
+~track.setToPlay(2, [\out,64,\loop,0,\rate,1,\trigger,0,\startPos,0,\amp,0.2]);
+~track.setToPlay(3, [\out,64,\loop,0,\rate,1,\trigger,0,\startPos,0,\amp,0]);
 //
 // debug
-~track1.bufread;
+~track.bufread;
 
-BufDur.kr(3);
+//debug soundFileView
+// ~track.viewTrack("volando");
 //////////////
-~track1.stopAll;//no need of reload after this
+~track.stopAll;//no need of reload after this
 //
-~track1.viewTrack;//waveform GUI//still incomplete
+~track.viewTrack;//waveform GUI//still incomplete
 //
 s.scope(2,50);
