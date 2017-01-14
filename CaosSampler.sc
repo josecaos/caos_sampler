@@ -157,7 +157,7 @@ CaosSampler {
 				fork{~inform.value("You chose " + copies + "track(s) to run simultaneously",0.01)};
 
 				////asocia nombre de sinte con instancias
-				info = [["Track name", name].join(": "), ["Instance Nodes", infoinstances].join(": ")].join(" => ");
+				info = [["Track name", name].join(": "), ["Instance Nodes", infoinstances].join(": ")].join(" => ") + "";
 				//
 				ids.add(info);//agrega informacion a un array global para posterior identificacion
 
