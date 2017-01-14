@@ -2,8 +2,10 @@
 CaosSampler {
 
 	classvar <server, <>coreurl, <>audiourl, <ids, <id;
-	classvar <bufread, <run1, <run2, <run3, <>instances, <playname = "No name";
+	classvar <run1, <run2, <run3, <>instances;
 	classvar <num = 1, >info;
+	classvar <bufread;
+	classvar >playname = "No name";
 
 
 	*new {
@@ -134,17 +136,17 @@ CaosSampler {
 
 				switch(copies,
 
-					1,{run1 = Synth.newPaused(\playsample);
+					1,{run1 = Synth.newPaused(\playsample,[\amp,1]);
 						instances = instances.put(0,run1);
 						infoinstances = instances[0].nodeID;
 					},
 
-					2,{run1 = Synth.newPaused(\playsample);run2 = Synth.newPaused(\playsample);
+					2,{run1 = Synth.newPaused(\playsample,[\amp,1]);run2 = Synth.newPaused(\playsample,[\amp,0]);
 						instances = instances.put(0,run1);instances = instances.put(1,run2);
 						infoinstances = [instances[0].nodeID, instances[1].nodeID].join(", ");
 					},
 
-					3,{run1 = Synth.newPaused(\playsample);run2 = Synth.newPaused(\playsample);run3 = Synth.newPaused(\playsample);
+					3,{run1 = Synth.newPaused(\playsample,[\amp,1]);run2 = Synth.newPaused(\playsample,[\amp,0]);run3 = Synth.newPaused(\playsample,[\amp,0]);
 						instances = instances.put(0,run1);instances = instances.put(1,run2); instances = instances.put(2,run3);
 						infoinstances = [instances[0].nodeID,instances[1].nodeID,instances[2].nodeID].join(", ");
 					}
@@ -181,7 +183,6 @@ CaosSampler {
 		if(paused != true, {
 
 			fork{~inform.value("Synth: " + playname + "paused",0.01)};
-
 
 			}, {
 
