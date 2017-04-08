@@ -51,7 +51,7 @@ CaosSampler {
 
 		var informPositive = {fork{~inform.value("The file " ++ name ++ " has been loaded" ,0.015)}};
 
-		audiourl = coreurl +/+ "audios/";
+		audiourl = coreurl +/+ "tracks/";
 
 		bufread = Buffer.read(server,audiourl ++ name, startFrame, -1, informPositive);
 
