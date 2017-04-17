@@ -1,6 +1,7 @@
-# caos_sampler
-##Class: CaosSampler
+# CaosSampler
 
-###This is intended to be a SuperCollider extension, easy to connect to CaosBox or stand-alone.
+## SC Class
+
+### This is intended to be a SuperCollider extension, to reproduce audio files in a tweak way, default connection thru CaosBox or use it stand-alone.
 
 
