@@ -72,6 +72,7 @@ CaosSampler {
 
 	}
 
+/*
 	*viewTrack {|position|
 
 		// El view del sampleo estara completo mas adelante
@@ -117,6 +118,7 @@ CaosSampler {
 		^w.front;//imprime ventana
 
 	}
+*/
 
 	// registra el numero de copias de el audio a tocar
 	*register {|name, copies = 3|
