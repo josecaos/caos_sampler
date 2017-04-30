@@ -6,9 +6,20 @@ CaosSamplerRec.overDub;
 CaosSampler.instVarNames
 CaosSampler.classVarNames
 //
+k = CaosSampler;
+k.new;
+k.numero;
+k.test;
+k.numero_(20);
+x = CaosSampler;
+x.new;
+x.test(1);
+x.numero_(2);
+x.numero;
+
 ~track = CaosSampler;
-~track2 = CaosSampler;
 ~track.new;
+~track2 = CaosSampler;
 ~track2.new;
 //
 ~track.loadTrack("master.final/josecaos-01-xibalba-bilocacion-master-48khz-24bits.wav");//
@@ -19,7 +30,12 @@ CaosSampler.classVarNames
 ~track.loadTrack("master.final/josecaos-02-xibalba-wdyjdi3-master-48khz-24bits.wav");//
 //debug
 ~track.nums;
-~track.nums(4);
+~track.numero;
+~track.numero_(5);
+
+~track2.nums;
+~track2.numero;
+~track2.numero_(6);
 //
 ~track.register("sinte uno",1);//# de tracks
 ~track.bufread;

@@ -1,7 +1,7 @@
 //
 CaosSampler {
 
-	var <>numero = 1;
+	var <>numero = 100;
 
 	classvar <server, <>coreurl,  <>audiourl, <ids, <id;
 	classvar <run1, <run2, <run3, <>instances;
@@ -46,15 +46,24 @@ CaosSampler {
 		// (coreurl +/+ "synths/synths.scd").load;
 		// (coreurl +/+ "midi/midiin.scd").load;
 
+
 		^"";
 	}
 
+
+
 	//debug
-	nums {
+	*test {|index = 0|
 
-		^fork{~inform.value(numero,0.25)};
-
+		^this.nums(index);
 	}
+	//
+	nums {|param|
+	//
+
+		^this.numero_(param);
+
+		}
 	// fin debug
 
 	//
