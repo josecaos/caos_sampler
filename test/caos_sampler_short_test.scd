@@ -15,13 +15,13 @@
 ~track.loadTrack("josecaos-xib4lb4-12-Pozo.wav");//
 ~track.loadTrack("josecaos-xib4lb4-13-Nuestro_amigo_Boox.wav");//
 // arreglar error de nombre de instancia
-~track.register("lluvia",2);//Name your instance + how many simultaneous copies 1 to 3
+~track.register("Bocas",1);//Name your instance + how many simultaneous copies 1 to 3
 ~track.trackName;//just to keep track of your instance;
 ~track.play(true);//false = paused;//plays the number of registered tracks together
 //Change the instances you created, max three default instances
 (
-~track.setToPlay(1, [\out,58,\loop,0,\rate,1,\trigger,1,\startPos,0,\amp,1]);
-~track.setToPlay(2, [\out,64,\loop,0,\rate,1,\trigger,1,\startPos,0,\amp,0.25]);
+~track.setToPlay(1, [\out,50,\loop,0,\rate,1,\trigger,0,\startPos,0,\amp,1]);
+~track.setToPlay(2, [\out,52,\loop,0,\rate,1.15,\trigger,0,\startPos,0,\amp,0]);
 )
 (
 ~track.setToPlay(3, [\out,64,\loop,0,\rate,1,\trigger,0,\startPos,0,\amp,0]);
