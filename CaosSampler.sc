@@ -1,7 +1,9 @@
 //
 CaosSampler {
 
-	classvar <server, <>coreurl, <>audiourl, <ids, <id;
+	var <>numero = 1;
+
+	classvar <server, <>coreurl,  <>audiourl, <ids, <id;
 	classvar <run1, <run2, <run3, <>instances;
 	classvar <num = 1, >info;
 	classvar <bufread;
@@ -47,7 +49,25 @@ CaosSampler {
 		^"";
 	}
 
-	*loadTrack {|name = "test-caos_sampler-115_bpm.wav", startFrame = 0|
+	//debug
+	nums {
+
+		^fork{~inform.value(numero,0.25)};
+
+	}
+	// fin debug
+
+	//
+	*loadTrack {|name, startFrame|
+
+		//
+		^this.loadTrackInto(name,startFrame);
+		//
+		// ^"";
+
+	}
+
+	*loadTrackInto {|name = "test-caos_sampler-115_bpm.wav", startFrame = 0|
 
 		var informPositive = {fork{~inform.value("The file " ++ name ++ " has been loaded" ,0.015)}};
 
@@ -55,9 +75,8 @@ CaosSampler {
 
 		bufread = Buffer.read(server,audiourl ++ name, startFrame, -1, informPositive);
 
-		//
 		//sintes
-		SynthDef(\playsample,{|rate = 1, pan = 0, amp = 1, trigger = 0, out = 50, startPos = 0, loop = 1, reset = 0|
+		SynthDef(\sample,{|rate = 1, pan = 0, amp = 1, trigger = 0, out = 50, startPos = 0, loop = 1, reset = 0|
 
 			var sample;
 
@@ -71,54 +90,53 @@ CaosSampler {
 		^"";
 
 	}
-
-/*
-	*viewTrack {|position|
-
-		// El view del sampleo estara completo mas adelante
-		//
-		//waveform GUI
-		var y, x, w, a, f;
-
-		position = 0;//reset de posicion
-
-
-		y = Window.screenBounds.height - 25;
-		x = Window.screenBounds.width;
-		w = Window.new("CaosSampler instance soundfile", Rect(400, y, x, 220)).alwaysOnTop_(true);
-		a = SoundFileView.new(w, Rect(5,5, x, 210));
-		// bufread.inspect;
-
-		a.soundfile = bufread;
-		// a.read(0, bufread.numFrames);todo el acrhivo
-		a.readFile(bufread,0, bufread.numFrames);//tambien todo el archivo
-		// a.elasticMode = true;
-
-		a.timeCursorOn = true;
-		a.timeCursorColor = Color.red;
-		a.drawsWaveForm = true;
-		a.gridOn = true;
-		a.gridResolution = 0.1;
-		// a.zoom(1).refresh;
-
-
-		// Esta funcion se evalua al ineractuar con la ventana, no al evaluarla
-		a.action = {|lecture|
-
-			//
-			// lecture = a.readProgress;
-			//
-			lecture.asString.postcln;
-			position.postcln;
-			a.timeCursorPosition.postcln;//muestra la posicion en frames del cursor
-
-			a.readProgress.poll;
-		};
-
-		^w.front;//imprime ventana
-
-	}
-*/
+	//
+	// *viewTrack {|position|
+	//
+	// 	// El view del sampleo estara completo mas adelante
+	// 	//
+	// 	//waveform GUI
+	// 	var y, x, w, a, f;
+	//
+	// 	position = 0;//reset de posicion
+	//
+	//
+	// 	y = Window.screenBounds.height - 25;
+	// 	x = Window.screenBounds.width;
+	// 	w = Window.new("CaosSampler instance soundfile", Rect(400, y, x, 220)).alwaysOnTop_(true);
+	// 	a = SoundFileView.new(w, Rect(5,5, x, 210));
+	// 	// bufread.inspect;
+	//
+	// 	a.soundfile = bufread;
+	// 	// a.read(0, bufread.numFrames);todo el acrhivo
+	// 	a.readFile(bufread,0, bufread.numFrames);//tambien todo el archivo
+	// 	// a.elasticMode = true;
+	//
+	// 	a.timeCursorOn = true;
+	// 	a.timeCursorColor = Color.red;
+	// 	a.drawsWaveForm = true;
+	// 	a.gridOn = true;
+	// 	a.gridResolution = 0.1;
+	// 	// a.zoom(1).refresh;
+	//
+	//
+	// 	// Esta funcion se evalua al ineractuar con la ventana, no al evaluarla
+	// 	a.action = {|lecture|
+	//
+	// 		//
+	// 		// lecture = a.readProgress;
+	// 		//
+	// 		lecture.asString.postcln;
+	// 		position.postcln;
+	// 		a.timeCursorPosition.postcln;//muestra la posicion en frames del cursor
+	//
+	// 		a.readProgress.poll;
+	// 	};
+	//
+	// 	^w.front;//imprime ventana
+	//
+	// }
+	//
 
 	// registra el numero de copias de el audio a tocar
 	*register {|name, copies = 3|
@@ -138,17 +156,17 @@ CaosSampler {
 
 				switch(copies,
 
-					1,{run1 = Synth.newPaused(\playsample,[\amp,1]);
+					1,{run1 = Synth.newPaused(\sample,[\amp,1]);
 						instances = instances.put(0,run1);
 						infoinstances = instances[0].nodeID;
 					},
 
-					2,{run1 = Synth.newPaused(\playsample,[\amp,1]);run2 = Synth.newPaused(\playsample,[\amp,0]);
+					2,{run1 = Synth.newPaused(\sample,[\amp,1]);run2 = Synth.newPaused(\sample,[\amp,0]);
 						instances = instances.put(0,run1);instances = instances.put(1,run2);
 						infoinstances = [instances[0].nodeID, instances[1].nodeID].join(", ");
 					},
 
-					3,{run1 = Synth.newPaused(\playsample,[\amp,1]);run2 = Synth.newPaused(\playsample,[\amp,0]);run3 = Synth.newPaused(\playsample,[\amp,0]);
+					3,{run1 = Synth.newPaused(\sample,[\amp,1]);run2 = Synth.newPaused(\sample,[\amp,0]);run3 = Synth.newPaused(\sample,[\amp,0]);
 						instances = instances.put(0,run1);instances = instances.put(1,run2); instances = instances.put(2,run3);
 						infoinstances = [instances[0].nodeID,instances[1].nodeID,instances[2].nodeID].join(", ");
 					}
@@ -254,4 +272,4 @@ CaosSampler {
 
 	//
 }
-// 
+//

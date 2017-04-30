@@ -4,8 +4,14 @@ CaosSamplerRec : CaosSampler {
 
 	*overDub {
 
-		fork{~inform.value("Soy overdub  mas variables de la clase CaosSampler: " + coreurl)}
+		 fork{~inform.value("Sobredubeando: " + coreurl, 0.125)};
 
+	}
+
+
+	*instance {
+
+		^"Hey dub";
 	}
 
 
