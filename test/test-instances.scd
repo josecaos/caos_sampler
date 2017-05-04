@@ -21,9 +21,12 @@ x.numero;
 ~track.new;
 ~track2 = CaosSampler;
 ~track2.new;
+
+~track.bufread;
+~track2.bufread;
 //
-~track.loadTrack("master.final/josecaos-01-xibalba-bilocacion-master-48khz-24bits.wav");//
-~track2.loadTrack("IMPT-josecaos-master/josecaos-1500(edit)-master-48khz-24bits-josecaos.xyz.wav");//
+~track.loadTrackInto("master.final/josecaos-01-xibalba-bilocacion-master-48khz-24bits.wav");//
+~track2.loadTrackInto("IMPT-josecaos-master/josecaos-1500(edit)-master-48khz-24bits-josecaos.xyz.wav");//
 ~track.loadTrack("master.final/josecaos-11-xibalba-p4nda-master-48khz-24bits.wav");//
 ~track.loadTrack("master.final/josecaos-07-xibalba-eternas_lluvias-master-48khz-24bits.wav");//
 ~track.loadTrack("master.final/josecaos-15-xibalba-boox_(bonus_track)-master-48khz-24bits.wav");//
@@ -66,3 +69,7 @@ x.numero;
 // ~track.viewTrack("volando");
 //////////////
 ~track.stopAll;
+
+//
+// debugging
+CaosSampler.dumpClassSubtree;

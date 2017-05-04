@@ -2,11 +2,12 @@
 CaosSampler {
 
 	var <>numero = 100;
+	var <bufread;
 
 	classvar <server, <>coreurl,  <>audiourl, <ids, <id;
 	classvar <run1, <run2, <run3, <>instances;
 	classvar <num = 1, >info;
-	classvar <bufread;
+	// classvar <bufread;
 	classvar >playname = "No name";
 
 
@@ -71,12 +72,10 @@ CaosSampler {
 
 		//
 		^this.loadTrackInto(name,startFrame);
-		//
-		// ^"";
 
 	}
 
-	*loadTrackInto {|name = "test-caos_sampler-115_bpm.wav", startFrame = 0|
+	loadTrackInto {|name = "test-caos_sampler-115_bpm.wav", startFrame = 0|
 
 		var informPositive = {fork{~inform.value("The file " ++ name ++ " has been loaded" ,0.015)}};
 
