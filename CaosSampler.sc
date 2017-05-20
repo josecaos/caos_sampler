@@ -60,11 +60,11 @@ CaosSampler {
 	}
 	//
 	nums {|param|
-	//
+		//
 
 		^this.numero_(param);
 
-		}
+	}
 	// fin debug
 
 	//
