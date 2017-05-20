@@ -2,14 +2,16 @@
 CaosSamplerRec : CaosSampler {
 
 
-	*overDub {
+	*overDub {|texto = "Sobredubeando: "|
 
-		 fork{~inform.value("Sobredubeando: " + coreurl, 0.125)};
+		 fork{~inform.value(texto + coreurl, 0.125)};
+
+		^this.instance;
 
 	}
 
 
-	*instance {
+	instance {
 
 		^"Hey dub";
 	}
