@@ -240,19 +240,22 @@ CaosSampler {
 				},
 
 				2,{
-					instances[0].set(\out,chan);
-					instances[1].set(\out,chan);
+					instances.collect({|item|
+						item.set(\out,chan);
+					});
 				},
 
 				3,{
-					instances[0].set(\out,chan);
-					instances[1].set(\out,chan);
-					instances[2].set(\out,chan);
+
+					instances.collect({|item|
+						var a;
+						a = item.set(\out,chan);
+					});
+			^"";
 				}
 
 			);
 
-			^"";
 			}, {
 
 		/*		if( instance > 3 || instance < 1 , {
