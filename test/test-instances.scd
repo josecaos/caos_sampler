@@ -6,21 +6,33 @@ CaosSamplerRec.overDub;
 CaosSampler.instVarNames
 CaosSampler.classVarNames
 //
-k = CaosSampler;
-k.new;
-k.numero;
-k.test;
-k.numero_(20);
-x = CaosSampler;
-x.new;
-x.test(1);
-x.numero_(2);
-x.numero;
-
 a = CaosSampler;
 a.new;
-a.hey;
+a.loadTrack();
+a.register("sampler",3)
+a.play;
 
+~t = {[1,-1].choose};
+(
+a.setToPlay(1,[\out,0,\loop,1,\rate,~t,\trigger,1,\startPos,1,\amp,0.33]);
+a.setToPlay(2,[\out,0,\loop,1,\rate,~t,\trigger,1,\startPos,1,\amp,0.33]);
+a.setToPlay(3,[\out,0,\loop,1,\rate,~t,\trigger,1,\startPos,1,\amp,0.33]);
+
+)
+a.speedToPlay(~t.value);
+b.buildSynth(2);
+b = CaosSampler;
+b.new;
+b.loadTrack();
+b.register("sam",1)
+b.trackName;
+a.trackName;
+
+b.setToPlay(1,[\out,0,\loop,1,\rate,-2,\trigger,0,\startPos,0,\amp,1])
+(
+b.play();
+a.play();
+);
 ~track2 = CaosSampler.new;
 
 //
@@ -29,6 +41,7 @@ a.hey;
 ~track2.bufread;
 //
 ~track.loadTrack("master.final/josecaos-01-xibalba-bilocacion-master-48khz-24bits.wav");//
+a.loadTrack("master.final/josecaos-01-xibalba-bilocacion-master-48khz-24bits.wav");//
 ~track.loadTrackInto("IMPT-josecaos-master/josecaos-1500(edit)-master-48khz-24bits-josecaos.xyz.wav");//
 ~track.loadTrack("master.final/josecaos-11-xibalba-p4nda-master-48khz-24bits.wav");//
 ~track.loadTrack("master.final/josecaos-07-xibalba-eternas_lluvias-master-48khz-24bits.wav");//

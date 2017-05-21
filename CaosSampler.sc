@@ -67,7 +67,7 @@ CaosSampler {
 	}
 
 	*buildSynth {|bufnumb|
-	//sintes
+		//sintes
 		SynthDef(\sample,{|rate = 1, pan = 0, amp = 1, trigger = 0,
 			out = 50, startPos = 0, loop = 1, reset = 0|
 
@@ -79,55 +79,8 @@ CaosSampler {
 
 		}).add;
 	}
-	//
-	// *viewTrack {|position|
-	//
-	// 	// El view del sampleo estara completo mas adelante
-	// 	//
-	// 	//waveform GUI
-	// 	var y, x, w, a, f;
-	//
-	// 	position = 0;//reset de posicion
-	//
-	//
-	// 	y = Window.screenBounds.height - 25;
-	// 	x = Window.screenBounds.width;
-	// 	w = Window.new("CaosSampler instance soundfile", Rect(400, y, x, 220)).alwaysOnTop_(true);
-	// 	a = SoundFileView.new(w, Rect(5,5, x, 210));
-	// 	// bufread.inspect;
-	//
-	// 	a.soundfile = bufread;
-	// 	// a.read(0, bufread.numFrames);todo el acrhivo
-	// 	a.readFile(bufread,0, bufread.numFrames);//tambien todo el archivo
-	// 	// a.elasticMode = true;
-	//
-	// 	a.timeCursorOn = true;
-	// 	a.timeCursorColor = Color.red;
-	// 	a.drawsWaveForm = true;
-	// 	a.gridOn = true;
-	// 	a.gridResolution = 0.1;
-	// 	// a.zoom(1).refresh;
-	//
-	//
-	// 	// Esta funcion se evalua al ineractuar con la ventana, no al evaluarla
-	// 	a.action = {|lecture|
-	//
-	// 		//
-	// 		// lecture = a.readProgress;
-	// 		//
-	// 		lecture.asString.postcln;
-	// 		position.postcln;
-	// 		a.timeCursorPosition.postcln;//muestra la posicion en frames del cursor
-	//
-	// 		a.readProgress.poll;
-	// 	};
-	//
-	// 	^w.front;//imprime ventana
-	//
-	// }
-	//
 
-	// registra el numero de copias de el audio a tocar
+	// registra el numero de copias simultaneas de el track
 	*register {|name, copies = 3|
 
 		var infoinstances;
@@ -248,6 +201,31 @@ CaosSampler {
 
 		});
 
+	}
+
+	*speedToPlay {|vel = 1|
+
+		var arr = instances.size;
+
+		switch(arr,
+
+			1,{
+				instances[0].set(\rate,vel);
+			},
+
+			2,{
+				instances[0].set(\rate,vel);
+				instances[1].set(\rate,vel);
+			},
+
+			3,{
+				instances[0].set(\rate,vel);
+				instances[1].set(\rate,vel);
+				instances[2].set(\rate,vel);
+
+			}
+
+		)
 	}
 
 	*stopAll {
