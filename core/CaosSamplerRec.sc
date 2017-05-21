@@ -6,14 +6,14 @@ CaosSamplerRec : CaosSampler {
 
 		 fork{~inform.value(texto + coreurl, 0.125)};
 
-		^this.instance;
+		^this.instance(texto);
 
 	}
 
 
-	instance {
+	instance {|texto = "Hey dub"|
 
-		^"Hey dub";
+		texto;
 	}
 
 

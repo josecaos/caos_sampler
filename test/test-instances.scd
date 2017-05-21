@@ -17,25 +17,28 @@ x.test(1);
 x.numero_(2);
 x.numero;
 
-~track = CaosSampler;
-~track.new;
-~track2 = CaosSampler;
-~track2.new;
+a = CaosSampler;
+a.new;
+a.hey;
 
+~track2 = CaosSampler.new;
+
+//
+//
 ~track.bufread;
 ~track2.bufread;
 //
 ~track.loadTrack("master.final/josecaos-01-xibalba-bilocacion-master-48khz-24bits.wav");//
-~track2.loadTrackInto("IMPT-josecaos-master/josecaos-1500(edit)-master-48khz-24bits-josecaos.xyz.wav");//
+~track.loadTrackInto("IMPT-josecaos-master/josecaos-1500(edit)-master-48khz-24bits-josecaos.xyz.wav");//
 ~track.loadTrack("master.final/josecaos-11-xibalba-p4nda-master-48khz-24bits.wav");//
 ~track.loadTrack("master.final/josecaos-07-xibalba-eternas_lluvias-master-48khz-24bits.wav");//
 ~track.loadTrack("master.final/josecaos-15-xibalba-boox_(bonus_track)-master-48khz-24bits.wav");//
 ~track.loadTrack("master.final/josecaos-02-xibalba-wdyjdi3-master-48khz-24bits.wav");//
 //debug
 ~track.nums;
-~track.synthName;
-~track.synth_(5);
-~track.test
+~track.synthNum;
+~track.synthNum_(5);
+~track.test1(4);
 
 //
 ~track.register("sinte uno",1);//# de tracks

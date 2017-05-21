@@ -2,14 +2,14 @@
 CaosSampler {
 
 	// debug only
-	var <bufread;
+	// var <bufread, cosa;
 	var <synthNum = 0;
 	//
 
 	classvar <server, <>coreurl,  <>audiourl, <ids, <id;
 	classvar <run1, <run2, <run3, <>instances;
 	classvar <num = 1, >info;
-	// classvar <bufread;
+	classvar <bufread;
 	classvar >playname = "No name";
 
 
@@ -28,7 +28,6 @@ CaosSampler {
 
 		ids = Array.new(4);//array de ids de los sintes usados
 
-		(coreurl +/+ "core/inform.scd").load;
 
 		// revisa si el servidor esta corriendo
 		if(server.serverRunning != true ,{
@@ -46,19 +45,14 @@ CaosSampler {
 
 		});
 
-		synthNum = synthNum + 1;
+		synthNum = synthNum + 1;//indice de synthefs
+		(coreurl +/+ "core/inform.scd").load;
 
 		^"";
-	}
-	//
-	*loadTrack {|file, startFrame|
 
-		//
-		^this.loadTrackInto(file,startFrame);
-		// ^"cyborg";
 	}
 
-	loadTrackInto {|filename = "test-caos_sampler-115_bpm.wav", startFrame = 0|
+	*loadTrack {|filename = "test-caos_sampler-115_bpm.wav", startFrame = 0|
 
 		var informPositive = {fork{~inform.value("The file " ++ filename ++ " has been loaded" ,0.015)}};
 
@@ -66,20 +60,24 @@ CaosSampler {
 
 		bufread = Buffer.read(server,audiourl ++ filename, startFrame, -1, informPositive);
 
-		//sintes
-		SynthDef((\sample ++ synthNum),{|rate = 1, pan = 0, amp = 1, trigger = 0, out = 50, startPos = 0, loop = 1, reset = 0|
+
+		//
+		^this.buildSynth(bufread.bufnum);
+
+	}
+
+	*buildSynth {|bufnumb|
+	//sintes
+		SynthDef(\sample,{|rate = 1, pan = 0, amp = 1, trigger = 0,
+			out = 50, startPos = 0, loop = 1, reset = 0|
 
 			var sample;
 
-			sample = PlayBuf.ar(2, bufread, rate, trigger, startPos, loop, reset);
+			sample = PlayBuf.ar(2, bufnumb, rate, trigger, startPos, loop, reset);
 
 			Out.ar(out,Pan2.ar(sample,pan,amp));
 
 		}).add;
-
-		//
-		^"";
-
 	}
 	//
 	// *viewTrack {|position|
@@ -261,6 +259,5 @@ CaosSampler {
 		^"";
 	}
 
-	//
+
 }
-//
