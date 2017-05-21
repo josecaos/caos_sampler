@@ -1,8 +1,4 @@
 // Test + debug varias instancias a la vez
-CaosSampler.ids;
-CaosSampler.id;
-CaosSamplerRec.instance;
-CaosSamplerRec.overDub;
 CaosSampler.instVarNames
 CaosSampler.classVarNames
 //
@@ -12,14 +8,19 @@ a.loadTrack();
 a.register("sampler",3)
 a.play;
 
-~t = {[1,-1].choose};
+~t = {-2};
+a.speedAll(~t.value);
+a.out(1,0);
+a.out('all',0);
+
 (
 a.setToPlay(1,[\out,0,\loop,1,\rate,~t,\trigger,1,\startPos,1,\amp,0.33]);
-a.setToPlay(2,[\out,0,\loop,1,\rate,~t,\trigger,1,\startPos,1,\amp,0.33]);
-a.setToPlay(3,[\out,0,\loop,1,\rate,~t,\trigger,1,\startPos,1,\amp,0.33]);
+a.setToPlay(2,[\out,10,\loop,1,\rate,~t,\trigger,1,\startPos,1,\amp,0.33]);
+a.setToPlay(3,[\out,10,\loop,1,\rate,~t,\trigger,1,\startPos,1,\amp,0.33]);
 
 )
-a.speedToPlay(~t.value);
+
+//
 b.buildSynth(2);
 b = CaosSampler;
 b.new;

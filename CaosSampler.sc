@@ -203,7 +203,7 @@ CaosSampler {
 
 	}
 
-	*speedToPlay {|vel = 1|
+	*speedAll {|vel = 1|
 
 		var arr = instances.size;
 
@@ -227,6 +227,49 @@ CaosSampler {
 
 		)
 	}
+
+	*out {|instance = 1, chan = 50|
+
+		var arr = instances.size;
+		if(instance == 'all', {
+
+			switch(arr,
+
+				1,{
+					instances[0].set(\out,chan);
+				},
+
+				2,{
+					instances[0].set(\out,chan);
+					instances[1].set(\out,chan);
+				},
+
+				3,{
+					instances[0].set(\out,chan);
+					instances[1].set(\out,chan);
+					instances[2].set(\out,chan);
+				}
+
+			);
+
+					^"";
+			}, {
+
+				if(instance < 1 || instance > 3 , {
+
+					fork{~inform.value("Use only numbers between 1 to 3, or \all symbol, as first argument, to choose instance Output",0.015)};
+					},{
+
+						^instances[instance-1].set(\out,chan);
+
+					}
+				);
+
+		});
+
+
+	}
+
 
 	*stopAll {
 
