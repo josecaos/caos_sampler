@@ -10,7 +10,7 @@ CaosSampler {
 	classvar <run1, <run2, <run3, <>instances;
 	classvar <num = 1, >info;
 	classvar <bufread;
-	classvar >playname = "No name";
+	classvar >playname = "Default name";
 
 
 	*new {
@@ -272,6 +272,56 @@ CaosSampler {
 				);
 */
 		});
+
+
+	}
+
+	*amp {|instance = 1, amp = 1|
+
+		var arr = instances.size;
+		if(instance == 'all', {
+
+			switch(arr,
+
+				1,{
+					instances[0].set(\amp,amp);
+			^"";
+				},
+
+				2,{
+					instances.collect({|item|
+						item.set(\amp,amp);
+					});
+			^"";
+				},
+
+				3,{
+
+					instances.collect({|item|
+						var a;
+						a = item.set(\amp,amp);
+					});
+			^"";
+				}
+
+			);
+
+			}, {
+
+		if(instance == 0 || instance < 0 || instance > 3 , {
+
+					fork{~inform.value("Use only numbers between 1 to 3, or \all symbol, as first argument, to choose instance Output",0.015)};
+					},{
+						switch(instance,
+							1,{instances[0].set(\amp,amp);},
+							2,{instances[1].set(\amp,amp);},
+							3,{instances[2].set(\apm,amp);}
+						);
+
+					}
+				);
+
+		});//endif
 
 
 	}
