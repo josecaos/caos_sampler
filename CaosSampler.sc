@@ -308,14 +308,14 @@ CaosSampler {
 
 			}, {
 
-		if(instance == 0 || instance < 0 || instance > 3 , {
+		if(instance <= 0 || instance >= 4 , {
 
 					fork{~inform.value("Use only numbers between 1 to 3, or \all symbol, as first argument, to choose instance Output",0.015)};
 					},{
 						switch(instance,
 							1,{instances[0].set(\amp,amp);},
 							2,{instances[1].set(\amp,amp);},
-							3,{instances[2].set(\apm,amp);}
+							3,{instances[2].set(\amp,amp);}
 						);
 
 					}
