@@ -98,17 +98,20 @@ CaosSampler {
 
 				switch(copies,
 
-					1,{run1 = Synth.newPaused(\sample,[\amp,1]);
+					1,{
+						run1 = Synth.newPaused(\sample,[\amp,1]);
 						instances = instances.put(0,run1);
 						infoinstances = instances[0].nodeID;
 					},
 
-					2,{run1 = Synth.newPaused(\sample,[\amp,1]);run2 = Synth.newPaused(\sample,[\amp,0]);
+					2,{
+						run1 = Synth.newPaused(\sample,[\amp,1]);run2 = Synth.newPaused(\sample,[\amp,0]);
 						instances = instances.put(0,run1);instances = instances.put(1,run2);
 						infoinstances = [instances[0].nodeID, instances[1].nodeID].join(", ");
 					},
 
-					3,{run1 = Synth.newPaused(\sample,[\amp,1]);run2 = Synth.newPaused(\sample,[\amp,0]);run3 = Synth.newPaused(\sample,[\amp,0]);
+					3,{
+						run1 = Synth.newPaused(\sample,[\amp,1]);run2 = Synth.newPaused(\sample,[\amp,0]);run3 = Synth.newPaused(\sample,[\amp,0]);
 						instances = instances.put(0,run1);instances = instances.put(1,run2); instances = instances.put(2,run3);
 						infoinstances = [instances[0].nodeID,instances[1].nodeID,instances[2].nodeID].join(", ");
 					}
@@ -183,7 +186,7 @@ CaosSampler {
 				var inst = num-1;
 				var variables;
 
-				instanceinform = fork{~inform.value("Synth instance #" ++ num + "with node:" + instances[inst].nodeID + "affected",0.01)};
+				instanceinform = fork{~inform.value("Synth instance #" ++ num + "with node:" + instances[inst].nodeID + " affected",0.01)};
 				//
 
 				//iguala los argumentos necesarios
@@ -208,121 +211,116 @@ CaosSampler {
 		var arr = instances.size;
 
 		switch(arr,
-
 			1,{
 				instances[0].set(\rate,vel);
 			},
-
 			2,{
 				instances[0].set(\rate,vel);
 				instances[1].set(\rate,vel);
 			},
-
 			3,{
 				instances[0].set(\rate,vel);
 				instances[1].set(\rate,vel);
 				instances[2].set(\rate,vel);
 
 			}
+		);
+		fork{~inform.value("All instances chenged speed rate to " ++ vel,0.01)};
 
-		)
+		^"";
 	}
 
 	*out {|instance = 1, chan = 50|
 
 		var arr = instances.size;
+
 		if(instance == 'all', {
 
 			switch(arr,
-
 				1,{
 					instances[0].set(\out,chan);
 				},
-
 				2,{
 					instances.collect({|item|
 						item.set(\out,chan);
 					});
 				},
-
 				3,{
-
 					instances.collect({|item|
 						var a;
 						a = item.set(\out,chan);
 					});
-			^"";
 				}
 
 			);
+			fork{~inform.value("All instances chaged output to channel: " ++ chan,0.01)};
 
 			}, {
 
-		/*		if( instance > 3 || instance < 1 , {
+				if(instance <= 0 || instance >= 4 , {
 
 					fork{~inform.value("Use only numbers between 1 to 3, or \all symbol, as first argument, to choose instance Output",0.015)};
-					},{*/
+					},{
 						switch(instance,
 							1,{instances[0].set(\out,chan);},
 							2,{instances[1].set(\out,chan);},
 							3,{instances[2].set(\out,chan);}
 						);
-
-				/*	}
+						fork{~inform.value("Instance #" ++ instance ++ " changed output to " ++ chan,0.01)};
+					}
 				);
-*/
 		});
 
+		^"";
 
 	}
 
 	*amp {|instance = 1, amp = 1|
 
 		var arr = instances.size;
+
 		if(instance == 'all', {
 
 			switch(arr,
-
 				1,{
 					instances[0].set(\amp,amp);
-			^"";
 				},
-
 				2,{
 					instances.collect({|item|
 						item.set(\amp,amp);
 					});
-			^"";
 				},
-
 				3,{
-
 					instances.collect({|item|
 						var a;
 						a = item.set(\amp,amp);
 					});
-			^"";
 				}
 
 			);
 
 			}, {
 
-		if(instance <= 0 || instance >= 4 , {
+				var bol = instance > 3;
+
+				if(instance < 1 or: {instance > 3}, {
 
 					fork{~inform.value("Use only numbers between 1 to 3, or \all symbol, as first argument, to choose instance Output",0.015)};
 					},{
+
 						switch(instance,
 							1,{instances[0].set(\amp,amp);},
 							2,{instances[1].set(\amp,amp);},
 							3,{instances[2].set(\amp,amp);}
 						);
 
+						fork{~inform.value("Instance #" ++ instance ++ " changed amplitude to " ++ amp,0.015)};
 					}
 				);
 
 		});//endif
 
+		^"";
 
 	}
 
