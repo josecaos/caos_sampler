@@ -32,11 +32,12 @@
 );
 
 ~track1.amp(1,1);
-~track1.amp(2,0);
-~track1.amp(3,0);
+~track1.amp(2,1);
+~track1.amp(3,1);
 ~track1.out(1,0);
 ~track1.out('all',0);
 ~track1.speedAll(1.43);
+~track1.toggleReverse(1);
 //
 (//alternativa afecta todas las instancias
 ~track1.instances.collect({|item|

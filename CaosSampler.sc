@@ -90,7 +90,7 @@ CaosSampler {
 		instances = Array.newClear(copies);
 
 
-		if( copies == 0 || copies < 0 || copies > 3,{
+		if( copies < 1 or: {copies > 3},{
 
 			fork{~inform.value("Only 1 to 3 simultaneous copies allowed",0.01)};
 
@@ -175,7 +175,7 @@ CaosSampler {
 
 		num = number;
 		//
-		if(num == 0 || num < 0 || num > 3 , {
+		if(num < 1 or: {num > 3} , {
 
 			fork{~inform.value("Use only numbers between '1 and 3' as first argument, to choose instance",0.015)};
 
@@ -230,6 +230,28 @@ CaosSampler {
 		^"";
 	}
 
+	*toggleReverse {|rate = 1|
+		// falta terminar logica toggle
+			var neg;
+		if( neg == nil ,{
+			"si".postcln;
+			instances.collect({|item|
+				item.set(\rate,rate);
+			});
+			neg = rate * -1;
+		},{
+				"no".postcln;
+			instances.collect({|item|
+				item.set(\rate,neg);
+			});
+				neg == nil;
+		});
+
+		fork{~inform.value("Reverse " ,0.001)};
+
+		^"";
+	}
+
 	*out {|instance = 1, chan = 50|
 
 		var arr = instances.size;
@@ -257,7 +279,7 @@ CaosSampler {
 
 			}, {
 
-				if(instance <= 0 || instance >= 4 , {
+				if(instance < 1 or: {instance > 3} , {
 
 					fork{~inform.value("Use only numbers between 1 to 3, or \all symbol, as first argument, to choose instance Output",0.015)};
 					},{
