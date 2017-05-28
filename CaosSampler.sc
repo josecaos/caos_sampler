@@ -240,6 +240,7 @@ CaosSampler {
 				instances.collect({|item|
 					item.set(\rate,res);
 				});
+				reverse = reverse + 1;
 				fork{~inform.value("Track reversed: " ++ res ,0.001)};
 			},
 			1,{
@@ -247,16 +248,10 @@ CaosSampler {
 				instances.collect({|item|
 					item.set(\rate,res);
 				});
+				reverse = 0;//reset
 				fork{~inform.value("Track with normal rate: " ++ res ,0.001)};
 			}
 		);
-
-		//reset + inform
-		if(reverse == 0,{
-				reverse = reverse + 1;
-			},{
-			reverse = 0
-		});
 
 		^"";
 	}
