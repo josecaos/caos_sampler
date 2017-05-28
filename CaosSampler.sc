@@ -9,7 +9,7 @@ CaosSampler {
 	classvar <server, <>coreurl,  <>audiourl, <ids, <id;
 	classvar <run1, <run2, <run3, <>instances;
 	classvar <num = 1, >info;
-	classvar <bufread;
+	classvar <bufread, reverse = 0;
 	classvar >playname = "Default name";
 
 
@@ -206,7 +206,7 @@ CaosSampler {
 
 	}
 
-	*speedAll {|vel = 1|
+	*speed {|vel = 1|
 
 		var arr = instances.size;
 
@@ -231,23 +231,32 @@ CaosSampler {
 	}
 
 	*toggleReverse {|rate = 1|
-		// falta terminar logica toggle
-			var neg;
-		if( neg == nil ,{
-			"si".postcln;
-			instances.collect({|item|
-				item.set(\rate,rate);
-			});
-			neg = rate * -1;
-		},{
-				"no".postcln;
-			instances.collect({|item|
-				item.set(\rate,neg);
-			});
-				neg == nil;
-		});
 
-		fork{~inform.value("Reverse " ,0.001)};
+		var res;
+
+		switch(reverse,
+			0,{
+				res = rate * -1;
+				instances.collect({|item|
+					item.set(\rate,res);
+				});
+				fork{~inform.value("Track reversed: " ++ res ,0.001)};
+			},
+			1,{
+				res = rate * 1;
+				instances.collect({|item|
+					item.set(\rate,res);
+				});
+				fork{~inform.value("Track with normal rate: " ++ res ,0.001)};
+			}
+		);
+
+		//reset + inform
+		if(reverse == 0,{
+				reverse = reverse + 1;
+			},{
+			reverse = 0
+		});
 
 		^"";
 	}
@@ -322,8 +331,6 @@ CaosSampler {
 			);
 
 			}, {
-
-				var bol = instance > 3;
 
 				if(instance < 1 or: {instance > 3}, {
 
