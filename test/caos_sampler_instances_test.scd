@@ -14,28 +14,32 @@
 ~track1.register("Reversed",3);
 ~track2.register("track2",3);
 )
-// falta debuggear el nombre y nodos an la version multitrack
+// falta debuggear el nombre y nodos an la version multitrack>
 // ~track1.trackName;
 // ~track2.trackName;
 (
 ~track1.play;
 ~track2.play;
 );
-~t = 1;//{[1,-1].choose};
-~t = {[0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1].choose};
+// tempo
+~t = 1;
 
-(//primero
-~track1.setToPlay(1,[\out,0,\loop,1,\rate,~t,\trigger,1,\startPos,0,\amp,1]);
-~track1.setToPlay(2,[\out,0,\loop,1,\rate,~t,\trigger,1,\startPos,0,\amp,0]);
-~track1.setToPlay(3,[\out,0,\loop,1,\rate,~t,\trigger,1,\startPos,0,\amp,0]);
+(//primero instancias juntas
+~track1.setToPlay(1,[\out,50,\loop,1,\rate,~t,\trigger,0,\startPos,0,\amp,1]);
+~track1.setToPlay(2,[\out,58,\loop,1,\rate,~t,\trigger,0,\startPos,0,\amp,0]);
+~track1.setToPlay(3,[\out,64,\loop,1,\rate,~t,\trigger,0,\startPos,0,\amp,0]);
 );
 
+//despues instancias individual
+//tempo evaluado
+~track1.speed(~t=1.64);
+//
 ~track1.amp(1,1);
-~track1.amp(2,1);
-~track1.amp(3,1);
+~track1.amp(2,0.3);
+~track1.amp(3,0.8);
 ~track1.out(1,0);
 ~track1.out('all',0);
-~track1.speed(2);
+//
 ~track1.toggleReverse(~t);
 //
 (//alternativa afecta todas las instancias

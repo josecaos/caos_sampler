@@ -225,7 +225,7 @@ CaosSampler {
 
 			}
 		);
-		fork{~inform.value("All instances chenged speed rate to " ++ vel,0.01)};
+		fork{~inform.value("All instances changed speed rate to " ++ vel,0.01)};
 
 		^"";
 	}
