@@ -7,7 +7,7 @@
 
 ~track1.loadTrack('josecaos-bug5-mixed_v2-peaks-3db-48khz-16bits.wav');
 ~track2.loadTrack();
-~track2.register("lop",3);
+~track2.register("loop",3);
 
 // falta debuggear el nombre y nodos an la version multitrack>
 // ~track1.trackName;
@@ -32,7 +32,7 @@
 
 //despues instancias individual
 //tempo evaluado
-~track1.speed(~t=0.74);
+~track1.speed(~t=0.77);
 //
 ~track1.amp(1,1);
 ~track1.amp(2,0.3);

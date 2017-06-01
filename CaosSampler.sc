@@ -1,17 +1,13 @@
 //
 CaosSampler {
 
-	// debug only
-	// var <bufread, cosa;
-	var <synthNum = 0;
-	//
-
-	classvar <server, <>coreurl,  <>audiourl, <ids, <id;
+	classvar <server, <>coreurl,  <>audiourl, <id, <ids, info;
 	classvar <run1, <run2, <run3, <>instances;
-	classvar <num = 1, >info;
 	classvar <bufread, reverse = 0;
 	classvar >playname = "Default name";
-
+	classvar <num = 1;
+	//
+	var <synthNum = 0;
 
 	*new {
 
@@ -26,8 +22,7 @@ CaosSampler {
 
 		server = Server.local;
 
-		ids = Array.new(4);//array de ids de los sintes usados
-
+		ids = [];//array de ids de los sintes usados
 
 		// revisa si el servidor esta corriendo
 		if(server.serverRunning != true ,{
@@ -105,26 +100,31 @@ CaosSampler {
 					},
 
 					2,{
-						run1 = Synth.newPaused(\sample,[\amp,1]);run2 = Synth.newPaused(\sample,[\amp,0]);
-						instances = instances.put(0,run1);instances = instances.put(1,run2);
+						run1 = Synth.newPaused(\sample,[\amp,1]);
+						run2 = Synth.newPaused(\sample,[\amp,0]);
+						instances = instances.put(0,run1);
+						instances = instances.put(1,run2);
 						infoinstances = [instances[0].nodeID, instances[1].nodeID].join(", ");
 					},
 
 					3,{
-						run1 = Synth.newPaused(\sample,[\amp,1]);run2 = Synth.newPaused(\sample,[\amp,0]);run3 = Synth.newPaused(\sample,[\amp,0]);
-						instances = instances.put(0,run1);instances = instances.put(1,run2); instances = instances.put(2,run3);
+						run1 = Synth.newPaused(\sample,[\amp,1]);
+						run2 = Synth.newPaused(\sample,[\amp,0]);
+						run3 = Synth.newPaused(\sample,[\amp,0]);
+						instances = instances.put(0,run1);
+						instances = instances.put(1,run2);
+						instances = instances.put(2,run3);
 						infoinstances = [instances[0].nodeID,instances[1].nodeID,instances[2].nodeID].join(", ");
 					}
 
 				);
-
 
 				fork{~inform.value("You chose " + copies + "track(s) to run simultaneously",0.01)};
 
 				////asocia nombre de sinte con instancias
 				info = [["Track name", name].join(": "), ["Instance Nodes", infoinstances].join(": ")].join(" => ") + "";
 				//
-				ids.add(info);//agrega informacion a un array global para posterior identificacion
+				ids = ids.add(info);//agrega informacion a un array global para posterior identificacion
 
 				fork{1.wait;~inform.value("Track Name: " + name + "registered",0.01)};
 
@@ -359,4 +359,17 @@ CaosSampler {
 	}
 
 
+	*testNombre {|nombre = "default"|
+
+		// id, ids, info
+		var x;
+		x = ids.add(nombre);
+
+		^ids.postln;
+
+	}
+
+
 }
+
+
