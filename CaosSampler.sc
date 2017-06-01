@@ -122,11 +122,23 @@ CaosSampler {
 				fork{~inform.value("You chose " + copies + "track(s) to run simultaneously",0.01)};
 
 				////asocia nombre de sinte con instancias
-				info = [["Track name", name].join(": "), ["Instance Nodes", infoinstances].join(": ")].join(" => ") + "";
-				//
-				ids = ids.add(info);//agrega informacion a un array global para posterior identificacion
 
+				if( ids.find([name]).isNil ,{
+
+				info = [["Track name", name].join(": "),
+						["Instance Nodes", infoinstances].join(": ")].join(" => ") + "";
+				ids = ids.add(info);//agrega informacion a un array global para posterior identificacion
 				fork{1.wait;~inform.value("Track Name: " + name + "registered",0.01)};
+					"DEBUG: Si puedes accesar".postcln;
+
+					}, {
+
+						"DEBUG: No puedes accesar".postcln;
+						fork{1.wait;~inform.value("Track name already exists, use another one!",0.01)};
+				});
+
+				//
+
 
 		});
 
@@ -362,10 +374,20 @@ CaosSampler {
 	*testNombre {|nombre = "default"|
 
 		// id, ids, info
-		var x;
-		x = ids.add(nombre);
 
-		^ids.postln;
+		if( ids.find([nombre]).isNil ,{
+
+			ids = ids.add(nombre);
+			"Si puedes accesar".postcln;
+
+			}, {
+
+				"No puedes accesar".postcln;
+
+		});
+
+		// [item,i].postcln;
+		// ^ids.postln;
 
 	}
 

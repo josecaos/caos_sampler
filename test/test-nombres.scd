@@ -1,14 +1,17 @@
 // Test nombre de instancia
 
 a = CaosSampler;
-
-
 a.new;
-a.testNombre("foo3");
+a.testNombre();
 
 //
 b = CaosSampler;
-
 b.new;
+b.testNombre("si??");
 
-b.testNombre("fighter");
+//test encuentra en array
+x = [];
+x = x.add("test123");
+x.find(["test"]);
+
+x;
