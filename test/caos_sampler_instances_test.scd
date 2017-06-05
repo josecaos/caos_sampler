@@ -7,8 +7,8 @@
 
 ~track1.loadTrack('josecaos-bug5-mixed_v2-peaks-3db-48khz-16bits.wav');
 ~track2.loadTrack();
-~track2.register("loop",3);
 
+~track1.register("loop",3);
 // falta debuggear el nombre y nodos an la version multitrack>
 // ~track1.trackName;
 // ~track2.trackName;

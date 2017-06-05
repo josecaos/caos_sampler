@@ -76,7 +76,7 @@ CaosSampler {
 	}
 
 	// registra el numero de copias simultaneas de el track
-	*register {|name, copies = 3|
+	*register {|name, copies = 1|
 
 		var infoinstances;
 
@@ -84,8 +84,7 @@ CaosSampler {
 
 		instances = Array.newClear(copies);
 
-
-		if( copies < 1 or: {copies > 3},{
+		if( copies < 1 or: {copies > 3}, {
 
 			fork{~inform.value("Only 1 to 3 simultaneous copies allowed",0.01)};
 
@@ -123,7 +122,7 @@ CaosSampler {
 
 				////asocia nombre de sinte con instancias
 
-				if( ids.find([name]).isNil ,{
+			/*	if( ids.find([name]).isNil ,{
 
 				info = [["Track name", name].join(": "),
 						["Instance Nodes", infoinstances].join(": ")].join(" => ") + "";
@@ -135,7 +134,7 @@ CaosSampler {
 
 						"DEBUG: No puedes accesar".postcln;
 						fork{1.wait;~inform.value("Track name already exists, use another one!",0.01)};
-				});
+				});*/
 
 				//
 
