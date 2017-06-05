@@ -4,10 +4,10 @@ CaosSampler {
 	classvar <server, <>coreurl,  <>audiourl, <id, <ids, info;
 	classvar <run1, <run2, <run3, <>instances;
 	classvar <bufread, reverse = 0;
-	classvar >playname = "Default name";
-	classvar <num = 1;
+	classvar <num = 1, synthname;
 	//
-	var <synthNum = 0;
+	var <synthnum = 0;
+	var <playname = "Default name";
 
 	*new {
 
@@ -22,6 +22,7 @@ CaosSampler {
 
 		server = Server.local;
 
+		synthname = [];//array de nombres para los sintes
 		ids = [];//array de ids de los sintes usados
 
 		// revisa si el servidor esta corriendo
@@ -40,7 +41,7 @@ CaosSampler {
 
 		});
 
-		synthNum = synthNum + 1;//indice de synthefs
+		synthnum = synthnum + 1;//indice de synthefs
 		(coreurl +/+ "core/inform.scd").load;
 
 		^"";
@@ -61,8 +62,8 @@ CaosSampler {
 
 	}
 
-	*buildSynth {|bufnumb|
-		//sintes
+	buildSynth {|bufnumb|
+		//sinte
 		SynthDef(\sample,{|rate = 1, pan = 0, amp = 1, trigger = 0,
 			out = 50, startPos = 0, loop = 1, reset = 0|
 
@@ -80,8 +81,6 @@ CaosSampler {
 
 		var infoinstances;
 
-		playname = name;
-
 		instances = Array.newClear(copies);
 
 		if( copies < 1 or: {copies > 3}, {
@@ -90,54 +89,54 @@ CaosSampler {
 
 			}, {
 
-				switch(copies,
+				if( synthname.find([name]).isNil ,{
 
-					1,{
-						run1 = Synth.newPaused(\sample,[\amp,1]);
-						instances = instances.put(0,run1);
-						infoinstances = instances[0].nodeID;
-					},
+					synthname.add(name);
 
-					2,{
-						run1 = Synth.newPaused(\sample,[\amp,1]);
-						run2 = Synth.newPaused(\sample,[\amp,0]);
-						instances = instances.put(0,run1);
-						instances = instances.put(1,run2);
-						infoinstances = [instances[0].nodeID, instances[1].nodeID].join(", ");
-					},
+					switch(copies,
 
-					3,{
-						run1 = Synth.newPaused(\sample,[\amp,1]);
-						run2 = Synth.newPaused(\sample,[\amp,0]);
-						run3 = Synth.newPaused(\sample,[\amp,0]);
-						instances = instances.put(0,run1);
-						instances = instances.put(1,run2);
-						instances = instances.put(2,run3);
-						infoinstances = [instances[0].nodeID,instances[1].nodeID,instances[2].nodeID].join(", ");
-					}
+						1,{
+							run1 = Synth.newPaused(\sample,[\amp,1]);
+							instances = instances.put(0,run1);
+							infoinstances = instances[0].nodeID;
+						},
 
-				);
+						2,{
+							run1 = Synth.newPaused(\sample,[\amp,1]);
+							run2 = Synth.newPaused(\sample,[\amp,0]);
+							instances = instances.put(0,run1);
+							instances = instances.put(1,run2);
+							infoinstances = [instances[0].nodeID, instances[1].nodeID].join(", ");
+						},
 
-				fork{~inform.value("You chose " + copies + "track(s) to run simultaneously",0.01)};
+						3,{
+							run1 = Synth.newPaused(\sample,[\amp,1]);
+							run2 = Synth.newPaused(\sample,[\amp,0]);
+							run3 = Synth.newPaused(\sample,[\amp,0]);
+							instances = instances.put(0,run1);
+							instances = instances.put(1,run2);
+							instances = instances.put(2,run3);
+							infoinstances = [instances[0].nodeID,instances[1].nodeID,instances[2].nodeID].join(", ");
+						}
 
-				////asocia nombre de sinte con instancias
+					);
 
-			/*	if( ids.find([name]).isNil ,{
+					fork{~inform.value("You chose " + copies + "track(s) to run simultaneously",0.01)};
 
-				info = [["Track name", name].join(": "),
+					////asocia nombre de sinte con instancias
+					info = [["Track name", name].join(": "),
 						["Instance Nodes", infoinstances].join(": ")].join(" => ") + "";
-				ids = ids.add(info);//agrega informacion a un array global para posterior identificacion
-				fork{1.wait;~inform.value("Track Name: " + name + "registered",0.01)};
+					ids = ids.add(info);//agrega informacion a un array global para posterior identificacion
+					fork{1.wait;~inform.value("Track Name: " + name + "registered",0.01)};
 					"DEBUG: Si puedes accesar".postcln;
 
 					}, {
 
 						"DEBUG: No puedes accesar".postcln;
-						fork{1.wait;~inform.value("Track name already exists, use another one!",0.01)};
-				});*/
+						fork{1.wait;~inform.value("Track name already exists, try another one!",0.01)};
+				});
 
 				//
-
 
 		});
 
@@ -146,11 +145,20 @@ CaosSampler {
 
 	*trackName {
 
-		var name = playname;
+		fork{~inform.value("All set Instances: " + ids.join, 0.01)};
 
-		fork{~inform.value("Instance Name: " + name + "||  All Instances: " + ids.join, 0.01)};
 
-		^name;
+		^this.instanceName;
+
+	}
+
+	instanceName {|index|
+
+		// fork{~inform.value("Instance Name: " + playname )};
+
+		synthname.find([index]);
+
+		^playname;
 
 	}
 
@@ -158,11 +166,11 @@ CaosSampler {
 
 		if(paused != true, {
 
-			fork{~inform.value("Synth: " + playname + "paused",0.01)};
+			fork{~inform.value("Track: " + this.instanceName + "paused",0.01)};
 
 			}, {
 
-				fork{~inform.value("Synth: " + playname + "running",0.01)};
+				fork{~inform.value("Track: " + this.instanceName + "running",0.01)};
 
 		});
 
@@ -373,7 +381,7 @@ CaosSampler {
 	*testNombre {|nombre = "default"|
 
 		// id, ids, info
-
+		ids.postcln;
 		if( ids.find([nombre]).isNil ,{
 
 			ids = ids.add(nombre);

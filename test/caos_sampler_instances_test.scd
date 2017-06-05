@@ -8,17 +8,21 @@
 ~track1.loadTrack('josecaos-bug5-mixed_v2-peaks-3db-48khz-16bits.wav');
 ~track2.loadTrack();
 
-~track1.register("loop",3);
-// falta debuggear el nombre y nodos an la version multitrack>
-// ~track1.trackName;
-// ~track2.trackName;
-
+~track1.register("leoop",1);
+~track2.register("loopard",1);
+// falta debuggear el nombre y nodos en la version multitrack>
+//debugging nombre
+~track1.trackName;
+~track1.playname="sinte 1";
+~track2.trackName;
+~track2.playname;
+//
 ~track1.play;
 ~track2.play;
 
 // tempo
-~t = 1;
 
+~t = 1;
 (//primero instancias juntas
 ~track1.setToPlay(1,[\out,0,\loop,1,\rate,~t,\trigger,0,\startPos,0,\amp,1]);
 ~track1.setToPlay(2,[\out,0,\loop,1,\rate,~t,\trigger,0,\startPos,0,\amp,0]);
@@ -32,7 +36,7 @@
 
 //despues instancias individual
 //tempo evaluado
-~track1.speed(~t=0.77);
+~track1.speed(~t=1.45);
 //
 ~track1.amp(1,1);
 ~track1.amp(2,0.3);
