@@ -9,7 +9,9 @@ a.register("hola",3);//me quede aqui testeando el metodo register despues de agr
 //
 b = CaosSampler;
 b.new;
-b.testNombre("si??");
+// b.testNombre("si??");
+b.loadTrack();
+b.register("si??");
 
 //test encuentra en array
 x = [];

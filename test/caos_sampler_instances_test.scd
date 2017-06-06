@@ -13,7 +13,7 @@
 // falta debuggear el nombre y nodos en la version multitrack>
 //debugging nombre
 ~track1.trackName;
-~track1.playname="sinte 1";
+~track1.playname_("sinte 1");
 ~track2.trackName;
 ~track2.playname;
 //

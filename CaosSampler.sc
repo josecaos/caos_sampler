@@ -4,10 +4,10 @@ CaosSampler {
 	classvar <server, <>coreurl,  <>audiourl, <id, <ids, info;
 	classvar <run1, <run2, <run3, <>instances;
 	classvar <bufread, reverse = 0;
-	classvar <num = 1, synthname;
+	classvar <num = 1, trackname;
 	//
 	var <synthnum = 0;
-	var <playname = "Default name";
+	var <>playname = "Default name";
 
 	*new {
 
@@ -22,7 +22,7 @@ CaosSampler {
 
 		server = Server.local;
 
-		synthname = [];//array de nombres para los sintes
+		trackname = [];//array de nombres para los sintes
 		ids = [];//array de ids de los sintes usados
 
 		// revisa si el servidor esta corriendo
@@ -62,7 +62,7 @@ CaosSampler {
 
 	}
 
-	buildSynth {|bufnumb|
+	*buildSynth {|bufnumb|
 		//sinte
 		SynthDef(\sample,{|rate = 1, pan = 0, amp = 1, trigger = 0,
 			out = 50, startPos = 0, loop = 1, reset = 0|
@@ -89,9 +89,8 @@ CaosSampler {
 
 			}, {
 
-				if( synthname.find([name]).isNil ,{
+				if( tracknames.find([name]).isNil ,{
 
-					synthname.add(name);
 
 					switch(copies,
 
@@ -126,14 +125,18 @@ CaosSampler {
 					////asocia nombre de sinte con instancias
 					info = [["Track name", name].join(": "),
 						["Instance Nodes", infoinstances].join(": ")].join(" => ") + "";
+
 					ids = ids.add(info);//agrega informacion a un array global para posterior identificacion
+
 					fork{1.wait;~inform.value("Track Name: " + name + "registered",0.01)};
-					"DEBUG: Si puedes accesar".postcln;
+
+					trackname
+					.add(name);//agrega el nombre de el sinte en el array
 
 					}, {
 
-						"DEBUG: No puedes accesar".postcln;
 						fork{1.wait;~inform.value("Track name already exists, try another one!",0.01)};
+
 				});
 
 				//
@@ -148,15 +151,13 @@ CaosSampler {
 		fork{~inform.value("All set Instances: " + ids.join, 0.01)};
 
 
-		^this.instanceName;
+		^synth;
 
 	}
 
 	instanceName {|index|
 
 		// fork{~inform.value("Instance Name: " + playname )};
-
-		synthname.find([index]);
 
 		^playname;
 
