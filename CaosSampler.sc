@@ -1,10 +1,10 @@
 //
 CaosSampler {
 
-	classvar <server, <>coreurl,  <>audiourl, <id, <ids, info;
+	classvar <server, <>coreurl,  <>audiourl, <id, info;
 	classvar <run1, <run2, <run3, <>instances;
-	classvar <bufread, reverse = 0;
-	classvar <num = 1, trackname;
+	classvar <bufread, reverse = 0, <num = 1;
+	classvar trackname, <ids;
 	//
 	var <synthnum = 0;
 	var <>playname = "Default name";
@@ -22,13 +22,8 @@ CaosSampler {
 
 		server = Server.local;
 
-		trackname = [];//array de nombres para los sintes
-		ids = [];//array de ids de los sintes usados
-
-		// revisa si el servidor esta corriendo
 		if(server.serverRunning != true ,{
 
-			// si no, enciendelo
 			server.waitForBoot{
 
 				fork{~inform.value("Server boot .... CaosSampler instance created",0.015,false);}
@@ -41,7 +36,12 @@ CaosSampler {
 
 		});
 
-		synthnum = synthnum + 1;//indice de synthefs
+		trackname = Array.new;
+
+		ids = Array.new;
+
+		synthnum = synthnum + 1;
+
 		(coreurl +/+ "core/inform.scd").load;
 
 		^"";
@@ -76,7 +76,7 @@ CaosSampler {
 		}).add;
 	}
 
-	// registra el numero de copias simultaneas de el track
+	// registra el numero de copias simultaneas por track
 	*register {|name, copies = 1|
 
 		var infoinstances;
@@ -89,7 +89,7 @@ CaosSampler {
 
 			}, {
 
-				if( tracknames.find([name]).isNil ,{
+				if( trackname.find([name]).isNil ,{
 
 
 					switch(copies,
@@ -124,18 +124,19 @@ CaosSampler {
 
 					////asocia nombre de sinte con instancias
 					info = [["Track name", name].join(": "),
-						["Instance Nodes", infoinstances].join(": ")].join(" => ") + "";
+						["Instance Nodes", infoinstances].join(": ")].join(" => ");
 
 					ids = ids.add(info);//agrega informacion a un array global para posterior identificacion
 
 					fork{1.wait;~inform.value("Track Name: " + name + "registered",0.01)};
 
-					trackname
-					.add(name);//agrega el nombre de el sinte en el array
+					//
+					// ^this.instanceName;
+					//
 
 					}, {
 
-						fork{1.wait;~inform.value("Track name already exists, try another one!",0.01)};
+						fork{1.wait;~inform.value("Track name already exists and was not registered, try another one!",0.01)};
 
 				});
 
@@ -148,18 +149,19 @@ CaosSampler {
 
 	*trackName {
 
-		fork{~inform.value("All set Instances: " + ids.join, 0.01)};
+		fork{1.wait;~inform.value("Used Tracks & Nodes: " + ids, 0.01)};
 
-
-		^synth;
+		^trackname;
 
 	}
 
 	instanceName {|index|
 
-		// fork{~inform.value("Instance Name: " + playname )};
+		playname = index;
 
-		^playname;
+		trackname.add(playname);//agrega el nombre de el sinte en el array
+		//
+		^trackname;
 
 	}
 
@@ -376,27 +378,6 @@ CaosSampler {
 		fork{~inform.value("All Instances stopped ", 0.01)};
 
 		^"";
-	}
-
-
-	*testNombre {|nombre = "default"|
-
-		// id, ids, info
-		ids.postcln;
-		if( ids.find([nombre]).isNil ,{
-
-			ids = ids.add(nombre);
-			"Si puedes accesar".postcln;
-
-			}, {
-
-				"No puedes accesar".postcln;
-
-		});
-
-		// [item,i].postcln;
-		// ^ids.postln;
-
 	}
 
 
