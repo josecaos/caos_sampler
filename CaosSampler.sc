@@ -4,15 +4,17 @@ CaosSampler {
 	classvar <server, <>coreurl,  <>audiourl, <id, info;
 	classvar <run1, <run2, <run3, <>instances;
 	classvar <bufread, reverse = 0, <num = 1;
-	classvar trackname, <ids;
+	classvar <ids;
+	classvar <>trackname;
 	//
 	var <synthnum = 0;
 	var <>playname = "Default name";
 
+	trackname = Array.new;
+
 	*new {
 
 		coreurl = this.filenameSymbol.asString.dirname;
-
 
 		^super.new.init;
 
@@ -36,8 +38,6 @@ CaosSampler {
 
 		});
 
-		trackname = Array.new;
-
 		ids = Array.new;
 
 		synthnum = synthnum + 1;
@@ -56,8 +56,6 @@ CaosSampler {
 
 		bufread = Buffer.read(server,audiourl ++ filename, startFrame, -1, informPositive);
 
-
-		//
 		^this.buildSynth(bufread.bufnum);
 
 	}
@@ -83,6 +81,7 @@ CaosSampler {
 
 		instances = Array.newClear(copies);
 
+
 		if( copies < 1 or: {copies > 3}, {
 
 			fork{~inform.value("Only 1 to 3 simultaneous copies allowed",0.01)};
@@ -90,7 +89,6 @@ CaosSampler {
 			}, {
 
 				if( trackname.find([name]).isNil ,{
-
 
 					switch(copies,
 
@@ -130,8 +128,8 @@ CaosSampler {
 
 					fork{1.wait;~inform.value("Track Name: " + name + "registered",0.01)};
 
-					//
-					// ^this.instanceName;
+					this.trackname_(name);
+
 					//
 
 					}, {
@@ -147,11 +145,11 @@ CaosSampler {
 		^"";
 	}
 
-	*trackName {
+	*trackName {|name|
 
 		fork{1.wait;~inform.value("Used Tracks & Nodes: " + ids, 0.01)};
 
-		^trackname;
+		^this.trackname_(name);
 
 	}
 
