@@ -1,26 +1,26 @@
 //
 CaosSampler {
 
-	classvar <server, <>coreurl,  <>audiourl, <id, info;
+	classvar <server, <>coreurl,  <>audiourl, <id, <info;
 	classvar <run1, <run2, <run3, <>instances;
 	classvar <bufread, reverse = 0, <num = 1;
-	classvar <ids;
-	classvar <>trackname;
+	classvar <ids, >tracks;
 	//
-	var <synthnum = 0;
+	var <>trackname;
 	var <>playname = "Default name";
 
-	trackname = Array.new;
 
 	*new {
 
 		coreurl = this.filenameSymbol.asString.dirname;
+
 
 		^super.new.init;
 
 	}
 
 	init {
+
 
 		server = Server.local;
 
@@ -38,11 +38,11 @@ CaosSampler {
 
 		});
 
-		ids = Array.new;
+		tracks = Array.new(20);
 
-		synthnum = synthnum + 1;
+		ids = Array.new(20);
 
-		(coreurl +/+ "core/inform.scd").load;
+		(coreurl +/+ "core/inform.scd").load;//carga debug
 
 		^"";
 
@@ -81,14 +81,13 @@ CaosSampler {
 
 		instances = Array.newClear(copies);
 
-
 		if( copies < 1 or: {copies > 3}, {
 
 			fork{~inform.value("Only 1 to 3 simultaneous copies allowed",0.01)};
 
 			}, {
 
-				if( trackname.find([name]).isNil ,{
+				if( tracks.find([name]).isNil, {
 
 					switch(copies,
 
@@ -126,11 +125,10 @@ CaosSampler {
 
 					ids = ids.add(info);//agrega informacion a un array global para posterior identificacion
 
+					tracks.add(name);//agrega nombre a array
+
 					fork{1.wait;~inform.value("Track Name: " + name + "registered",0.01)};
 
-					this.trackname_(name);
-
-					//
 
 					}, {
 
@@ -138,30 +136,19 @@ CaosSampler {
 
 				});
 
-				//
-
 		});
 
 		^"";
 	}
 
-	*trackName {|name|
+	*trackName {
 
 		fork{1.wait;~inform.value("Used Tracks & Nodes: " + ids, 0.01)};
 
-		^this.trackname_(name);
+		^this.trackname;
 
 	}
 
-	instanceName {|index|
-
-		playname = index;
-
-		trackname.add(playname);//agrega el nombre de el sinte en el array
-		//
-		^trackname;
-
-	}
 
 	*play {|paused = true, args|
 

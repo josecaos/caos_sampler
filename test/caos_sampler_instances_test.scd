@@ -1,4 +1,3 @@
-
 ~track1 = CaosSampler;
 ~track2 = CaosSampler;
 
@@ -13,9 +12,9 @@
 // falta debuggear el nombre y nodos en la version multitrack>
 //debugging nombre
 ~track1.trackName;
-~track1.playname_("sinte 1");
+~track1.info;
 ~track2.trackName;
-~track2.playname;
+~track2.info;
 //
 ~track1.play;
 ~track2.play;
@@ -50,6 +49,7 @@
 //
 (//alternativa
 ~track2.instances.collect({|item|
+
 	var a;
 
 	a = item.set(\trigger,1).set(\startPos,0);
