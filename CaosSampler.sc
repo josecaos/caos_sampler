@@ -4,7 +4,7 @@ CaosSampler {
 	classvar <server, <>coreurl,  <>audiourl, <id, <info;
 	classvar <run1, <run2, <run3, <>instances;
 	classvar <bufread, reverse = 0, <num = 1;
-	classvar <ids, >tracks;
+	classvar <>tracks, <ids;
 	//
 	var <>trackname;
 	var <>playname = "Default name";
@@ -40,7 +40,7 @@ CaosSampler {
 
 		tracks = Array.new(20);
 
-		ids = Array.new(20);
+		// ids = Array.new(20);
 
 		(coreurl +/+ "core/inform.scd").load;//carga debug
 
@@ -127,6 +127,8 @@ CaosSampler {
 
 					tracks.add(name);//agrega nombre a array
 
+					this.trackName(tracks.last);
+
 					fork{1.wait;~inform.value("Track Name: " + name + "registered",0.01)};
 
 
@@ -141,11 +143,11 @@ CaosSampler {
 		^"";
 	}
 
-	*trackName {
+	trackName {|name|
 
-		fork{1.wait;~inform.value("Used Tracks & Nodes: " + ids, 0.01)};
+		fork{1.wait;~inform.value("Used Tracks & Nodes: " + tracks.join(" : "), 0.01)};
 
-		^this.trackname;
+		^this.trackname_(name);
 
 	}
 
