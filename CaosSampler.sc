@@ -14,7 +14,6 @@ CaosSampler {
 
 		coreurl = this.filenameSymbol.asString.dirname;
 
-
 		^super.new.init;
 
 	}
@@ -127,7 +126,7 @@ CaosSampler {
 
 					tracks.add(name);//agrega nombre a array
 
-					this.trackName(tracks.last);
+					// this.trackName(tracks.last);
 
 					fork{1.wait;~inform.value("Track Name: " + name + "registered",0.01)};
 
@@ -143,11 +142,11 @@ CaosSampler {
 		^"";
 	}
 
-	trackName {|name|
+	tracks {
 
 		fork{1.wait;~inform.value("Used Tracks & Nodes: " + tracks.join(" : "), 0.01)};
 
-		^this.trackname_(name);
+		^"";
 
 	}
 
@@ -156,11 +155,13 @@ CaosSampler {
 
 		if(paused != true, {
 
-			fork{~inform.value("Track: " + this.instanceName + "paused",0.01)};
+			// fork{~inform.value("Track: " + this.instanceName + "paused",0.01)};
+			fork{~inform.value("Track paused",0.01)};
 
 			}, {
 
-				fork{~inform.value("Track: " + this.instanceName + "running",0.01)};
+				// fork{~inform.value("Track: " + this.instanceName + "running",0.01)};
+				fork{~inform.value("Track running",0.01)};
 
 		});
 

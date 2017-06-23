@@ -19,5 +19,7 @@ b.play();
 x = Array.new;
 x = x.add("test123");
 x.find(["test"]);
+//
 
-x;
+q = CaosTest.new
+q
