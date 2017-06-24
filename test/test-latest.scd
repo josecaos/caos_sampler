@@ -15,19 +15,19 @@
 
 ~track1.out(1);
 
-~t = 2;
+~t = 4;
 
 (
-~track1.setToPlay(1,[\out,0,\loop,0,\rate,~t,\trigger,1,\startPos,0,\amp,1]);
-~track1.setToPlay(2,[\out,0,\loop,0,\rate,~t,\trigger,1,\startPos,0,\amp,0]);
-~track1.setToPlay(3,[\out,0,\loop,0,\rate,~t,\trigger,1,\startPos,0,\amp,0]);
+~track1.setToPlay(1,[\out,0,\loop,0,\rate,~t,\trigger,0,\startPos,0,\amp,1]);
+~track1.setToPlay(2,[\out,0,\loop,0,\rate,~t,\trigger,0,\startPos,0,\amp,0]);
+~track1.setToPlay(3,[\out,0,\loop,0,\rate,~t,\trigger,0,\startPos,0,\amp,0]);
 )
 
 //
 
 ~track1.out(1,0);
 ~track1.amp(1,1);
-
+~track1.speed(~t)
 ~track1.toggleReverse;
 
 

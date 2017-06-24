@@ -37,8 +37,6 @@ CaosSampler {
 
 		});
 
-		tracks = Array.new(20);
-
 		// ids = Array.new(20);
 
 		(coreurl +/+ "core/inform.scd").load;//carga debug
@@ -79,6 +77,8 @@ CaosSampler {
 		var infoinstances;
 
 		instances = Array.newClear(copies);
+		tracks = Array.new(20);
+
 
 		if( copies < 1 or: {copies > 3}, {
 
