@@ -8,11 +8,16 @@
 ~track2.loadTrack("josecaos-bug5-mixed_v2-peaks-3db-48khz-16bits.wav");
 
 ~track1.register("Uno test",1);
-~track2.register("dos test",1);
+~track2.register("Dos test",1);
 
 // checar metodo trackName
-~track1.tracks;
-~track2.tracks;
+~track1.usedTracks;
+~track1.trackname_("otro");
+~track1.info;
+~track2.info;
+
+CaosSampler.tracks;
+CaosSampler.usedTracks;
 
 ~track1.play;
 ~track2.play;

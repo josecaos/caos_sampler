@@ -1,13 +1,12 @@
-//
 CaosSampler {
 
 	classvar <server, <>coreurl,  <>audiourl, <id, <info;
 	classvar <run1, <run2, <run3, <>instances;
-	classvar <bufread, reverse = 0, <num = 1;
+	classvar <bufread, <num = 1, reverse = 0;
 	classvar <>tracks, <ids;
 	//
 	var <>trackname;
-	var <>playname = "Default name";
+	var <>playname;
 
 
 	*new {
@@ -36,19 +35,23 @@ CaosSampler {
 				fork{~inform.value(" .... CaosSampler instance created ",0.015,false)}
 
 		});
-
+		// evita sobre escritura del array
 		if(tracks.isNil, {
 
 			tracks = Array.new(20);
 			ids = Array.new(20);
+			// this.playname_("Default name");
+			this.trackName(this);
 
 			},{
 
 				tracks = tracks;
-				ids =ids;
+				ids = ids;
+				// this.playname_("Default name");
+				this.trackName(this);
 
 		});
-
+		//
 
 		(coreurl +/+ "core/inform.scd").load;//carga debug
 
@@ -86,11 +89,8 @@ CaosSampler {
 	*register {|name, copies = 1|
 
 		var infoinstances;
-		/*
-		tracks = Array.new(20);*/
+
 		instances = Array.newClear(copies);
-
-
 
 		if( copies < 1 or: {copies > 3}, {
 
@@ -130,18 +130,18 @@ CaosSampler {
 
 					fork{~inform.value("You chose " + copies + "track(s) to run simultaneously",0.01)};
 
+					//debug
+					// trackName(name);
+					//
 					////asocia nombre de sinte con instancias
 					info = [["Track name", name].join(": "),
 						["Instance Nodes", infoinstances].join(": ")].join(" => ");
 
-					/*ids = */ids.add(info);//agrega informacion a un array global para posterior identificacion
+					ids = ids.add(info);//agrega informacion a un array global para posterior identificacion
 
-					tracks.add(name);//agrega nombre a array
+					tracks = tracks.add(name);//agrega nombre a array
 
-					// this.trackName(tracks.last);
-
-					fork{1.wait;~inform.value("Track Name: " + name + "registered",0.01)};
-
+					fork{1.wait;~inform.value("Track Name: " + name + "registered ",0.01)};
 
 					}, {
 
@@ -151,14 +151,23 @@ CaosSampler {
 
 		});
 
+
 		^"";
 	}
 
-	tracks {
+	*usedTracks {|name|
 
-		fork{1.wait;~inform.value("Used Tracks & Nodes: " + tracks.join(" : "), 0.01)};
+		fork{1.wait;~inform.value("Used Tracks & Nodes: " + ids.join(", "), 0.01)};
 
 		^"";
+
+	}
+
+	trackName {|name|
+
+		tracks.find([name]).postcln;
+
+		^this.playname_(name);
 
 	}
 
