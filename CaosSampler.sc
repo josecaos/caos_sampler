@@ -37,7 +37,18 @@ CaosSampler {
 
 		});
 
-		// ids = Array.new(20);
+		if(tracks.isNil, {
+
+			tracks = Array.new(20);
+			ids = Array.new(20);
+
+			},{
+
+				tracks = tracks;
+				ids =ids;
+
+		});
+
 
 		(coreurl +/+ "core/inform.scd").load;//carga debug
 
@@ -75,9 +86,10 @@ CaosSampler {
 	*register {|name, copies = 1|
 
 		var infoinstances;
-
+		/*
+		tracks = Array.new(20);*/
 		instances = Array.newClear(copies);
-		tracks = Array.new(20);
+
 
 
 		if( copies < 1 or: {copies > 3}, {
@@ -122,7 +134,7 @@ CaosSampler {
 					info = [["Track name", name].join(": "),
 						["Instance Nodes", infoinstances].join(": ")].join(" => ");
 
-					ids = ids.add(info);//agrega informacion a un array global para posterior identificacion
+					/*ids = */ids.add(info);//agrega informacion a un array global para posterior identificacion
 
 					tracks.add(name);//agrega nombre a array
 
