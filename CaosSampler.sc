@@ -388,19 +388,23 @@ CaosSampler {
 
 			toggle = 0;
 
+			fork{0.5.wait;~inform.value("Loop is Off \n", 0.015)};
+
 			}, {
 
 				if(state == true ,{
 
 			toggle = 1;
 
+			fork{0.5.wait;~inform.value("Loop is On ", 0.015)};
 
 				}, {
 
-						fork{0.5.wait;~inform.value("Use only ' true ' or ' false ' to toggle on / off ", 0.015)}
+						fork{0.5.wait;~inform.value("Use only ' true ' or ' false ' to toggle on / off \n", 0.015)};
 				});
 
 		});
+
 
 		switch(arr,
 				1,{
@@ -419,6 +423,8 @@ CaosSampler {
 				}
 
 			);
+
+		^"";
 
 	}
 
