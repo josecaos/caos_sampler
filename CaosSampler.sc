@@ -379,6 +379,48 @@ CaosSampler {
 
 	}
 
+	*loop {|state = false|
+
+		var arr = instances.size;
+		var toggle;
+
+		if(state == false, {
+
+			toggle = 0;
+
+			}, {
+
+				if(state == true ,{
+
+			toggle = 1;
+
+
+				}, {
+
+						fork{0.5.wait;~inform.value("Use only ' true ' or ' false ' to toggle on / off ", 0.015)}
+				});
+
+		});
+
+		switch(arr,
+				1,{
+					instances[0].set(\loop,toggle);
+				},
+				2,{
+					instances.collect({|item|
+						item.set(\loop,toggle);
+					});
+				},
+				3,{
+					instances.collect({|item|
+						var a;
+						a = item.set(\loop,toggle);
+					});
+				}
+
+			);
+
+	}
 
 	*stopAll {
 

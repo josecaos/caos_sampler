@@ -10,6 +10,8 @@
 ~track1.register("Uno test",1);
 ~track2.register("Dos test",1);
 
+
+~track1.play;
 // checar metodo trackName
 ~track1.usedTracks;
 ~track1.trackname_("otro");
@@ -26,10 +28,10 @@ CaosSampler.usedTracks;
 
 ~track1.out(1);
 
-~t = 1.8;
+~t = 1;
 
 (
-~track1.setToPlay(1,[\out,0,\loop,1,\rate,~t,\trigger,0,\startPos,0,\amp,1]);
+~track1.setToPlay(1,[\out,0,\loop,1,\rate,~t,\trigger,1,\startPos,0,\amp,1]);
 ~track1.setToPlay(2,[\out,0,\loop,0,\rate,~t,\trigger,0,\startPos,0,\amp,0]);
 ~track1.setToPlay(3,[\out,0,\loop,0,\rate,~t,\trigger,0,\startPos,0,\amp,0]);
 )
@@ -38,7 +40,7 @@ CaosSampler.usedTracks;
 s.freqscope;
 ~track1.out(1,0);
 ~track1.amp(1,1);
-~track1.speed(~t=1)
+~track1.speed(~t=1.9)
 ~track1.toggleReverse;
 
 
