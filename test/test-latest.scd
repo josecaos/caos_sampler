@@ -26,24 +26,46 @@ CaosSampler.usedTracks;
 
 // control
 
-~track1.out(1);
+~track1.out(0);
 
-~t = 1;
+~t = 2;
 
 (
-~track1.setToPlay(1,[\out,0,\loop,1,\rate,~t,\trigger,1,\startPos,0,\amp,1]);
+~track1.setToPlay(1,[\out,0,\loop,0,\rate,~t,\trigger,0,\startPos,0,\amp,1]);
 ~track1.setToPlay(2,[\out,0,\loop,0,\rate,~t,\trigger,0,\startPos,0,\amp,0]);
 ~track1.setToPlay(3,[\out,0,\loop,0,\rate,~t,\trigger,0,\startPos,0,\amp,0]);
 )
 
+CaosSampler.tracks;
+
 //
 s.freqscope;
 ~track1.out(1,0);
-~track1.amp(1,1);
-~track1.speed(~t=1.9)
-~track1.toggleReverse;
+~track1.amp(1,0.99);
+~track1.speed(~t=1.075)
+~track1.toggleReverse(~t);
+~track1.loop(true)//false
+~track1.stopAll
+
+(
+Tdef(\revs, {
+
+	var func = {~track1.toggleReverse(~t)};
+	var t = Prand([0.25,0.5,1,2],inf).asStream;
+	loop{
+
+		func.value;
+
+		// t.next.wait;
+		~t.wait;
+	}
+
+}).quant_(4);
+)
+Tdef(\revs).play;
+Tdef(\revs).stop;
 
 
 
-
+s.record;
 
