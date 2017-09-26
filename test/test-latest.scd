@@ -26,26 +26,29 @@ CaosSampler.usedTracks;
 
 // control
 
-~track1.out(0);
+~track1.out(1,0);
 
-~t = 2;
+~t = 1.5;
 
 (
 ~track1.setToPlay(1,[\out,0,\loop,0,\rate,~t,\trigger,0,\startPos,0,\amp,1]);
-~track1.setToPlay(2,[\out,0,\loop,0,\rate,~t,\trigger,0,\startPos,0,\amp,0]);
-~track1.setToPlay(3,[\out,0,\loop,0,\rate,~t,\trigger,0,\startPos,0,\amp,0]);
+~track1.setToPlay(2,[\out,0,\loop,0,\rate,~t,\trigger,0,\startPos,0,\amp,0.5]);
+// ~track1.setToPlay(3,[\out,0,\loop,0,\rate,~t,\trigger,0,\startPos,0,\amp,0]);
 )
 
 CaosSampler.tracks;
 
 //
 s.freqscope;
-~track1.out(1,0);
-~track1.amp(1,0.99);
-~track1.speed(~t=1.075)
+~track1.out(1,50);
+~track1.amp(1,1);
+~track1.speed(~t=1)
 ~track1.toggleReverse(~t);
 ~track1.loop(true)//false
 ~track1.stopAll
+~track1.play(false);
+~track1.play(true);
+CaosSampler.bufread
 
 (
 Tdef(\revs, {
@@ -57,15 +60,11 @@ Tdef(\revs, {
 		func.value;
 
 		// t.next.wait;
-		~t.wait;
+		~t/0.25.wait;
 	}
 
 }).quant_(4);
 )
 Tdef(\revs).play;
 Tdef(\revs).stop;
-
-
-
-s.record;
 

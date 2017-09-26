@@ -5,19 +5,19 @@ CaosSampler {
 	classvar <bufread, <num = 1, reverse = 0;
 	classvar <>tracks, <ids;
 	//
-	var <>trackname;
+	classvar <>trackname;
 	var <>playname;
 
 
-	*new {
+	*new {|name = "Default Name"|
 
 		coreurl = this.filenameSymbol.asString.dirname;
 
-		^super.new.init;
+		^super.new.init(name);
 
 	}
 
-	init {
+	init {|name|
 
 
 		server = Server.local;
@@ -40,15 +40,17 @@ CaosSampler {
 
 			tracks = Array.new(20);
 			ids = Array.new(20);
-			// this.playname_("Default name");
-			this.trackName(this);
+				this.playname_(name);
+			this.trackName(name);
+			// playname.postcln;
 
 			},{
 
 				tracks = tracks;
 				ids = ids;
-				// this.playname_("Default name");
-				this.trackName(this);
+				this.playname_(name);
+				this.trackName(name);
+				// playname.postcln;
 
 		});
 		//
@@ -163,12 +165,13 @@ CaosSampler {
 
 	}
 
-	trackName {|name|
+	trackName {
 
-		tracks.find([name]).postcln;
+		// tracks.find([name]).postcln;
 
-		^this.playname_(name);
+		// ^this.playname_(name);
 
+		^playname.postcln;
 	}
 
 
