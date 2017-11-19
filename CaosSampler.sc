@@ -6,12 +6,13 @@ CaosSampler {
 	classvar <>tracks, <ids;
 	//
 	classvar <>trackname;
-	var <>playname;
+	var <>playname, <>bufnum = 0;
 
 
 	*new {|name = "Default Name"|
 
 		coreurl = this.filenameSymbol.asString.dirname;
+		(coreurl +/+ "core/inform.scd").load;//carga debug
 
 		^super.new.init(name);
 
@@ -21,6 +22,7 @@ CaosSampler {
 
 
 		server = Server.local;
+
 
 		if(server.serverRunning != true ,{
 
@@ -40,40 +42,30 @@ CaosSampler {
 
 			tracks = Array.new(20);
 			ids = Array.new(20);
-				this.playname_(name);
-			this.trackName(name);
+			// this.playname_(name);
+			// this.trackName(name);
 			// playname.postcln;
 
 			},{
 
 				tracks = tracks;
 				ids = ids;
-				this.playname_(name);
-				this.trackName(name);
+				// this.playname_(name);
+				// this.trackName(name);
 				// playname.postcln;
 
 		});
 		//
+		bufnum = bufnum + 1;
 
-		(coreurl +/+ "core/inform.scd").load;//carga debug
+		this.buildSynth(bufnum);
+
 
 		^"";
 
 	}
 
-	*loadTrack {|filename = "test-caos_sampler-115_bpm.wav", startFrame = 0|
-
-		var informPositive = {fork{~inform.value("The file " ++ filename ++ " has been loaded" ,0.015)}};
-
-		audiourl = coreurl +/+ "tracks/";
-
-		bufread = Buffer.read(server,audiourl ++ filename, startFrame, -1, informPositive);
-
-		^this.buildSynth(bufread.bufnum);
-
-	}
-
-	*buildSynth {|bufnumb|
+	buildSynth {|bufnumb|
 		//sinte
 		SynthDef(\sample,{|rate = 1, pan = 0, amp = 1, trigger = 0,
 			out = 50, startPos = 0, loop = 1, reset = 0|
@@ -85,6 +77,18 @@ CaosSampler {
 			Out.ar(out,Pan2.ar(sample,pan,amp));
 
 		}).add;
+	}
+
+	*loadTrack {|filename = "test-caos_sampler-115_bpm.wav", startFrame = 0|
+
+		var informPositive = {fork{~inform.value("The file " ++ filename ++ " has been loaded" ,0.015)}};
+
+		audiourl = coreurl +/+ "tracks/";
+
+		^bufread = Buffer.read(server,audiourl ++ filename, startFrame, -1, informPositive);
+
+		// ^this.buildSynth(bufread.bufnum);
+
 	}
 
 	// registra el numero de copias simultaneas por track
