@@ -6,19 +6,19 @@ CaosSampler {
 	classvar <>tracks, <ids;
 	//
 	classvar <>trackname;
-	var <>playname, <>bufnum = 0;
+	var <>playname;
 
 
-	*new {|name = "Default Name"|
+	*loadTrack {|name = "Default Name",fileName = "test-caos_sampler-115_bpm.wav", startFrame = 0|
 
 		coreurl = this.filenameSymbol.asString.dirname;
 		(coreurl +/+ "core/inform.scd").load;//carga debug
 
-		^super.new.init(name);
+		^super.new.init(name,fileName,startFrame);
 
 	}
 
-	init {|name|
+	init {|name,fileName,startFrame|
 
 
 		server = Server.local;
@@ -28,16 +28,21 @@ CaosSampler {
 
 			server.waitForBoot{
 
-				fork{~inform.value("Server boot .... CaosSampler instance created",0.015,false);};
-				// nuevo inform test
-				this.inform("TEST TEST TEST TEST TEST TEST TES TE TTTTTTT",0.125,true);
-				//
+				1.do({
+				this.inform("Server boot ...  CaosSampler instance created",0.015,true);
+					1.5.yield;
+				this.load(fileName, startFrame);
+				});
 
 			};
 
 			}, {
 
-				fork{~inform.value(" .... CaosSampler instance created ",0.015,false)}
+				1.do({
+					this.inform(" .... CaosSampler instance created ",0.015,true);
+					1.yield;
+					this.load(fileName, startFrame);
+				});
 
 		});
 		// evita sobre escritura del array
@@ -59,16 +64,25 @@ CaosSampler {
 
 		});
 		//
-		bufnum = bufnum + 1;
-
-		this.buildSynth(bufread.bufnum);
 
 
 		^"";
 
 	}
 
-	buildSynth {|bufnumb|
+	load{|fileName, startFrame|
+
+		var informPositive = {this.inform("The file " ++ fileName ++ " has been loaded" ,0.015)};
+
+		audiourl = coreurl +/+ "tracks/";
+
+		bufread = Buffer.read(server,audiourl ++ fileName, startFrame, -1, informPositive);
+
+		^this.buildSynth(bufread.bufnum);
+
+	}
+
+	buildSynth {|bufnumb,i=0|
 		//sinte
 		SynthDef(\sample,{|rate = 1, pan = 0, amp = 1, trigger = 0,
 			out = 50, startPos = 0, loop = 1, reset = 0|
@@ -80,43 +94,14 @@ CaosSampler {
 			Out.ar(out,Pan2.ar(sample,pan,amp));
 
 		}).add;
-	}
 
-	*loadTrack {|filename = "test-caos_sampler-115_bpm.wav", startFrame = 0|
+		i = i + 1;
+		^i.postcln;
 
-		var informPositive = {fork{~inform.value("The file " ++ filename ++ " has been loaded" ,0.015)}};
 
-		audiourl = coreurl +/+ "tracks/";
-
-		^bufread = Buffer.read(server,audiourl ++ filename, startFrame, -1, informPositive);
-
-		// ^this.buildSynth(bufread.bufnum);
 
 	}
 
-	//debug info
-	*inform {|print = "CaosSampler written by @joseCao5 \n", tempoTexto = 0.025, breakLine = true|
-
-	var txt = print.asArray;
-	var texto = txt.size;
-	var letrero = Array.newClear(texto);
-
-	texto.do({|i|
-
-		letrero.put(i, txt[i]);
-		letrero[i].asString.post;
-		tempoTexto.wait;
-		0.yield;//regresa un valor vacio, para evitar que se imprima en el post
-
-		});
-
-	if(breakLine == true, {
-
-		"\n".post;
-
-	});
-
-}
 
 	// registra el numero de copias simultaneas por track
 	*register {|name, copies = 1|
@@ -127,7 +112,7 @@ CaosSampler {
 
 		if( copies < 1 or: {copies > 3}, {
 
-			fork{~inform.value("Only 1 to 3 simultaneous copies allowed",0.01)};
+			this.inform("Only 1 to 3 simultaneous copies allowed",0.01);
 
 			}, {
 
@@ -161,11 +146,8 @@ CaosSampler {
 
 					);
 
-					fork{~inform.value("You chose " + copies + "track(s) to run simultaneously",0.01)};
+					this.inform("You chose " + copies + "track(s) to run simultaneously",0.01);
 
-					//debug
-					// trackName(name);
-					//
 					////asocia nombre de sinte con instancias
 					info = [["Track name", name].join(": "),
 						["Instance Nodes", infoinstances].join(": ")].join(" => ");
@@ -188,50 +170,6 @@ CaosSampler {
 		^"";
 	}
 
-	*usedTracks {|name|
-
-		fork{1.wait;~inform.value("Used Tracks & Nodes: " + ids.join(", "), 0.01)};
-
-		^"";
-
-	}
-
-	trackName {
-
-		// tracks.find([name]).postcln;
-
-		// ^this.playname_(name);
-
-		^playname.postcln;
-	}
-
-
-	*play {|paused = true, args|
-
-		if(paused != true, {
-
-			// fork{~inform.value("Track: " + this.instanceName + "paused",0.01)};
-			fork{~inform.value("Track paused",0.01)};
-
-			}, {
-
-				// fork{~inform.value("Track: " + this.instanceName + "running",0.01)};
-				fork{~inform.value("Track running",0.01)};
-
-		});
-
-		switch(instances.size,
-
-			1,{instances[0].run(paused)},
-
-			2,{[instances[0].run(paused),instances[1].run(paused)]},
-
-			3,{[instances[0].run(paused),instances[1].run(paused),instances[2].run(paused)]}
-
-		);
-
-		^"";
-	}
 
 	//depende del metodo .instance
 	*setToPlay {|number, params|
@@ -242,7 +180,7 @@ CaosSampler {
 		//
 		if(num < 1 or: {num > 3} , {
 
-			fork{~inform.value("Use only numbers between '1 and 3' as first argument, to choose instance",0.015)};
+			this.inform("Use only numbers between '1 and 3' as first argument, to choose instance",0.015);
 
 			^"";
 
@@ -251,7 +189,7 @@ CaosSampler {
 				var inst = num-1;
 				var variables;
 
-				instanceinform = fork{~inform.value("Synth instance #" ++ num + "with node:" + instances[inst].nodeID + " affected",0.01)};
+				instanceinform = this.inform("Synth instance #" ++ num + "with node:" + instances[inst].nodeID + " affected",0.01);
 				//
 
 				//iguala los argumentos necesarios
@@ -290,7 +228,7 @@ CaosSampler {
 
 			}
 		);
-		fork{~inform.value("All instances changed speed rate to " ++ vel,0.01)};
+		this.inform("All instances changed speed rate to " ++ vel,0.01);
 
 		^"";
 	}
@@ -306,7 +244,7 @@ CaosSampler {
 					item.set(\rate,res);
 				});
 				reverse = reverse + 1;
-				fork{~inform.value("Track reversed: " ++ res ,0.001)};
+				this.inform("Track reversed: " ++ res ,0.001);
 			},
 			1,{
 				res = rate * 1;
@@ -314,7 +252,7 @@ CaosSampler {
 					item.set(\rate,res);
 				});
 				reverse = 0;//reset
-				fork{~inform.value("Track with normal rate: " ++ res ,0.001)};
+				this.inform("Track with normal rate: " ++ res ,0.001);
 			}
 		);
 
@@ -344,20 +282,20 @@ CaosSampler {
 				}
 
 			);
-			fork{~inform.value("All instances chaged output to channel: " ++ chan,0.01)};
+			this.inform("All instances chaged output to channel: " ++ chan,0.01);
 
 			}, {
 
 				if(instance < 1 or: {instance > 3} , {
 
-					fork{~inform.value("Use only numbers between 1 to 3, or \all symbol, as first argument, to choose instance Output",0.015)};
+					this.inform("Use only numbers between 1 to 3, or \all symbol, as first argument, to choose instance Output",0.015);
 					},{
 						switch(instance,
 							1,{instances[0].set(\out,chan);},
 							2,{instances[1].set(\out,chan);},
 							3,{instances[2].set(\out,chan);}
 						);
-						fork{~inform.value("Instance #" ++ instance ++ " changed output to " ++ chan,0.01)};
+						this.inform("Instance #" ++ instance ++ " changed output to " ++ chan,0.01);
 					}
 				);
 		});
@@ -394,7 +332,7 @@ CaosSampler {
 
 				if(instance < 1 or: {instance > 3}, {
 
-					fork{~inform.value("Use only numbers between 1 to 3, or \all symbol, as first argument, to choose instance Output",0.015)};
+					this.inform("Use only numbers between 1 to 3, or \all symbol, as first argument, to choose instance Output",0.015);
 					},{
 
 						switch(instance,
@@ -403,7 +341,7 @@ CaosSampler {
 							3,{instances[2].set(\amp,amp);}
 						);
 
-						fork{~inform.value("Instance #" ++ instance ++ " changed amplitude to " ++ amp,0.015)};
+						this.inform("Instance #" ++ instance ++ " changed amplitude to " ++ amp,0.015);
 					}
 				);
 
@@ -422,56 +360,131 @@ CaosSampler {
 
 			toggle = 0;
 
-			fork{0.5.wait;~inform.value("Loop is Off \n", 0.015)};
+			this.inform("Loop is Off \n", 0.015);
 
 			}, {
 
 				if(state == true ,{
 
-			toggle = 1;
+					toggle = 1;
 
-			fork{0.5.wait;~inform.value("Loop is On ", 0.015)};
+					this.inform("Loop is On ", 0.015);
 
-				}, {
+					}, {
 
-						fork{0.5.wait;~inform.value("Use only ' true ' or ' false ' to toggle on / off \n", 0.015)};
+						this.inform("Use only ' true ' or ' false ' to toggle on / off \n", 0.015);
 				});
 
 		});
 
 
 		switch(arr,
-				1,{
-					instances[0].set(\loop,toggle);
-				},
-				2,{
-					instances.collect({|item|
-						item.set(\loop,toggle);
-					});
-				},
-				3,{
-					instances.collect({|item|
-						var a;
-						a = item.set(\loop,toggle);
-					});
-				}
+			1,{
+				instances[0].set(\loop,toggle);
+			},
+			2,{
+				instances.collect({|item|
+					item.set(\loop,toggle);
+				});
+			},
+			3,{
+				instances.collect({|item|
+					var a;
+					a = item.set(\loop,toggle);
+				});
+			}
 
-			);
+		);
 
 		^"";
 
+	}
+
+		*play {|paused = true, args|
+
+		if(paused != true, {
+
+			// this.inform("Track: " + this.instanceName + "paused",0.01);
+			this.inform("Track paused",0.01);
+
+			}, {
+
+				// this.inform("Track: " + this.instanceName + "running",0.01);
+				this.inform("Track running",0.01);
+
+		});
+
+		switch(instances.size,
+
+			1,{instances[0].run(paused)},
+
+			2,{[instances[0].run(paused),instances[1].run(paused)]},
+
+			3,{[instances[0].run(paused),instances[1].run(paused),instances[2].run(paused)]}
+
+		);
+
+		^"";
 	}
 
 	*stopAll {
 
 		thisProcess.stop;
 
-		fork{~inform.value("All Instances stopped ", 0.01)};
+		this.inform("All Instances stopped ", 0.01);
 
 		^"";
 	}
 
 
+
+	//debug inform class and instance methods
+	inform {|print = "CaosSampler written by @joseCao5 \n", tempoTexto = 0.025, breakLine = true|
+
+		var txt = print.asArray;
+		var texto = txt.size;
+		var letrero = Array.newClear(texto);
+
+		fork {
+			texto.do({|i|
+
+				letrero.put(i, txt[i]);
+				letrero[i].asString.post;
+				tempoTexto.wait;
+				0.yield;//regresa un valor vacio, para evitar que se imprima en el post
+
+			});
+
+			if(breakLine == true, {
+
+				"\n".post;
+
+			});
+		}
+	}
+
+	*inform {|print = "CaosSampler written by @joseCao5 \n", tempoTexto = 0.025, breakLine = true|
+
+		var txt = print.asArray;
+		var texto = txt.size;
+		var letrero = Array.newClear(texto);
+
+		fork {
+			texto.do({|i|
+
+				letrero.put(i, txt[i]);
+				letrero[i].asString.post;
+				tempoTexto.wait;
+				0.yield;//regresa un valor vacio, para evitar que se imprima en el post
+
+			});
+
+			if(breakLine == true, {
+
+				"\n".post;
+
+			});
+		}
+	}
+
 }
-
-

@@ -1,25 +1,24 @@
 // Test nombre de instancia
-
 a = CaosSampler;
-a.new;
-a.loadTrack();
-a.register("Volando",1);
-// a.trackname_("Nayarit");
-a.trackName();
-//
 b = CaosSampler;
-b.new;
-b.loadTrack();
-b.register("otro");
-// b.trackname_("Carlos");
-b.trackName();
-
-b.play();
-//test encuentra en array
-x = Array.new;
-x = x.add("test123");
-x.find(["test"]);
+a.loadTrack;
+a.register("Volando",1);
+a.play(true);
+a.out(1,23);
+a.speed(0.4);
 //
+b.loadTrack;
+b.register("otwro",1);
+b.play(true);
+b.out(1,12);
+b.speed(0.75);
+//
+a.out(1,0);
+a.play(true);
+a.play(false);
+b.out(1,0);
+b.play(true);
+b.play(false);
 
-q = CaosTest.new
-q
+
+s.scope;
