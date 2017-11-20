@@ -28,7 +28,10 @@ CaosSampler {
 
 			server.waitForBoot{
 
-				fork{~inform.value("Server boot .... CaosSampler instance created",0.015,false);}
+				fork{~inform.value("Server boot .... CaosSampler instance created",0.015,false);};
+				// nuevo inform test
+				this.inform("TEST TEST TEST TEST TEST TEST TES TE TTTTTTT",0.125,true);
+				//
 
 			};
 
@@ -58,7 +61,7 @@ CaosSampler {
 		//
 		bufnum = bufnum + 1;
 
-		this.buildSynth(bufnum);
+		this.buildSynth(bufread.bufnum);
 
 
 		^"";
@@ -72,7 +75,7 @@ CaosSampler {
 
 			var sample;
 
-			sample = PlayBuf.ar(2, bufnumb, rate, trigger, startPos, loop, reset);
+			sample = PlayBuf.ar(2,bufnumb,rate,trigger,startPos,loop,reset);
 
 			Out.ar(out,Pan2.ar(sample,pan,amp));
 
@@ -90,6 +93,30 @@ CaosSampler {
 		// ^this.buildSynth(bufread.bufnum);
 
 	}
+
+	//debug info
+	*inform {|print = "CaosSampler written by @joseCao5 \n", tempoTexto = 0.025, breakLine = true|
+
+	var txt = print.asArray;
+	var texto = txt.size;
+	var letrero = Array.newClear(texto);
+
+	texto.do({|i|
+
+		letrero.put(i, txt[i]);
+		letrero[i].asString.post;
+		tempoTexto.wait;
+		0.yield;//regresa un valor vacio, para evitar que se imprima en el post
+
+		});
+
+	if(breakLine == true, {
+
+		"\n".post;
+
+	});
+
+}
 
 	// registra el numero de copias simultaneas por track
 	*register {|name, copies = 1|
