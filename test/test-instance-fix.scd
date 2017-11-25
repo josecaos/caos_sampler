@@ -1,7 +1,7 @@
 // Test nombre de instancia
 a = CaosSampler;
 b = CaosSampler;
-a.loadTrack;
+a.loadTrack("test");
 a.register("Volando",1);
 a.play(true);
 a.out(1,23);

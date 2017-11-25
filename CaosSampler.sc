@@ -2,17 +2,17 @@ CaosSampler {
 
 	classvar <server, <>coreurl,  <>audiourl, <id, <info;
 	classvar <run1, <run2, <run3, <>instances;
-	classvar <bufread, <num = 1, reverse = 0;
+	classvar <num = 1, reverse = 0;
 	classvar <>tracks, <ids;
 	//
 	classvar <>trackname;
-	var <>playname;
+	var <>playname, <bufread;
 
 
-	*loadTrack {|name = "Default Name",fileName = "test-caos_sampler-115_bpm.wav", startFrame = 0|
+	*loadTrack {|name = "Default",fileName = "test-caos_sampler-115_bpm.wav", startFrame = 0|
 
 		coreurl = this.filenameSymbol.asString.dirname;
-		(coreurl +/+ "core/inform.scd").load;//carga debug
+		(coreurl +/+ "core/inform.scd").load;
 
 		^super.new.init(name,fileName,startFrame);
 
@@ -20,9 +20,7 @@ CaosSampler {
 
 	init {|name,fileName,startFrame|
 
-
 		server = Server.local;
-
 
 		if(server.serverRunning != true ,{
 
@@ -31,7 +29,7 @@ CaosSampler {
 				1.do({
 				this.inform("Server boot ...  CaosSampler instance created",0.015,true);
 					1.5.yield;
-				this.load(fileName, startFrame);
+				this.load(name,fileName, startFrame);
 				});
 
 			};
@@ -41,7 +39,7 @@ CaosSampler {
 				1.do({
 					this.inform(" .... CaosSampler instance created ",0.015,true);
 					1.yield;
-					this.load(fileName, startFrame);
+					this.load(name,fileName, startFrame);
 				});
 
 		});
@@ -60,7 +58,6 @@ CaosSampler {
 				ids = ids;
 				// this.playname_(name);
 				// this.trackName(name);
-				// playname.postcln;
 
 		});
 		//
@@ -70,19 +67,21 @@ CaosSampler {
 
 	}
 
-	load{|fileName, startFrame|
+	load{|name,fileName, startFrame|
 
 		var informPositive = {this.inform("The file " ++ fileName ++ " has been loaded" ,0.015)};
 
 		audiourl = coreurl +/+ "tracks/";
 
-		bufread = Buffer.read(server,audiourl ++ fileName, startFrame, -1, informPositive);
+		// name = Buffer.read(server,audiourl ++ fileName, startFrame, -1, informPositive);
 
-		^this.buildSynth(bufread.bufnum);
+		// ^this.buildSynth(bufread.bufnum);
+		// ^this.buildAudio(name);
 
+		^name.postcln;
 	}
 
-	buildSynth {|bufnumb,i=0|
+	buildSynth {|bufnumb|
 		//sinte
 		SynthDef(\sample,{|rate = 1, pan = 0, amp = 1, trigger = 0,
 			out = 50, startPos = 0, loop = 1, reset = 0|
@@ -95,10 +94,12 @@ CaosSampler {
 
 		}).add;
 
-		i = i + 1;
-		^i.postcln;
+		^"";
 
+	}
+	buildAudio {|name|
 
+		^name.play(true).plot;
 
 	}
 
