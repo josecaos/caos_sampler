@@ -13,6 +13,7 @@ CaosSampler {
 
 		coreurl = this.filenameSymbol.asString.dirname;
 		(coreurl +/+ "core/inform.scd").load;
+		// this.trackName(name);//returns playname instance var
 
 		^super.new.init(name,fileName,startFrame);
 
@@ -27,9 +28,12 @@ CaosSampler {
 			server.waitForBoot{
 
 				1.do({
-				this.inform("Server boot ...  CaosSampler instance created",0.015,true);
+					this.inform("Server boot ...  ",0.075,true);
 					1.5.yield;
-				this.load(name,fileName, startFrame);
+					this.trackName(name);
+					this.load(playname,fileName, startFrame);
+					1.yield;
+					this.inform("CaosSampler instance created",0.015,true);
 				});
 
 			};
@@ -37,51 +41,50 @@ CaosSampler {
 			}, {
 
 				1.do({
-					this.inform(" .... CaosSampler instance created ",0.015,true);
+					this.trackName(name);
+					this.load(playname,fileName, startFrame);
 					1.yield;
-					this.load(name,fileName, startFrame);
+					this.inform(" .... CaosSampler instance created ",0.015,true);
 				});
 
 		});
-		// evita sobre escritura del array
+		//
+		^"";
+
+	}
+
+	trackName {|name|
+			// evita sobre escritura del array
 		if(tracks.isNil, {
 
 			tracks = Array.new(20);
 			ids = Array.new(20);
-			// this.playname_(name);
-			// this.trackName(name);
-			// playname.postcln;
+			^this.playname_(name);
 
 			},{
 
 				tracks = tracks;
 				ids = ids;
-				// this.playname_(name);
-				// this.trackName(name);
+				^this.playname_(name);
 
 		});
-		//
-
-
-		^"";
 
 	}
 
-	load{|name,fileName, startFrame|
+	load {|name,fileName, startFrame|
 
 		var informPositive = {this.inform("The file " ++ fileName ++ " has been loaded" ,0.015)};
 
 		audiourl = coreurl +/+ "tracks/";
 
-		// name = Buffer.read(server,audiourl ++ fileName, startFrame, -1, informPositive);
+		name = Buffer.read(server,audiourl ++ fileName, startFrame, -1, informPositive);
 
 		// ^this.buildSynth(bufread.bufnum);
-		// ^this.buildAudio(name);
+		^this.buildAudio(playname);
 
-		^name.postcln;
 	}
 
-	buildSynth {|bufnumb|
+/*	buildSynth {|bufnumb|
 		//sinte
 		SynthDef(\sample,{|rate = 1, pan = 0, amp = 1, trigger = 0,
 			out = 50, startPos = 0, loop = 1, reset = 0|
@@ -97,10 +100,11 @@ CaosSampler {
 		^"";
 
 	}
+	*/
+
 	buildAudio {|name|
 
-		^name.play(true).plot;
-
+		^name.play(false).plot;
 	}
 
 
@@ -401,7 +405,7 @@ CaosSampler {
 
 	}
 
-		*play {|paused = true, args|
+	*play {|paused = true, args|
 
 		if(paused != true, {
 
