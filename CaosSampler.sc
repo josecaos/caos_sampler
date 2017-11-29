@@ -1,27 +1,28 @@
 CaosSampler {
 
 	classvar <server, <>coreurl,  <>audiourl,  <info;
-	classvar <run1, <run2, <run3, <>instances;
+	classvar <run1, <run2, <run3;
 	classvar <num = 1, reverse = 0;
-	classvar <>tracks, <ids;
+	classvar <>tracks, <ids, <instances;
 	//
 	var <>trackname;
-	var <id, <>playname, <bufread;
+	var <bufread;
 
 
-	*loadTrack {|name = "Default",fileName = "test-caos_sampler-115_bpm.wav", startFrame = 0|
+	*loadTrack {|name = "Default",fileName = "test-caos_sampler-115_bpm.wav",copies = 1, startFrame = 0|
 
 		coreurl = this.filenameSymbol.asString.dirname;
 		(coreurl +/+ "core/inform.scd").load;
-		// this.trackName(name);//returns playname instance var
 
-		^super.new.init(name,fileName,startFrame);
+		^super.new.init(name,fileName,copies,startFrame);
 
 	}
 
-	init {|name,fileName,startFrame|
+	init {|name,fileName,copies,startFrame|
 
 		server = Server.local;
+
+		this.trackName(name);
 
 		if(server.serverRunning != true ,{
 
@@ -30,8 +31,7 @@ CaosSampler {
 				1.do({
 					this.inform("Server boot ...  ",0.075,true);
 					1.5.yield;
-					this.trackName(name);
-					this.load(playname,fileName, startFrame);
+					this.load(trackname,fileName,copies,startFrame);
 					1.yield;
 					this.inform("CaosSampler instance created",0.015,true);
 				});
@@ -41,8 +41,7 @@ CaosSampler {
 
 				fork {
 					1.do({
-						this.trackName(name);
-						this.load(playname,fileName, startFrame);
+						this.load(trackname,fileName,copies,startFrame);
 						1.yield;
 						this.inform(" .... CaosSampler instance created ",0.015,true);
 					});
@@ -67,22 +66,21 @@ CaosSampler {
 
 	}
 
-	load {|name,fileName, startFrame|
+	load {|name,fileName,copies,startFrame|
 
-		var informPositive = {this.inform("The file " ++ fileName ++ " has been loaded" ,0.015)};
+		var informPositive = fork{1.wait;this.inform("The file " ++ fileName ++ " has been loaded" ,0.015) };
 
 		audiourl = coreurl +/+ "tracks/";
 
 		name = Buffer.read(server,audiourl ++ fileName, startFrame, -1, informPositive);
 
-		^this.buildSynth(name.bufnum);
-		// ^this.buildAudio(playname);
+		^this.buildSynth(trackname,name.bufnum,copies);
 
 	}
 
-	buildSynth {|bufnumb|
+	buildSynth {|synthName, bufnumb,copies|
 		//sinte
-		SynthDef(\sample,{|rate = 1, pan = 0, amp = 1, trigger = 0,
+		SynthDef(synthName.asSymbol,{|rate = 1, pan = 0, amp = 1, trigger = 0,
 			out = 50, startPos = 0, loop = 1, reset = 0|
 
 			var sample;
@@ -93,26 +91,23 @@ CaosSampler {
 
 		}).add;
 
+		this.register(synthName.asSymbol,copies);
+
 		^"";
 
 	}
 
-	/*	buildAudio {|name|
-
-	^name.play(false).plot;
-	}
-	*/
-
 	// registra el numero de copias simultaneas por track
-	register {|name, copies = 1|
+	register {|name, copies|
 
 		var infoinstances;
+		var synth = name.asSymbol;
 
 		instances = Array.newClear(copies);
 
 		if( copies < 1 or: {copies > 3}, {
 
-			this.inform("Only 1 to 3 simultaneous copies allowed",0.01);
+			fork{2.5.wait;this.inform("Only 1 to 3 simultaneous copies allowed",0.01)  };
 
 			}, {
 
@@ -121,23 +116,23 @@ CaosSampler {
 					switch(copies,
 
 						1,{
-							run1 = Synth.newPaused(\sample,[\amp,1]);
+							run1 = Synth.newPaused(synth,[\amp,1]);
 							instances = instances.put(0,run1);
 							infoinstances = instances[0].nodeID;
 						},
 
 						2,{
-							run1 = Synth.newPaused(\sample,[\amp,1]);
-							run2 = Synth.newPaused(\sample,[\amp,0]);
+							run1 = Synth.newPaused(synth,[\amp,1]);
+							run2 = Synth.newPaused(synth,[\amp,0]);
 							instances = instances.put(0,run1);
 							instances = instances.put(1,run2);
 							infoinstances = [instances[0].nodeID, instances[1].nodeID].join(", ");
 						},
 
 						3,{
-							run1 = Synth.newPaused(\sample,[\amp,1]);
-							run2 = Synth.newPaused(\sample,[\amp,0]);
-							run3 = Synth.newPaused(\sample,[\amp,0]);
+							run1 = Synth.newPaused(synth,[\amp,1]);
+							run2 = Synth.newPaused(synth,[\amp,0]);
+							run3 = Synth.newPaused(synth,[\amp,0]);
 							instances = instances.put(0,run1);
 							instances = instances.put(1,run2);
 							instances = instances.put(2,run3);
@@ -146,7 +141,7 @@ CaosSampler {
 
 					);
 
-					this.inform("You chose " + copies + "track(s) to run simultaneously",0.01);
+					fork{3.wait;this.inform("You chose " + copies + "track(s) to run simultaneously",0.01)  };
 
 					////asocia nombre de sinte con instancias
 					info = [["Track name", name].join(": "),
@@ -156,11 +151,11 @@ CaosSampler {
 
 					tracks = tracks.add(name);//agrega nombre a array
 
-					fork{1.wait;~inform.value("Track Name: " + name + "registered ",0.01)};
+					fork{4.wait;this.inform("Track Name: " + name + "registered ",0.01)};
 
 					}, {
 
-						fork{1.wait;~inform.value("Track name already exists and was not registered, try another one!",0.01)};
+						fork{4.wait;this.inform("Track name already exists and was not registered, try another one!",0.01)};
 
 				});
 
