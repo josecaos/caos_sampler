@@ -1,12 +1,12 @@
 CaosSampler {
 
-	classvar <server, <>coreurl,  <>audiourl, <id, <info;
+	classvar <server, <>coreurl,  <>audiourl,  <info;
 	classvar <run1, <run2, <run3, <>instances;
 	classvar <num = 1, reverse = 0;
 	classvar <>tracks, <ids;
 	//
-	classvar <>trackname;
-	var <>playname, <bufread;
+	var <>trackname;
+	var <id, <>playname, <bufread;
 
 
 	*loadTrack {|name = "Default",fileName = "test-caos_sampler-115_bpm.wav", startFrame = 0|
@@ -37,36 +37,30 @@ CaosSampler {
 				});
 
 			};
-
 			}, {
 
 				1.do({
 					this.trackName(name);
 					this.load(playname,fileName, startFrame);
-					1.yield;
+					// 1.yield;
 					this.inform(" .... CaosSampler instance created ",0.015,true);
 				});
 
 		});
 		//
 		^"";
-
 	}
 
 	trackName {|name|
-			// evita sobre escritura del array
+		// evita sobre escritura del array
 		if(tracks.isNil, {
-
 			tracks = Array.new(20);
 			ids = Array.new(20);
-			^this.playname_(name);
-
+			^this.trackname_(name);
 			},{
-
 				tracks = tracks;
 				ids = ids;
-				^this.playname_(name);
-
+				^this.trackname_(name);
 		});
 
 	}
@@ -79,12 +73,12 @@ CaosSampler {
 
 		name = Buffer.read(server,audiourl ++ fileName, startFrame, -1, informPositive);
 
-		// ^this.buildSynth(bufread.bufnum);
-		^this.buildAudio(playname);
+		^this.buildSynth(name.bufnum);
+		// ^this.buildAudio(playname);
 
 	}
 
-/*	buildSynth {|bufnumb|
+	buildSynth {|bufnumb|
 		//sinte
 		SynthDef(\sample,{|rate = 1, pan = 0, amp = 1, trigger = 0,
 			out = 50, startPos = 0, loop = 1, reset = 0|
@@ -100,16 +94,15 @@ CaosSampler {
 		^"";
 
 	}
-	*/
 
-	buildAudio {|name|
+/*	buildAudio {|name|
 
 		^name.play(false).plot;
 	}
-
+	*/
 
 	// registra el numero de copias simultaneas por track
-	*register {|name, copies = 1|
+	register {|name, copies = 1|
 
 		var infoinstances;
 
