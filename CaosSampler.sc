@@ -39,12 +39,14 @@ CaosSampler {
 			};
 			}, {
 
-				1.do({
-					this.trackName(name);
-					this.load(playname,fileName, startFrame);
-					// 1.yield;
-					this.inform(" .... CaosSampler instance created ",0.015,true);
-				});
+				fork {
+					1.do({
+						this.trackName(name);
+						this.load(playname,fileName, startFrame);
+						1.yield;
+						this.inform(" .... CaosSampler instance created ",0.015,true);
+					});
+				}
 
 		});
 		//
@@ -95,9 +97,9 @@ CaosSampler {
 
 	}
 
-/*	buildAudio {|name|
+	/*	buildAudio {|name|
 
-		^name.play(false).plot;
+	^name.play(false).plot;
 	}
 	*/
 
