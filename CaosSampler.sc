@@ -92,7 +92,7 @@ CaosSampler {
 
 	buildSynth {|synthName, bufnumb,copies|
 		//sinte
-		SynthDef(\notest,{|rate = 1, pan = 0, amp = 1, trigger = 0,
+		SynthDef(synthName.asString.asSymbol,{|rate = 1, pan = 0, amp = 1, trigger = 0,
 			out = 50, startPos = 0, loop = 1, reset = 0|
 
 			var sample;
@@ -122,25 +122,25 @@ CaosSampler {
 				switch(copies,
 
 					1,{
-						run1 = Synth.newPaused(\notest,[\amp,1]);
+						run1 = Synth.newPaused(name.asString.asSymbol,[\amp,1]);
 						instances = instances.put(0,run1);
 						infoinstances = instances[0].nodeID;
 					},
 
 					2,{
-						run1 = Synth.newPaused(name,[\amp,1]);
+						run1 = Synth.newPaused(name.asString.asSymbol,[\amp,1]);
 						instances = instances.put(0,run1);
-						run2 = Synth.newPaused(name,[\amp,0]);
+						run2 = Synth.newPaused(name.asString.asSymbol,[\amp,0]);
 						instances = instances.put(1,run2);
 						infoinstances = [instances[0].nodeID, instances[1].nodeID].join(", ");
 					},
 
 					3,{
-						run1 = Synth.newPaused(name,[\amp,1]);
+						run1 = Synth.newPaused(name.asString.asSymbol,[\amp,1]);
 						instances = instances.put(0,run1);
-						run2 = Synth.newPaused(name,[\amp,0]);
+						run2 = Synth.newPaused(name.asString.asSymbol,[\amp,0]);
 						instances = instances.put(1,run2);
-						run3 = Synth.newPaused(name,[\amp,0]);
+						run3 = Synth.newPaused(name.asString.asSymbol,[\amp,0]);
 						instances = instances.put(2,run3);
 						infoinstances = [instances[0].nodeID,instances[1].nodeID,instances[2].nodeID].join(", ");
 					}
