@@ -1,13 +1,16 @@
-// Test nombre de instancia
-b = CaosSampler.loadTrack("notestxx",copies:1);
-a = CaosSampler.loadTrack("Testttt",copies:3);
-//
-a.trackname;
-b.trackname;
-//
-a.play(true);
-a.out(1,23);
+s.boot;
+s.scope(2,50);
+//crea Instancia
+a = CaosSampler.loadTrack("notest",copies:1);
+b = CaosSampler.loadTrack("Testttt",copies:3);
+// Esperando para instancia
+CaosSampler.out(1,0);
 a.speed(0.4);
+//Class
+CaosSampler.play(false);
+CaosSampler.play(true);
+CaosSampler.instances;
+CaosSampler.ids[0];
 //
 b = CaosSampler;
 b.loadTrack;
