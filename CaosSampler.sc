@@ -101,7 +101,7 @@ CaosSampler {
 	register {|name, copies|
 
 		var infoinstances;
-		var synth = name.asSymbol;
+		var synth = name;
 
 		instances = Array.newClear(copies);
 
@@ -167,42 +167,42 @@ CaosSampler {
 
 
 	//depende del metodo .instance
-	*setToPlay {|number, params|
-
-		var instanceinform, values;
-
-		num = number;
-		//
-		if(num < 1 or: {num > 3} , {
-
-			this.inform("Use only numbers between '1 and 3' as first argument, to choose instance",0.015);
-
-			^"";
-
-			}, {
-
-				var inst = num-1;
-				var variables;
-
-				instanceinform = this.inform("Synth instance #" ++ num + "with node:" + instances[inst].nodeID + " affected",0.01);
-				//
-
-				//iguala los argumentos necesarios
-				values = params.copySeries(1,3,11);
-				variables = Array.newClear(6);//numero de argumentos
-
-				for(0,(params.size/2)-1, {|i|
-
-					variables[i] = values[i];//asignacion de valor de argumento
-
-				});
-
-				//
-				^instances[inst].set(\out,variables[0],\loop,variables[1],\rate,variables[2],\trigger,variables[3],\startPos,variables[4],\amp,variables[5]);
-
-		});
-
-	}
+	// *setToPlay {|number, params|
+	//
+	// 	var instanceinform, values;
+	//
+	// 	num = number;
+	// 	//
+	// 	if(num < 1 or: {num > 3} , {
+	//
+	// 		this.inform("Use only numbers between '1 and 3' as first argument, to choose instance",0.015);
+	//
+	// 		^"";
+	//
+	// 		}, {
+	//
+	// 			var inst = num-1;
+	// 			var variables;
+	//
+	// 			instanceinform = this.inform("Synth instance #" ++ num + "with node:" + instances[inst].nodeID + " affected",0.01);
+	// 			//
+	//
+	// 			//iguala los argumentos necesarios
+	// 			values = params.copySeries(1,3,11);
+	// 			variables = Array.newClear(6);//numero de argumentos
+	//
+	// 			for(0,(params.size/2)-1, {|i|
+	//
+	// 				variables[i] = values[i];//asignacion de valor de argumento
+	//
+	// 			});
+	//
+	// 			//
+	// 			^instances[inst].set(\out,variables[0],\loop,variables[1],\rate,variables[2],\trigger,variables[3],\startPos,variables[4],\amp,variables[5]);
+	//
+	// 	});
+	//
+	// }
 
 	*speed {|vel = 1|
 

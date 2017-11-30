@@ -1,8 +1,9 @@
 // Test nombre de instancia
-a = CaosSampler.loadTrack("nombretodo",copies:3);
-b = CaosSampler.loadTrack("nombretodo",copies:3);
+a = CaosSampler.loadTrack("Testttt",copies:3);
+b = CaosSampler.loadTrack("NoTest",copies:3);
 //
 a.trackname;
+b.trackname;
 //
 a.play(true);
 a.out(1,23);
