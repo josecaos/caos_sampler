@@ -1,16 +1,24 @@
 s.boot;
 s.scope(2,50);
 //crea Instancia
-a = CaosSampler.loadTrack("notest",copies:1);
-b = CaosSampler.loadTrack("Testttt",copies:3);
+a = CaosSampler.loadTrack("notesdfsdfgtx",copies:1);
+b = CaosSampler.loadTrack(fileName:"master.final/josecaos-12-xibalba-toh-master-48khz-24bits.wav",copies:3);
+c = CaosSampler.loadTrack("notesdfsdfgtx",copies:1);
+d = CaosSampler.loadTrack("zzdz",copies:2);
 // Esperando para instancia
+a.play;
 CaosSampler.out(1,0);
+CaosSampler.amp(1,0);
+CaosSampler.play(false);
 a.speed(0.4);
 //Class
-CaosSampler.play(false);
-CaosSampler.play(true);
-CaosSampler.instances;
-CaosSampler.ids[0];
+CaosSampler.playAll(false);
+CaosSampler.playAll(true);
+CaosSampler.ids;
+CaosSampler.all;
+CaosSampler.toggleReverse
+CaosSampler.loop(false);
+CaosSampler.stopAll;
 //
 b = CaosSampler;
 b.loadTrack;

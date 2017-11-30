@@ -3,10 +3,11 @@ CaosSampler {
 	classvar <server, <>coreurl,  <>audiourl,  <info;
 	classvar <run1, <run2, <run3;
 	classvar <num = 1, reverse = 0;
-	classvar <>tracks, <ids, <instances;
+	classvar <>tracks, <ids, <all;
 	//
-	var <>trackname;
+	var <>trackname, <instances;
 	var <bufread;
+	var play, <>loopTrack, <>ampTrack, <>outTrack;
 
 
 	*loadTrack {|name = "Default",fileName = "test-caos_sampler-115_bpm.wav",copies = 1, startFrame = 0|
@@ -33,10 +34,10 @@ CaosSampler {
 					1.do({
 						this.inform("Server boot ...  ",0.075,true);
 						1.5.yield;
-						this.load(trackname,fileName,copies,startFrame);
-						1.yield;
 						this.inform("CaosSampler instance created",0.015,true);
-						1.yield;
+						0.5.yield;
+						this.load(trackname,fileName,copies,startFrame);
+						2.5.yield;
 						this.register(name,copies);
 					});
 
@@ -45,10 +46,10 @@ CaosSampler {
 
 					fork {
 						1.do({
-							this.load(trackname,fileName,copies,startFrame);
-							1.yield;
 							this.inform(" .... CaosSampler instance created ",0.015,true);
-							1.yield;
+							0.5.yield;
+							this.load(trackname,fileName,copies,startFrame);
+							2.5.yield;
 							this.register(name,copies);
 						});
 					}
@@ -109,7 +110,7 @@ CaosSampler {
 	// registra el numero de copias simultaneas por track
 	register {|name, copies|
 
-		var infoinstances;
+		var infoinstances, allinstances;
 
 		instances = Array.newClear(copies);
 
@@ -120,10 +121,10 @@ CaosSampler {
 			}, {
 
 				switch(copies,
-
 					1,{
 						run1 = Synth.newPaused(name.asString.asSymbol,[\amp,1]);
 						instances = instances.put(0,run1);
+						allinstances = instances[0];
 						infoinstances = instances[0].nodeID;
 					},
 
@@ -132,7 +133,8 @@ CaosSampler {
 						instances = instances.put(0,run1);
 						run2 = Synth.newPaused(name.asString.asSymbol,[\amp,0]);
 						instances = instances.put(1,run2);
-						infoinstances = [instances[0].nodeID, instances[1].nodeID].join(", ");
+						allinstances = [instances[0], instances[1]];
+						infoinstances = [instances[0].nodeID, instances[1].nodeID];
 					},
 
 					3,{
@@ -142,7 +144,8 @@ CaosSampler {
 						instances = instances.put(1,run2);
 						run3 = Synth.newPaused(name.asString.asSymbol,[\amp,0]);
 						instances = instances.put(2,run3);
-						infoinstances = [instances[0].nodeID,instances[1].nodeID,instances[2].nodeID].join(", ");
+						allinstances = [instances[0],instances[1],instances[2]];
+						infoinstances = [instances[0].nodeID,instances[1].nodeID,instances[2].nodeID];
 					}
 
 				);
@@ -154,6 +157,7 @@ CaosSampler {
 					["Instance Nodes", infoinstances].join(": ")].join(" => ");
 
 				ids = ids.add(info);//agrega informacion a un array global para posterior identificacion
+				all = all.add(allinstances);
 
 				tracks = tracks.add(name);//agrega nombre a array
 
@@ -165,7 +169,7 @@ CaosSampler {
 		^"";
 	}
 
-	*speed {|vel = 1|
+	speed {|vel = 1|
 
 		var arr = instances.size;
 
@@ -189,6 +193,16 @@ CaosSampler {
 		^"";
 	}
 
+	*speedAll {|vel = 1|
+
+	all.collect({|item|
+			item.set(\rate,vel);
+		});
+
+		^this.inform("All instances changed speed rate to " ++ vel,0.01);
+
+	}
+
 	*toggleReverse {|rate = 1|
 
 		var res;
@@ -196,7 +210,7 @@ CaosSampler {
 		switch(reverse,
 			0,{
 				res = rate * -1;
-				instances.collect({|item|
+				ids.collect({|item|
 					item.set(\rate,res);
 				});
 				reverse = reverse + 1;
@@ -204,7 +218,7 @@ CaosSampler {
 			},
 			1,{
 				res = rate * 1;
-				instances.collect({|item|
+				ids.collect({|item|
 					item.set(\rate,res);
 				});
 				reverse = 0;//reset
@@ -215,7 +229,7 @@ CaosSampler {
 		^"";
 	}
 
-	*out {|instance = 1, chan = 50|
+	out {|instance = 1, chan = 50|
 
 		var arr = instances.size;
 
@@ -260,7 +274,7 @@ CaosSampler {
 
 	}
 
-	*amp {|instance = 1, amp = 1|
+	amp {|instance = 1, amp = 1|
 
 		var arr = instances.size;
 
@@ -307,7 +321,7 @@ CaosSampler {
 
 	}
 
-	*loop {|state = false|
+	loop {|state = false|
 
 		var arr = instances.size;
 		var toggle;
@@ -353,15 +367,13 @@ CaosSampler {
 		);
 
 		^"";
-
 	}
 
-	*play {|paused = true, args|
+	play {|paused = true, args|
 
 		switch(instances.size,
 
-			1,{Synth(\notest).run(paused)},
-			// 1,{instances[0].run(paused)},
+			1,{instances[0].run(paused)},
 
 			2,{[instances[0].run(paused),instances[1].run(paused)]},
 
@@ -380,6 +392,23 @@ CaosSampler {
 		});
 
 
+	}
+
+	*playAll {|paused = true, args|
+
+		all.collect({|item|
+			item.run(paused);
+		});
+
+		if(paused != true, {
+			// instances.run(paused);
+			^this.inform("All tracks paused",0.01);
+
+			}, {
+				// instances.run(paused);
+				^this.inform("All tracks running",0.01);
+
+		});
 	}
 
 	*stopAll {
