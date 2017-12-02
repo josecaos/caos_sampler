@@ -39,6 +39,10 @@ CaosSampler {
 						this.load(trackname,fileName,copies,startFrame);
 						2.5.yield;
 						this.register(name,copies);
+						2.yield;
+						this.out('all',0);
+						1.yield;
+						this.loop(false);
 					});
 
 				};
@@ -51,6 +55,10 @@ CaosSampler {
 							this.load(trackname,fileName,copies,startFrame);
 							2.5.yield;
 							this.register(name,copies);
+							2.yield;
+							this.out(1,0);
+							1.yield;
+							this.loop(false);
 						});
 					}
 
@@ -195,7 +203,7 @@ CaosSampler {
 
 	*speedAll {|vel = 1|
 
-	all.collect({|item|
+		all.collect({|item|
 			item.set(\rate,vel);
 		});
 
@@ -232,6 +240,8 @@ CaosSampler {
 	out {|instance = 1, chan = 50|
 
 		var arr = instances.size;
+
+		outTrack = chan;
 
 		if(instance == 'all', {
 
@@ -401,11 +411,9 @@ CaosSampler {
 		});
 
 		if(paused != true, {
-			// instances.run(paused);
 			^this.inform("All tracks paused",0.01);
 
 			}, {
-				// instances.run(paused);
 				^this.inform("All tracks running",0.01);
 
 		});
