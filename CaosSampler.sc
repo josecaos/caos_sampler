@@ -6,14 +6,14 @@ CaosSampler {
 	classvar <>tracks, <ids, <all;
 	//
 	var <>trackname, <instances;
+	var <>outTrack;
 	var <bufread;
-	var play, <>loopTrack, <>ampTrack, <>outTrack;
+	var play, <>loopTrack, <>ampTrack;
 
 
-	*loadTrack {|name = "Default",fileName = "test-caos_sampler-115_bpm.wav",copies = 1, startFrame = 0|
+	*new {|name = "Default",fileName = "test-caos_sampler-115_bpm.wav",copies = 1, startFrame = 0|
 
 		coreurl = this.filenameSymbol.asString.dirname;
-		(coreurl +/+ "core/inform.scd").load;
 
 		^super.new.init(name,fileName,copies,startFrame);
 
@@ -23,8 +23,17 @@ CaosSampler {
 
 		server = Server.local;
 
-		this.trackName(name);
-
+		// Evita sobre escritura del array de nombres
+		if(tracks.isNil, {
+			tracks = Array.new(20);
+			ids = Array.new(20);
+			^this.trackname_(name);
+			},{
+				tracks = tracks;
+				ids = ids;
+				^this.trackname_(name);
+		});
+		//
 		if( tracks.find([name]).isNil, {//con mismo nombre rechaza la creacion de la instancia
 
 			if(server.serverRunning != true ,{
@@ -36,32 +45,24 @@ CaosSampler {
 						1.5.yield;
 						this.inform("CaosSampler instance created",0.015,true);
 						0.5.yield;
-						this.load(trackname,fileName,copies,startFrame);
+						this.loadTrack(trackname,fileName,copies,startFrame);
 						2.5.yield;
 						this.register(name,copies);
 						2.yield;
-						this.out('all',0);
-						1.yield;
-						this.loop(false);
 					});
-
 				};
 				}, {
 
-					fork {
+					// fork {
 						1.do({
 							this.inform(" .... CaosSampler instance created ",0.015,true);
 							0.5.yield;
-							this.load(trackname,fileName,copies,startFrame);
+							this.loadTrack(trackname,fileName,copies,startFrame);
 							2.5.yield;
 							this.register(name,copies);
 							2.yield;
-							this.out(1,0);
-							1.yield;
-							this.loop(false);
 						});
-					}
-
+				// }
 			});
 
 			}, {
@@ -73,33 +74,22 @@ CaosSampler {
 		^"";
 	}
 
-	trackName {|name|
-		// evita sobre escritura del array
-		if(tracks.isNil, {
-			tracks = Array.new(20);
-			ids = Array.new(20);
-			^this.trackname_(name);
-			},{
-				tracks = tracks;
-				ids = ids;
-				^this.trackname_(name);
-		});
+	loadTrack {|name,fileName,copies,startFrame|
 
-	}
-
-	load {|name,fileName,copies,startFrame|
-
-		var informPositive = fork{1.wait;this.inform("The file " ++ fileName ++ " has been loaded" ,0.015) };
+		var informPositive = this.inform("The file " ++ fileName ++ " has been loaded" ,0.015);
+		var buf;
 
 		audiourl = coreurl +/+ "tracks/";
 
-		name = Buffer.read(server,audiourl ++ fileName, startFrame, -1, informPositive);
+		buf = Buffer.new;
 
-		^this.buildSynth(trackname,name.bufnum,copies);
+		buf.read(server,audiourl ++ fileName, startFrame, -1, informPositive);
+
+		^this.buildSynth(trackname,buf.bufnum,copies);
 
 	}
 
-	buildSynth {|synthName, bufnumb,copies|
+	buildSynth {|synthName, bufnumb, copies|
 		//sinte
 		SynthDef(synthName.asString.asSymbol,{|rate = 1, pan = 0, amp = 1, trigger = 0,
 			out = 50, startPos = 0, loop = 1, reset = 0|
@@ -173,7 +163,6 @@ CaosSampler {
 
 		});
 
-
 		^"";
 	}
 
@@ -237,7 +226,7 @@ CaosSampler {
 		^"";
 	}
 
-	out {|instance = 1, chan = 50|
+	out {|instance, chan|
 
 		var arr = instances.size;
 
@@ -247,17 +236,18 @@ CaosSampler {
 
 			switch(arr,
 				1,{
-					instances[0].set(\out,chan);
+					instances[0].set(\out,outTrack);
+					this.inform("AASDKJOIERTU: " ++ outTrack,0.01);
 				},
 				2,{
 					instances.collect({|item|
-						item.set(\out,chan);
+						item.set(\out,outTrack);
 					});
 				},
 				3,{
 					instances.collect({|item|
 						var a;
-						a = item.set(\out,chan);
+						a = item.set(\out,outTrack);
 					});
 				}
 
@@ -271,11 +261,11 @@ CaosSampler {
 					this.inform("Use only numbers between 1 to 3, or \all symbol, as first argument, to choose instance Output",0.015);
 					},{
 						switch(instance,
-							1,{instances[0].set(\out,chan);},
-							2,{instances[1].set(\out,chan);},
-							3,{instances[2].set(\out,chan);}
+							1,{instances[0].set(\out,outTrack);},
+							2,{instances[1].set(\out,outTrack);},
+							3,{instances[2].set(\out,outTrack);}
 						);
-						this.inform("Instance #" ++ instance ++ " changed output to " ++ chan,0.01);
+						this.inform("Instance #" ++ instance ++ " changed output to " ++ outTrack,0.01);
 					}
 				);
 		});
@@ -379,7 +369,7 @@ CaosSampler {
 		^"";
 	}
 
-	play {|paused = true, args|
+	play {|paused = true|
 
 		switch(instances.size,
 
@@ -428,7 +418,9 @@ CaosSampler {
 		^"";
 	}
 
+	//
 	//debug inform class and instance methods
+	//
 	inform {|print = "CaosSampler written by @joseCao5 \n", tempoTexto = 0.025, breakLine = true|
 
 		var txt = print.asArray;
