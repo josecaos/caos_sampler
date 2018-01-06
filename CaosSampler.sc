@@ -1,12 +1,12 @@
 CaosSampler {
 
-	classvar <server, <>coreurl,  <>audiourl,  <info;
-	classvar <run1, <run2, <run3;
-	classvar <num = 1, reverse = 0;
+	classvar <server, <coreurl, <audiourl, <info;
 	classvar <>tracks, <ids, <all;
+	// classvar <run1, <run2, <run3;
+	classvar num = 1, reverse = 0;
 	//
-	var <>trackname, <instances;
-	var <>outTrack;
+	var <>trackname, <instances, <>outTrack;
+	var <run1, <run2, <run3;
 	var <bufread;
 	var play, <>loopTrack, <>ampTrack;
 
@@ -22,16 +22,17 @@ CaosSampler {
 	init {|name,fileName,copies,startFrame|
 
 		server = Server.local;
+		audiourl = coreurl +/+ "tracks/";
 
 		// Evita sobre escritura del array de nombres
 		if(tracks.isNil, {
 			tracks = Array.new(20);
 			ids = Array.new(20);
-			^this.trackname_(name);
+			this.trackname_(name);
 			},{
 				tracks = tracks;
 				ids = ids;
-				^this.trackname_(name);
+				this.trackname_(name);
 		});
 		//
 		if( tracks.find([name]).isNil, {//con mismo nombre rechaza la creacion de la instancia
@@ -53,16 +54,16 @@ CaosSampler {
 				};
 				}, {
 
-					// fork {
+					fork {
 						1.do({
 							this.inform(" .... CaosSampler instance created ",0.015,true);
-							0.5.yield;
+							1.yield;
 							this.loadTrack(trackname,fileName,copies,startFrame);
 							2.5.yield;
 							this.register(name,copies);
 							2.yield;
 						});
-				// }
+					}
 			});
 
 			}, {
@@ -79,11 +80,7 @@ CaosSampler {
 		var informPositive = this.inform("The file " ++ fileName ++ " has been loaded" ,0.015);
 		var buf;
 
-		audiourl = coreurl +/+ "tracks/";
-
-		buf = Buffer.new;
-
-		buf.read(server,audiourl ++ fileName, startFrame, -1, informPositive);
+		buf = Buffer.read(server,audiourl ++ fileName, startFrame, -1, informPositive);
 
 		^this.buildSynth(trackname,buf.bufnum,copies);
 
@@ -91,8 +88,7 @@ CaosSampler {
 
 	buildSynth {|synthName, bufnumb, copies|
 		//sinte
-		SynthDef(synthName.asString.asSymbol,{|rate = 1, pan = 0, amp = 1, trigger = 0,
-			out = 50, startPos = 0, loop = 1, reset = 0|
+		SynthDef(synthName.asString.asSymbol,{|rate = 1, pan = 0, amp = 1, trigger = 0,out = 50, startPos = 0, loop = 1, reset = 0|
 
 			var sample;
 
@@ -148,7 +144,7 @@ CaosSampler {
 
 				);
 
-				this.inform("You chose " + copies + "track(s) to run simultaneously",0.01);
+				this.inform("You chose '" + copies + "' track(s) to run simultaneously",0.01);
 
 				////asocia nombre de sinte con instancias
 				info = [["Track name", name].join(": "),
@@ -159,7 +155,7 @@ CaosSampler {
 
 				tracks = tracks.add(name);//agrega nombre a array
 
-				fork{1.wait;this.inform("Track Name: " + name + "registered ",0.01)};
+				fork{1.wait;this.inform("Track Name: '" + name + "' registered ",0.01)};
 
 		});
 
