@@ -65,7 +65,6 @@ CaosSampler {
 						});
 					}
 			});
-
 			}, {
 
 				this.inform("Track name already exists and was not registered, try another one!",0.01);
@@ -416,6 +415,12 @@ CaosSampler {
 
 	//
 	//debug inform class and instance methods
+	*scope {|scope|
+				// osciloscopio
+			if(scope == true,{
+				server.scope(2,0);
+			});
+	}
 	//
 	inform {|print = "CaosSampler written by @joseCao5 \n", tempoTexto = 0.025, breakLine = true|
 
