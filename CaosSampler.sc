@@ -2,13 +2,12 @@ CaosSampler {
 
 	classvar <server, <coreurl, <audiourl, <info;
 	classvar <>tracks, <ids, <all;
-	// classvar <run1, <run2, <run3;
 	classvar num = 1, reverse = 0;
 	//
-	var <>trackname, <instances, <>outTrack;
+	var <>trackname, <>instances, <>outTrack;
 	var <run1, <run2, <run3;
 	var <bufread;
-	var play, <>loopTrack, <>ampTrack;
+	var <>loopTrack, <>ampTrack;
 
 
 	*new {|name = "Default",fileName = "test-caos_sampler-115_bpm.wav",copies = 1, startFrame = 0|
@@ -16,9 +15,19 @@ CaosSampler {
 		coreurl = this.filenameSymbol.asString.dirname;
 
 		^super.new.init(name,fileName,copies,startFrame);
+		// ^super.init(name,fileName,copies,startFrame);
 
 	}
 
+	*debug {
+		"soy  de clase".postcln;
+		^"";
+	}
+	debug {
+	var z =	2 + 2;
+	z;
+	}
+	//
 	init {|name,fileName,copies,startFrame|
 
 		server = Server.local;
@@ -105,7 +114,7 @@ CaosSampler {
 
 		var infoinstances, allinstances;
 
-		instances = Array.newClear(copies);
+		instances = [];
 
 		if( copies < 1 or: {copies > 3}, {
 
@@ -116,27 +125,27 @@ CaosSampler {
 				switch(copies,
 					1,{
 						run1 = Synth.newPaused(name.asString.asSymbol,[\amp,1]);
-						instances = instances.put(0,run1);
+						instances = instances.add(run1);
 						allinstances = instances[0];
 						infoinstances = instances[0].nodeID;
 					},
 
 					2,{
 						run1 = Synth.newPaused(name.asString.asSymbol,[\amp,1]);
-						instances = instances.put(0,run1);
+						instances = instances.add(run1);
 						run2 = Synth.newPaused(name.asString.asSymbol,[\amp,0]);
-						instances = instances.put(1,run2);
+						instances = instances.add(run2);
 						allinstances = [instances[0], instances[1]];
 						infoinstances = [instances[0].nodeID, instances[1].nodeID];
 					},
 
 					3,{
 						run1 = Synth.newPaused(name.asString.asSymbol,[\amp,1]);
-						instances = instances.put(0,run1);
+						instances = instances.add(run1);
 						run2 = Synth.newPaused(name.asString.asSymbol,[\amp,0]);
-						instances = instances.put(1,run2);
+						instances = instances.add(run2);
 						run3 = Synth.newPaused(name.asString.asSymbol,[\amp,0]);
-						instances = instances.put(2,run3);
+						instances = instances.add(run3);
 						allinstances = [instances[0],instances[1],instances[2]];
 						infoinstances = [instances[0].nodeID,instances[1].nodeID,instances[2].nodeID];
 					}
@@ -232,7 +241,7 @@ CaosSampler {
 			switch(arr,
 				1,{
 					instances[0].set(\out,outTrack);
-					this.inform("AASDKJOIERTU: " ++ outTrack,0.01);
+					this.inform("instanciassssss: " ++ outTrack,0.01);
 				},
 				2,{
 					instances.collect({|item|
@@ -310,7 +319,7 @@ CaosSampler {
 					}
 				);
 
-		});//endif
+		});
 
 		^"";
 
@@ -366,6 +375,8 @@ CaosSampler {
 
 	play {|paused = true|
 
+		("SDLKMCDK -> "+instances).postln;
+
 		switch(instances.size,
 
 			1,{instances[0].run(paused)},
@@ -415,11 +426,9 @@ CaosSampler {
 
 	//
 	//debug inform class and instance methods
-	*scope {|scope|
-				// osciloscopio
-			if(scope == true,{
+	*scope {
+
 				server.scope(2,0);
-			});
 	}
 	//
 	inform {|print = "CaosSampler written by @joseCao5 \n", tempoTexto = 0.025, breakLine = true|
