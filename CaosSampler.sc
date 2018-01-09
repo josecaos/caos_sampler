@@ -2,14 +2,10 @@ CaosSampler {
 
 	classvar <server, <coreurl, <audiourl, <info;
 	classvar <>tracks, <ids, <all;
-	classvar num = 1, reverse = 0;
+	classvar reverse = 0;
 	//
-	var <>trackname, <>instances, <>outTrack;
+	var <>trackname, <instances;
 	var <run1, <run2, <run3;
-	var <bufread;
-	var <>loopTrack, <>ampTrack;
-
-
 
 	*new {
 
@@ -18,16 +14,6 @@ CaosSampler {
 		^super.new;
 	}
 
-	// debug
-	*debug {
-		"soy  de clase".postcln;
-		^"";
-	}
-	debug {
-		var z =	2 + 2;
-		^z;
-		// ^this.inform
-	}
 	//
 	load {|name = "Default",fileName = "test-caos_sampler-115_bpm.wav",copies = 1, startFrame = 0|
 
@@ -190,43 +176,7 @@ CaosSampler {
 
 			}
 		);
-		this.inform("All instances changed speed rate to " ++ vel,0.01);
-
-		^"";
-	}
-
-	*speedAll {|vel = 1|
-
-		all.collect({|item|
-			item.set(\rate,vel);
-		});
-
-		^this.inform("All instances changed speed rate to " ++ vel,0.01);
-
-	}
-
-	*toggleReverse {|rate = 1|
-
-		var res;
-
-		switch(reverse,
-			0,{
-				res = rate * -1;
-				ids.collect({|item|
-					item.set(\rate,res);
-				});
-				reverse = reverse + 1;
-				this.inform("Track reversed: " ++ res ,0.001);
-			},
-			1,{
-				res = rate * 1;
-				ids.collect({|item|
-					item.set(\rate,res);
-				});
-				reverse = 0;//reset
-				this.inform("Track with normal rate: " ++ res ,0.001);
-			}
-		);
+		this.inform("All subtracks changed speed rate to " ++ vel,0.01);
 
 		^"";
 	}
@@ -235,42 +185,40 @@ CaosSampler {
 
 		var arr = instances.size;
 
-		outTrack = chan;
-
 		if(instance == 'all', {
 
 			switch(arr,
 				1,{
-					instances[0].set(\out,outTrack);
-					this.inform("instanciassssss: " ++ outTrack,0.01);
+					instances[0].set(\out,chan);
 				},
 				2,{
 					instances.collect({|item|
-						item.set(\out,outTrack);
+						item.set(\out,chan);
 					});
 				},
 				3,{
 					instances.collect({|item|
 						var a;
-						a = item.set(\out,outTrack);
+						a = item.set(\out,chan);
 					});
 				}
 
 			);
-			this.inform("All instances chaged output to channel: " ++ chan,0.01);
+
+			this.inform("All subtracks chaged output to channel: " ++ chan,0.01);
 
 			}, {
 
 				if(instance < 1 or: {instance > 3} , {
 
-					this.inform("Use only numbers between 1 to 3, or \all symbol, as first argument, to choose instance Output",0.015);
+					this.inform("Use only numbers between 1 to 3, or \all symbol, as first argument, to choose subtrack Output",0.015);
 					},{
 						switch(instance,
-							1,{instances[0].set(\out,outTrack);},
-							2,{instances[1].set(\out,outTrack);},
-							3,{instances[2].set(\out,outTrack);}
+							1,{instances[0].set(\out,chan);},
+							2,{instances[1].set(\out,chan);},
+							3,{instances[2].set(\out,chan);}
 						);
-						this.inform("Instance #" ++ instance ++ " changed output to " ++ outTrack,0.01);
+						this.inform("Subtrack #" ++ instance ++ " changed output to channel: " ++ chan,0.01);
 					}
 				);
 		});
@@ -307,16 +255,23 @@ CaosSampler {
 
 				if(instance < 1 or: {instance > 3}, {
 
-					this.inform("Use only numbers between 1 to 3, or \all symbol, as first argument, to choose instance Output",0.015);
+					this.inform("Use only numbers between 1 to 3, or \all symbol, as first argument, to choose subtrack Output",0.015);
 					},{
 
-						switch(instance,
-							1,{instances[0].set(\amp,amp);},
-							2,{instances[1].set(\amp,amp);},
-							3,{instances[2].set(\amp,amp);}
-						);
+						if(amp > 1 or: { amp < 0}, {
 
-						this.inform("Instance #" ++ instance ++ " changed amplitude to " ++ amp,0.015);
+							switch(instance,
+								1,{instances[0].set(\amp,amp);},
+								2,{instances[1].set(\amp,amp);},
+								3,{instances[2].set(\amp,amp);}
+							);
+
+							this.inform("Subtrack #" ++ instance ++ " changed amplitude to: " ++ amp,0.015);
+							}, {
+
+								this.inform("For safety, only linear values between '0' and '1' admited for amplitud",0.015);
+
+						}):
 					}
 				);
 
@@ -347,11 +302,10 @@ CaosSampler {
 
 					}, {
 
-						this.inform("Use only ' true ' or ' false ' to toggle on / off \n", 0.015);
+						this.inform("Use only ' true ' or ' false ' to toggle on / off", 0.015);
 				});
 
 		});
-
 
 		switch(arr,
 			1,{
@@ -368,35 +322,32 @@ CaosSampler {
 					a = item.set(\loop,toggle);
 				});
 			}
-
 		);
 
 		^"";
 	}
 
-	playTrack {|paused = true|
+	play {|paused = true|
 
-		^("SDLKMCDK -> "+instances).postln;
+		switch(instances.size,
 
-		// switch(instances.size,
-		//
-		// 	1,{instances[0].run(paused)},
-		//
-		// 	2,{[instances[0].run(paused),instances[1].run(paused)]},
-		//
-		// 	3,{[instances[0].run(paused),instances[1].run(paused),instances[2].run(paused)]}
-		//
-		// );
-		//
-		// if(paused != true, {
-		//
-		// 	^this.inform("Track paused",0.01);
-		//
-		// 	}, {
-		//
-		// 		^this.inform("Track running",0.01);
-		//
-		// });
+			1,{instances[0].run(paused)},
+
+			2,{[instances[0].run(paused),instances[1].run(paused)]},
+
+			3,{[instances[0].run(paused),instances[1].run(paused),instances[2].run(paused)]}
+
+		);
+
+		if(paused != true, {
+
+			^this.inform("Track paused",0.01);
+
+			}, {
+
+				^this.inform("Track running",0.01);
+
+		});
 
 	}
 
@@ -419,16 +370,51 @@ CaosSampler {
 
 		thisProcess.stop;
 
-		this.inform("All Instances stopped ", 0.01);
+		this.inform("Everything stopped ", 0.01);
 
 		^"";
 	}
 
-	//
-	//debug inform class and instance methods
-	*scope {
+	*speedAll {|vel = 1|
 
-		server.scope(2,0);
+		all.collect({|item|
+			item.set(\rate,vel);
+		});
+
+		^this.inform("All tracks changed speed rate to " ++ vel,0.01);
+
+	}
+
+	*toggleReverse {|rate = 1|
+
+		var res;
+
+		switch(reverse,
+			0,{
+				res = rate * -1;
+				ids.collect({|item|
+					item.set(\rate,res);
+				});
+				reverse = reverse + 1;
+				this.inform("Tracks reversed: " ++ res ,0.001);
+			},
+			1,{
+				res = rate * 1;
+				ids.collect({|item|
+					item.set(\rate,res);
+				});
+				reverse = 0;//reset
+				this.inform("Tracks with normal rate: " ++ res ,0.001);
+			}
+		);
+
+		^"";
+	}
+	//
+	*scope {|numChannels = 2, fromBus = 0|
+
+		server.scope(numChannels,fromBus);
+
 	}
 	//
 	inform {|print = "CaosSampler written by @joseCao5 \n", tempoTexto = 0.025, breakLine = true|
