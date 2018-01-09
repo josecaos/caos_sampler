@@ -10,25 +10,26 @@ CaosSampler {
 	var <>loopTrack, <>ampTrack;
 
 
-	*new {|name = "Default",fileName = "test-caos_sampler-115_bpm.wav",copies = 1, startFrame = 0|
+
+	*new {
 
 		coreurl = this.filenameSymbol.asString.dirname;
 
-		^super.new.init(name,fileName,copies,startFrame);
-		// ^super.init(name,fileName,copies,startFrame);
-
+		^super.new;
 	}
 
+	// debug
 	*debug {
 		"soy  de clase".postcln;
 		^"";
 	}
 	debug {
-	var z =	2 + 2;
-	z;
+		var z =	2 + 2;
+		^z;
+		// ^this.inform
 	}
 	//
-	init {|name,fileName,copies,startFrame|
+	load {|name = "Default",fileName = "test-caos_sampler-115_bpm.wav",copies = 1, startFrame = 0|
 
 		server = Server.local;
 		audiourl = coreurl +/+ "tracks/";
@@ -373,30 +374,29 @@ CaosSampler {
 		^"";
 	}
 
-	play {|paused = true|
+	playTrack {|paused = true|
 
-		("SDLKMCDK -> "+instances).postln;
+		^("SDLKMCDK -> "+instances).postln;
 
-		switch(instances.size,
-
-			1,{instances[0].run(paused)},
-
-			2,{[instances[0].run(paused),instances[1].run(paused)]},
-
-			3,{[instances[0].run(paused),instances[1].run(paused),instances[2].run(paused)]}
-
-		);
-
-		if(paused != true, {
-
-			^this.inform("Track paused",0.01);
-
-			}, {
-
-				^this.inform("Track running",0.01);
-
-		});
-
+		// switch(instances.size,
+		//
+		// 	1,{instances[0].run(paused)},
+		//
+		// 	2,{[instances[0].run(paused),instances[1].run(paused)]},
+		//
+		// 	3,{[instances[0].run(paused),instances[1].run(paused),instances[2].run(paused)]}
+		//
+		// );
+		//
+		// if(paused != true, {
+		//
+		// 	^this.inform("Track paused",0.01);
+		//
+		// 	}, {
+		//
+		// 		^this.inform("Track running",0.01);
+		//
+		// });
 
 	}
 
@@ -428,7 +428,7 @@ CaosSampler {
 	//debug inform class and instance methods
 	*scope {
 
-				server.scope(2,0);
+		server.scope(2,0);
 	}
 	//
 	inform {|print = "CaosSampler written by @joseCao5 \n", tempoTexto = 0.025, breakLine = true|

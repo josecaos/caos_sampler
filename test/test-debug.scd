@@ -1,23 +1,23 @@
 // Instancia
-x = CaosSampler.new("Test",copies:1);
 z = CaosSampler;
+x = CaosSampler.new("Test",copies:1);
 y = CaosSampler.new("Test2x",copies:3);
-x.play;
-x.out(1,20);
-x.out_(20);
-x.server.scope(2,0);
 // debug
-x.debug;
 z.debug;
+x.debugxxx;
 CaosSampler.debug;
 z.playAll;
+//instancia
+x.playTrack;
+x.out(1,20);
+x.out_(20);
 // Clase
-CaosSampler.init
-CaosSampler.scope;
-CaosSampler.tracks;
-CaosSampler.ids;
-CaosSampler.all;
-CaosSampler.playAll;
+z.init
+z.scope;
+z.tracks;
+z.ids;
+z.all;
+z.playAll;
 
 
 
