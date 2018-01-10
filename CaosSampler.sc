@@ -271,10 +271,8 @@ CaosSampler {
 
 								this.inform("For safety, only linear values between '0' and '1' admited for amplitud",0.015);
 
-						}):
-					}
-				);
-
+						});
+				});
 		});
 
 		^"";

@@ -11,8 +11,11 @@ y.play;
 y.out(1,20);
 y.out(2,22);
 y.out(3,24);
+y.amp(1,1);
+y.amp(2,0.5);
+y.amp(3,0.25);
 // Clase
-z.scope(2,20);
+z.scope(6,20);
 z.tracks;
 z.ids;
 z.all;
