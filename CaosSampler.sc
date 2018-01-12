@@ -256,9 +256,10 @@ CaosSampler {
 				if(instance < 1 or: {instance > 3}, {
 
 					this.inform("Use only numbers between 1 to 3, or \all symbol, as first argument, to choose subtrack Output",0.015);
+
 					},{
 
-						if(amp > 1 or: { amp < 0}, {
+						if(amp > 0 or: { amp <1}, {
 
 							switch(instance,
 								1,{instances[0].set(\amp,amp);},
@@ -272,6 +273,7 @@ CaosSampler {
 								this.inform("For safety, only linear values between '0' and '1' admited for amplitud",0.015);
 
 						});
+
 				});
 		});
 
