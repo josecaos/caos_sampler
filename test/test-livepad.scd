@@ -15,8 +15,8 @@ b.load("impt","IMPT-josecaos-master/josecaos-1500(edit)-master-48khz-24bits-jose
 c.load("impt","master.final/josecaos-02-xibalba-wdyjdi3-master-48khz-24bits.wav",2);
 
 a.play;
-a.out(2,64);
-a.amp(2,0.65);
+a.out(1,0);
+a.amp(2,0.6);
 a.toggleReverse;
 b.play;
 b.out(1,0);

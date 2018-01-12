@@ -411,14 +411,14 @@ CaosSampler {
 		^"";
 	}
 
-	/**toggleReverse {|rate = 1|
+	*toggleReverse {|rate = 1|
 
 		var res;
 
 		switch(reverse,
 			0,{
 				res = rate * -1;
-				all.collect({|item|
+				all.deepCollect(2,{|item|
 					item.set(\rate,res);
 				});
 				reverse = reverse + 1;
@@ -426,7 +426,7 @@ CaosSampler {
 			},
 			1,{
 				res = rate * 1;
-				all.collect({|item|
+				all.deepCollect(2,{|item|
 					item.set(\rate,res);
 				});
 				reverse = 0;//reset
@@ -435,8 +435,8 @@ CaosSampler {
 		);
 
 		^"";
-	}*/
-	//
+	}	//
+
 	*scope {|numChannels = 2, fromBus = 0|
 
 		server.scope(numChannels,fromBus);
