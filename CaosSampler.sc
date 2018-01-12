@@ -4,7 +4,7 @@ CaosSampler {
 	classvar <>tracks, <ids, <all;
 	classvar reverse = 0;
 	//
-	var <>trackname, <instances;
+	var <>trackname, <>instances;
 	var <run1, <run2, <run3;
 
 	*new {
@@ -385,14 +385,14 @@ CaosSampler {
 
 	}
 
-	*toggleReverse {|rate = 1|
+	toggleReverse {|rate = 1|
 
 		var res;
 
 		switch(reverse,
 			0,{
 				res = rate * -1;
-				ids.collect({|item|
+				instances.collect({|item|
 					item.set(\rate,res);
 				});
 				reverse = reverse + 1;
@@ -400,7 +400,7 @@ CaosSampler {
 			},
 			1,{
 				res = rate * 1;
-				ids.collect({|item|
+				instances.collect({|item|
 					item.set(\rate,res);
 				});
 				reverse = 0;//reset
@@ -410,6 +410,32 @@ CaosSampler {
 
 		^"";
 	}
+
+	/**toggleReverse {|rate = 1|
+
+		var res;
+
+		switch(reverse,
+			0,{
+				res = rate * -1;
+				all.collect({|item|
+					item.set(\rate,res);
+				});
+				reverse = reverse + 1;
+				this.inform("Tracks reversed: " ++ res ,0.001);
+			},
+			1,{
+				res = rate * 1;
+				all.collect({|item|
+					item.set(\rate,res);
+				});
+				reverse = 0;//reset
+				this.inform("Tracks with normal rate: " ++ res ,0.001);
+			}
+		);
+
+		^"";
+	}*/
 	//
 	*scope {|numChannels = 2, fromBus = 0|
 
@@ -417,7 +443,7 @@ CaosSampler {
 
 	}
 	//
-	inform {|print = "CaosSampler written by @joseCao5 \n", tempoTexto = 0.025, breakLine = true|
+	inform {|print = "CaosSampler written by @joseCao5 ", tempoTexto = 0.025, breakLine = true|
 
 		var txt = print.asArray;
 		var texto = txt.size;
@@ -439,7 +465,7 @@ CaosSampler {
 		}
 	}
 
-	*inform {|print = "CaosSampler written by @joseCao5 \n", tempoTexto = 0.025, breakLine = true|
+	*inform {|print = "CaosSampler written by @joseCao5 ", tempoTexto = 0.025, breakLine = true|
 
 		var txt = print.asArray;
 		var texto = txt.size;
