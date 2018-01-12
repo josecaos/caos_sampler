@@ -157,30 +157,6 @@ CaosSampler {
 		^"";
 	}
 
-	speed {|vel = 1|
-
-		var arr = instances.size;
-
-		switch(arr,
-			1,{
-				instances[0].set(\rate,vel);
-			},
-			2,{
-				instances[0].set(\rate,vel);
-				instances[1].set(\rate,vel);
-			},
-			3,{
-				instances[0].set(\rate,vel);
-				instances[1].set(\rate,vel);
-				instances[2].set(\rate,vel);
-
-			}
-		);
-		this.inform("All subtracks changed speed rate to " ++ vel,0.01);
-
-		^"";
-	}
-
 	out {|instance, chan|
 
 		var arr = instances.size;
@@ -353,7 +329,7 @@ CaosSampler {
 
 	*playAll {|paused = true, args|
 
-		all.collect({|item|
+		all.deepCollect(2,{|item|
 			item.run(paused);
 		});
 
@@ -375,9 +351,33 @@ CaosSampler {
 		^"";
 	}
 
+	speed {|vel = 1|
+
+		var arr = instances.size;
+
+		switch(arr,
+			1,{
+				instances[0].set(\rate,vel);
+			},
+			2,{
+				instances[0].set(\rate,vel);
+				instances[1].set(\rate,vel);
+			},
+			3,{
+				instances[0].set(\rate,vel);
+				instances[1].set(\rate,vel);
+				instances[2].set(\rate,vel);
+
+			}
+		);
+		this.inform("All subtracks changed speed rate to " ++ vel,0.01);
+
+		^"";
+	}
+
 	*speedAll {|vel = 1|
 
-		all.collect({|item|
+		all.deepCollect(2,{|item|
 			item.set(\rate,vel);
 		});
 

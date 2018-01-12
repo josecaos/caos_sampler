@@ -16,31 +16,26 @@ c.load("impt","master.final/josecaos-02-xibalba-wdyjdi3-master-48khz-24bits.wav"
 
 a.play;
 a.out(1,0);
-a.amp(2,0.6);
+a.amp(2,0.5);
 a.toggleReverse;
 b.play;
 b.out(1,0);
 b.amp('all',0.3);
 b.toggleReverse;
 c.play;
-c.out(2,64);
+c.out(1,0);
 c.amp(2,0.95);
 c.speed(~t=1.02);
-c.loop(false);
+c.loop(true);
 c.toggleReverse(~t);
+
+// class methods
 ~c.scope(2,0);
 ~c.toggleReverse;
 ~c.ids;
 ~c.all;
 
-b.out(2,64);
-b.amp(2,1.001);
-b.out(2,54);
-b.amp(2,0.45);
-b.out(3,56);
 
-~c.toggleReverse
-c.loop(false);
 // seqs
 (
 Tdef(\test,{
