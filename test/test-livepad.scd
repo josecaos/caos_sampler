@@ -9,10 +9,10 @@ a = CaosSampler.new;
 b = CaosSampler.new;
 c = CaosSampler.new;
 
-
-a.load("NRfw15","master.final/josecaos-11-xibalba-p4nda-master-48khz-24bits.wav",2);
-b.load("impt","IMPT-josecaos-master/josecaos-1500(edit)-master-48khz-24bits-josecaos.xyz.wav",2);
-c.load("impt","master.final/josecaos-02-xibalba-wdyjdi3-master-48khz-24bits.wav",2);
+CaosSampler.scope
+a.load("p4nda","master.final/josecaos-11-xibalba-p4nda-master-48khz-24bits.wav",2);
+b.load("1500","IMPT-josecaos-master/josecaos-1500(edit)-master-48khz-24bits-josecaos.xyz.wav",2);
+c.load("di3","master.final/josecaos-02-xibalba-wdyjdi3-master-48khz-24bits.wav",2);
 
 a.play;
 a.out(1,0);
@@ -35,18 +35,19 @@ c.toggleReverse(~t);
 ~c.ids;
 ~c.all;
 
-
+c.amp('all',0.9);
 // seqs
 (
 Tdef(\test,{
-	var t = Pwrand([1,0.5,0.25]+0.5,[0.2,0.3,0.5],inf).asStream;
-	var n = Pwrand([0.25,0.5,1,1.25,1.5,1.75,2]*2,[0.2,0.2,0.3,0.1,0.2,0.1],inf).asStream;
+	var t = Pwrand([1,0.5,0.25],[0.2,0.3,0.5],inf).asStream;
+	// var n = Pwrand([0.25,0.5,1,1.25,1.5,1.75,2]*2,[0.2,0.2,0.3,0.1,0.2,0.1],inf).asStream;
+	var n = Pxrand([0.25,0.5,1.25,1.5,1.75,2],inf).asStream;
 	loop{
-		c.toggleReverse;
-		c.speed(~t = n.next);
+		a.toggleReverse(~t = n.next*2);
+		a.speed(~t = n.next);
 	t.next.wait
 	}
-});
+}).quant_(1);
 )
 Tdef('test').play;
 Tdef('test').stop;
