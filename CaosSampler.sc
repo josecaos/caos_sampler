@@ -45,7 +45,9 @@ CaosSampler {
 						this.loadTrack(trackname,fileName,copies,startFrame);
 						2.5.yield;
 						this.register(name,copies);
-						2.yield;
+						1.yield;
+						this.loop(false);
+						1.yield;
 					});
 				};
 				}, {
@@ -57,7 +59,9 @@ CaosSampler {
 							this.loadTrack(trackname,fileName,copies,startFrame);
 							2.5.yield;
 							this.register(name,copies);
-							2.yield;
+							1.yield;
+							this.loop(false);
+							1.yield;
 						});
 					}
 			});
@@ -299,6 +303,38 @@ CaosSampler {
 				});
 			}
 		);
+
+		^"";
+	}
+
+	*loopAll {|state = false|
+/*
+		var toggle;
+
+		if(state == false, {
+
+			toggle = 0;
+
+			this.inform("All track's Loop is Off \n", 0.015);
+
+			}, {
+
+				if(state == true , {
+
+					toggle = 1;
+
+					this.inform("All track's Loop is On ", 0.015);
+
+					}, {
+
+						this.inform("Use only ' true ' or ' false ' to toggle on / off", 0.015);
+				});
+
+		});
+
+		all.deepCollect(2,{|item|
+			item.set(\loop,toggle);
+		});*/
 
 		^"";
 	}

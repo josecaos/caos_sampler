@@ -3,49 +3,65 @@
 ~x = CaosBox;
 ~x.enviroment;
 ~x.play;
+~x.bpm(190);
+~x.freqAnalyzer(true);
 //
-~t = 1;
+~t = 0.1;
 a = CaosSampler.new;
 b = CaosSampler.new;
 c = CaosSampler.new;
-
-CaosSampler.scope
-a.load("p4nda","master.final/josecaos-11-xibalba-p4nda-master-48khz-24bits.wav",2);
-b.load("1500","IMPT-josecaos-master/josecaos-1500(edit)-master-48khz-24bits-josecaos.xyz.wav",2);
+d = CaosSampler.new;
+//
+a.load("NR15","master.final/josecaos-x4x1e1e-NR15-mezcla.aiff",2);
+b.load("p43wnda","master.final/josecaos-11-xibalba-p4nda-master-48khz-24bits.wav",2);
 c.load("di3","master.final/josecaos-02-xibalba-wdyjdi3-master-48khz-24bits.wav",2);
+d.load("15080","IMPT-josecaos-master/josecaos-1500(edit)-master-48khz-24bits-josecaos.xyz.wav",2);
 
-a.play;
+a.play(false);
 a.out(1,0);
 a.amp(2,0.5);
 a.toggleReverse;
-b.play;
+a.loop(true);
+b.play(true);
 b.out(1,0);
-b.amp('all',0.3);
-b.toggleReverse;
+b.out(,64);
+b.amp(1,0.85);
+b.loop(false);
+b.toggleReverse(~t=[0.25,0.5,0.75,1].choose);
+b.toggleReverse(~t=1.05);
 c.play;
 c.out(1,0);
-c.amp(2,0.95);
+c.amp(1,1);
 c.speed(~t=1.02);
-c.loop(true);
-c.toggleReverse(~t);
+c.loop(false);
+c.toggleReverse(~t=1);
+d.play(true);
+d.out(1,0)
+d.loop(false);
+d.toggleReverse(~t=0.25);
+d.toggleReverse(~t=1.12);
 
 // class methods
 ~c.scope(2,0);
 ~c.toggleReverse;
 ~c.ids;
 ~c.all;
+~c.loopAll;
 
 c.amp('all',0.9);
 // seqs
 (
 Tdef(\test,{
 	var t = Pwrand([1,0.5,0.25],[0.2,0.3,0.5],inf).asStream;
-	// var n = Pwrand([0.25,0.5,1,1.25,1.5,1.75,2]*2,[0.2,0.2,0.3,0.1,0.2,0.1],inf).asStream;
-	var n = Pxrand([0.25,0.5,1.25,1.5,1.75,2],inf).asStream;
+	var n = Pwrand([0.25,0.5,1,1.25,1.5,1.75,2]*2,[0.2,0.2,0.3,0.1,0.2,0.1],inf).asStream;
+	// var n = Pxrand([0.25,0.5,1.25,1.5,1.75,2],inf).asStream;
+	var x=[0.25,0.5,0.75,1]*2;
 	loop{
-		a.toggleReverse(~t = n.next*2);
-		a.speed(~t = n.next);
-	t.next.wait
+		// d.toggleReverse(x.choose);
+		d.toggleReverse(~t = n.next*2);
+		d.speed(~t = n.next);
+		// t.next.wait
+	0.25.wait
 	}
 }).quant_(1);
 )
