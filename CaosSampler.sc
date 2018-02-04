@@ -4,7 +4,7 @@ CaosSampler {
 	classvar <>tracks, <ids, <all;
 	classvar reverse = 0;
 	//
-	var <>trackname, <>instances;
+	var <>trackname, <>instances, <>buffer;
 	var <run1, <run2, <run3;
 
 	*new {
@@ -45,7 +45,7 @@ CaosSampler {
 						this.loadTrack(trackname,fileName,copies,startFrame);
 						2.5.yield;
 						this.register(name,copies);
-						1.yield;
+						2.yield;
 						this.loop(false);
 						1.yield;
 					});
@@ -59,7 +59,7 @@ CaosSampler {
 							this.loadTrack(trackname,fileName,copies,startFrame);
 							2.5.yield;
 							this.register(name,copies);
-							1.yield;
+							2.yield;
 							this.loop(false);
 							1.yield;
 						});
@@ -81,7 +81,9 @@ CaosSampler {
 
 		buf = Buffer.read(server,audiourl ++ fileName, startFrame, -1, informPositive);
 
-		^this.buildSynth(trackname,buf.bufnum,copies);
+		this.buffer_(buf.bufnum);
+
+		^this.buildSynth(trackname,buffer,copies);
 
 	}
 
@@ -159,6 +161,15 @@ CaosSampler {
 		});
 
 		^"";
+	}
+
+	grain {
+		var trate, dur, rate;
+		trate = MouseY.kr(2,200,1);
+		dur = 4 / trate;
+		rate = Dseq([10, 1, 1, 0.5, 0.5, 0.2, 0.1], inf);
+		TGrains.ar(2, Impulse.ar(trate), buffer, rate, MouseX.kr(0,BufDur.kr(buffer)), dur, Dseq([-1, 1], inf), 0.1, 2);
+		^"Granulando" + buffer ;
 	}
 
 	out {|instance, chan|
@@ -308,32 +319,32 @@ CaosSampler {
 	}
 
 	*loopAll {|state = false|
-/*
+		/*
 		var toggle;
 
 		if(state == false, {
 
-			toggle = 0;
+		toggle = 0;
 
-			this.inform("All track's Loop is Off \n", 0.015);
+		this.inform("All track's Loop is Off \n", 0.015);
 
-			}, {
+		}, {
 
-				if(state == true , {
+		if(state == true , {
 
-					toggle = 1;
+		toggle = 1;
 
-					this.inform("All track's Loop is On ", 0.015);
+		this.inform("All track's Loop is On ", 0.015);
 
-					}, {
+		}, {
 
-						this.inform("Use only ' true ' or ' false ' to toggle on / off", 0.015);
-				});
+		this.inform("Use only ' true ' or ' false ' to toggle on / off", 0.015);
+		});
 
 		});
 
 		all.deepCollect(2,{|item|
-			item.set(\loop,toggle);
+		item.set(\loop,toggle);
 		});*/
 
 		^"";
