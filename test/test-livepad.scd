@@ -3,7 +3,7 @@
 ~x = CaosBox;
 ~x.enviroment;
 ~x.play;
-~x.bpm(190);
+~x.bpm(135);
 ~x.freqAnalyzer(true);
 //
 ~t = 0.1;
@@ -13,20 +13,21 @@ c = CaosSampler.new;
 d = CaosSampler.new;
 //
 a.load("NR15","master.final/josecaos-x4x1e1e-NR15-mezcla.aiff",2);
-b.load("p43wnda","master.final/josecaos-11-xibalba-p4nda-master-48khz-24bits.wav",2);
+b.load("p4443wnda","master.final/josecaos-11-xibalba-p4nda-master-48khz-24bits.wav",2);
 c.load("di3","master.final/josecaos-02-xibalba-wdyjdi3-master-48khz-24bits.wav",2);
-d.load("15080","IMPT-josecaos-master/josecaos-1500(edit)-master-48khz-24bits-josecaos.xyz.wav",2);
+d.load("155080","IMPT-josecaos-master/josecaos-1500(edit)-master-48khz-24bits-josecaos.xyz.wav",2);
 
-a.play(false);
-a.out(1,0);
+a.play(true);
+a.out(1,64);
 a.amp(2,0.5);
+a.amp(1,0.75);
 a.toggleReverse;
-a.loop(true);
+a.loop(false);
 b.play(true);
 b.out(1,0);
 b.out(,64);
 b.amp(1,0.85);
-b.loop(false);
+b.loop(true);
 b.toggleReverse(~t=[0.25,0.5,0.75,1].choose);
 b.toggleReverse(~t=1.05);
 c.play;
@@ -58,8 +59,8 @@ Tdef(\test,{
 	var x=[0.25,0.5,0.75,1]*2;
 	loop{
 		// d.toggleReverse(x.choose);
-		d.toggleReverse(~t = n.next*2);
-		d.speed(~t = n.next);
+		b.toggleReverse(~t = n.next*2);
+		b.speed(~t = n.next);
 		// t.next.wait
 	0.25.wait
 	}
@@ -82,3 +83,5 @@ Tdef('test').stop;
 // "master.final/josecaos-01-xibalba-bilocacion-master-48khz-24bits.wav"
 //
 //
+s.boot;
+play{PinkNoise.ar(0.5)!2}

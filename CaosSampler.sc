@@ -165,11 +165,14 @@ CaosSampler {
 
 	grain {
 		var trate, dur, rate;
-		trate = MouseY.kr(2,200,1);
+
+		trate = 16;
 		dur = 4 / trate;
-		rate = Dseq([10, 1, 1, 0.5, 0.5, 0.2, 0.1], inf);
-		TGrains.ar(2, Impulse.ar(trate), buffer, rate, MouseX.kr(0,BufDur.kr(buffer)), dur, Dseq([-1, 1], inf), 0.1, 2);
-		^"Granulando" + buffer ;
+		rate = 4;
+
+		TGrains.ar(2, Impulse.ar(trate), buffer, rate, BufDur.kr(buffer), dur, 1, 0.75, 2);
+
+		^"Granulando buffer número" + buffer ;
 	}
 
 	out {|instance, chan|
