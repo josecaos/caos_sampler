@@ -67,7 +67,7 @@ CaosSampler {
 			});
 			}, {
 
-				this.inform("Track name already exists and was not registered, try another one!",0.01);
+				this.inform("Track name already exists and was not registered, try another one!",0.1);
 
 		});
 		//
@@ -493,7 +493,7 @@ CaosSampler {
 
 	}
 	//
-	inform {|print = "CaosSampler written by @joseCao5 ", tempoText = 0.025, breakLine = true|
+	inform {|print = "CaosSampler written by @Ill_Slide ", tempoText = 0.025, breakLine = true|
 
 		var txt = print.asArray;
 		var texto = txt.size;
@@ -515,7 +515,7 @@ CaosSampler {
 		}
 	}
 
-	*inform {|print = "CaosSampler written by @joseCao5 ", tempoText = 0.025, breakLine = true|
+	*inform {|print = "CaosSampler written by @Ill_Slide ", tempoText = 0.025, breakLine = true|
 
 		this.inform(print,tempoText,breakLine);
 	}
