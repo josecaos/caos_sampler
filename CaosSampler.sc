@@ -6,6 +6,7 @@ CaosSampler {
 	//
 	var <>trackname, <>instances, <>buffer;
 	var <run1, <run2, <run3;
+	var <>masterOut = 0;
 
 	*new {
 
@@ -20,15 +21,22 @@ CaosSampler {
 		server = Server.local;
 		audiourl = coreurl +/+ "tracks/";
 
-		// Evita sobre escritura del array de nombres
+		// Evita sobre escritura del array  'nombres de tracks'
 		if(tracks.isNil, {
 			tracks = Array.new(20);
 			ids = Array.new(20);
 			this.trackname_(name);
-			},{
-				tracks = tracks;
-				ids = ids;
-				this.trackname_(name);
+		},{
+			tracks = tracks;
+			ids = ids;
+			this.trackname_(name);
+		});
+		//
+		// Checa si CaosBox esta corriendo y rutea a su master, si no, sale por canal 0
+		if(~cbox_url.notNil,{
+			masterOut = 50;//salida hacia CaosBox
+		},{
+			masterOut = 0;//salida default
 		});
 		//
 		if( tracks.find([name]).isNil, {//con mismo nombre rechaza la creacion de la instancia
@@ -50,24 +58,24 @@ CaosSampler {
 						1.yield;
 					});
 				};
-				}, {
-
-					fork {
-						1.do({
-							this.inform(" .... CaosSampler instance created ",0.015,true);
-							1.yield;
-							this.loadTrack(trackname,fileName,copies,startFrame);
-							2.5.yield;
-							this.register(name,copies);
-							2.yield;
-							this.loop(false);
-							1.yield;
-						});
-					}
-			});
 			}, {
 
-				this.inform("Track name already exists and was not registered, try another one!",0.1);
+				fork {
+					1.do({
+						this.inform(" .... CaosSampler instance created ",0.015,true);
+						1.yield;
+						this.loadTrack(trackname,fileName,copies,startFrame);
+						2.5.yield;
+						this.register(name,copies);
+						2.yield;
+						this.loop(false);
+						1.yield;
+					});
+				}
+			});
+		}, {
+
+			this.inform("Track name already exists and was not registered, try another one!",0.1);
 
 		});
 		//
@@ -89,9 +97,11 @@ CaosSampler {
 
 	buildSynth {|synthName, bufnumb, copies|
 		//sinte
-		SynthDef(synthName.asString.asSymbol,{|rate = 1, pan = 0, amp = 1, trigger = 0,out = 50, startPos = 0, loop = 1, reset = 0|
+		SynthDef(synthName.asString.asSymbol,{|rate = 1, pan = 0, amp = 1, trigger = 0,out, startPos = 0, loop = 1, reset = 0|
 
 			var sample;
+
+			out = masterOut;
 
 			sample = PlayBuf.ar(2,bufnumb,rate,trigger,startPos,loop,reset);
 			Out.ar(out,Pan2.ar(sample,pan,amp));
@@ -113,50 +123,50 @@ CaosSampler {
 
 			fork{2.5.wait;this.inform("Only 1 to 3 simultaneous copies allowed",0.01)  };
 
-			}, {
+		}, {
 
-				switch(copies,
-					1,{
-						run1 = Synth.newPaused(name.asString.asSymbol,[\amp,1]);
-						instances = instances.add(run1);
-						allinstances = instances[0];
-						infoinstances = instances[0].nodeID;
-					},
+			switch(copies,
+				1,{
+					run1 = Synth.newPaused(name.asString.asSymbol,[\amp,1]);
+					instances = instances.add(run1);
+					allinstances = instances[0];
+					infoinstances = instances[0].nodeID;
+				},
 
-					2,{
-						run1 = Synth.newPaused(name.asString.asSymbol,[\amp,1]);
-						instances = instances.add(run1);
-						run2 = Synth.newPaused(name.asString.asSymbol,[\amp,0]);
-						instances = instances.add(run2);
-						allinstances = [instances[0], instances[1]];
-						infoinstances = [instances[0].nodeID, instances[1].nodeID];
-					},
+				2,{
+					run1 = Synth.newPaused(name.asString.asSymbol,[\amp,1]);
+					instances = instances.add(run1);
+					run2 = Synth.newPaused(name.asString.asSymbol,[\amp,0]);
+					instances = instances.add(run2);
+					allinstances = [instances[0], instances[1]];
+					infoinstances = [instances[0].nodeID, instances[1].nodeID];
+				},
 
-					3,{
-						run1 = Synth.newPaused(name.asString.asSymbol,[\amp,1]);
-						instances = instances.add(run1);
-						run2 = Synth.newPaused(name.asString.asSymbol,[\amp,0]);
-						instances = instances.add(run2);
-						run3 = Synth.newPaused(name.asString.asSymbol,[\amp,0]);
-						instances = instances.add(run3);
-						allinstances = [instances[0],instances[1],instances[2]];
-						infoinstances = [instances[0].nodeID,instances[1].nodeID,instances[2].nodeID];
-					}
+				3,{
+					run1 = Synth.newPaused(name.asString.asSymbol,[\amp,1]);
+					instances = instances.add(run1);
+					run2 = Synth.newPaused(name.asString.asSymbol,[\amp,0]);
+					instances = instances.add(run2);
+					run3 = Synth.newPaused(name.asString.asSymbol,[\amp,0]);
+					instances = instances.add(run3);
+					allinstances = [instances[0],instances[1],instances[2]];
+					infoinstances = [instances[0].nodeID,instances[1].nodeID,instances[2].nodeID];
+				}
 
-				);
+			);
 
-				this.inform("You chose '" + copies + "' track(s) to run simultaneously",0.01);
+			this.inform("You chose '" + copies + "' track(s) to run simultaneously",0.01);
 
-				////asocia nombre de sinte con instancias
-				info = [["Track name", name].join(": "),
-					["Instance Nodes", infoinstances].join(": ")].join(" => ");
+			////asocia nombre de sinte con instancias
+			info = [["Track name", name].join(": "),
+				["Instance Nodes", infoinstances].join(": ")].join(" => ");
 
-				ids = ids.add(info);//agrega informacion a un array global para posterior identificacion
-				all = all.add(allinstances);
+			ids = ids.add(info);//agrega informacion a un array global para posterior identificacion
+			all = all.add(allinstances);
 
-				tracks = tracks.add(name);//agrega nombre a array
+			tracks = tracks.add(name);//agrega nombre a array
 
-				fork{1.wait;this.inform("Track Name: '" + name + "' registered ",0.01)};
+			fork{1.wait;this.inform("Track Name: '" + name + "' registered ",0.01)};
 
 		});
 
@@ -201,20 +211,20 @@ CaosSampler {
 
 			this.inform("All subtracks chaged output to channel: " ++ chan,0.01);
 
-			}, {
+		}, {
 
-				if(instance < 1 or: {instance > 3} , {
+			if(instance < 1 or: {instance > 3} , {
 
-					this.inform("Use only numbers between 1 to 3, or \all symbol, as first argument, to choose subtrack Output",0.015);
-					},{
-						switch(instance,
-							1,{instances[0].set(\out,chan);},
-							2,{instances[1].set(\out,chan);},
-							3,{instances[2].set(\out,chan);}
-						);
-						this.inform("Subtrack #" ++ instance ++ " changed output to channel: " ++ chan,0.01);
-					}
+				this.inform("Use only numbers between 1 to 3, or \all symbol, as first argument, to choose subtrack Output",0.015);
+			},{
+				switch(instance,
+					1,{instances[0].set(\out,chan);},
+					2,{instances[1].set(\out,chan);},
+					3,{instances[2].set(\out,chan);}
 				);
+				this.inform("Subtrack #" ++ instance ++ " changed output to channel: " ++ chan,0.01);
+			}
+			);
 		});
 
 		^"";
@@ -245,30 +255,30 @@ CaosSampler {
 
 			);
 
-			}, {
+		}, {
 
-				if(instance < 1 or: {instance > 3}, {
+			if(instance < 1 or: {instance > 3}, {
 
-					this.inform("Use only numbers between 1 to 3, or \all symbol, as first argument, to choose subtrack Output",0.015);
+				this.inform("Use only numbers between 1 to 3, or \all symbol, as first argument, to choose subtrack Output",0.015);
 
-					},{
+			},{
 
-						if(amp > 0 or: { amp <1}, {
+				if(amp > 0 or: { amp <1}, {
 
-							switch(instance,
-								1,{instances[0].set(\amp,amp);},
-								2,{instances[1].set(\amp,amp);},
-								3,{instances[2].set(\amp,amp);}
-							);
+					switch(instance,
+						1,{instances[0].set(\amp,amp);},
+						2,{instances[1].set(\amp,amp);},
+						3,{instances[2].set(\amp,amp);}
+					);
 
-							this.inform("Subtrack #" ++ instance ++ " changed amplitude to: " ++ amp,0.015);
-							}, {
+					this.inform("Subtrack #" ++ instance ++ " changed amplitude to: " ++ amp,0.015);
+				}, {
 
-								this.inform("For safety, only linear values between '0' and '1' admited for amplitud",0.015);
-
-						});
+					this.inform("For safety, only linear values between '0' and '1' admited for amplitud",0.015);
 
 				});
+
+			});
 		});
 
 		^"";
@@ -286,18 +296,18 @@ CaosSampler {
 
 			this.inform("Loop is Off \n", 0.015);
 
+		}, {
+
+			if(state == true ,{
+
+				toggle = 1;
+
+				this.inform("Loop is On ", 0.015);
+
 			}, {
 
-				if(state == true ,{
-
-					toggle = 1;
-
-					this.inform("Loop is On ", 0.015);
-
-					}, {
-
-						this.inform("Use only ' true ' or ' false ' to toggle on / off", 0.015);
-				});
+				this.inform("Use only ' true ' or ' false ' to toggle on / off", 0.015);
+			});
 
 		});
 
@@ -369,9 +379,9 @@ CaosSampler {
 
 			^this.inform("Track paused",0.01);
 
-			}, {
+		}, {
 
-				^this.inform("Track running",0.01);
+			^this.inform("Track running",0.01);
 
 		});
 
@@ -386,8 +396,8 @@ CaosSampler {
 		if(paused != true, {
 			^this.inform("All tracks paused",0.01);
 
-			}, {
-				^this.inform("All tracks running",0.01);
+		}, {
+			^this.inform("All tracks running",0.01);
 
 		});
 	}
