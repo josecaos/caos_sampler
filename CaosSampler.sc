@@ -21,9 +21,9 @@ CaosSampler {
 		server = Server.local;
 		audiourl = coreurl +/+ "tracks/";
 
-			// soporte para CaosBox
+			// CaosBox Support
 		if(~cbox_url.notNil,{
-			defaultout = 50;//salida hacia CaosBox
+			defaultout = 50;
 		});
 		// Evita sobre escritura del array  'nombres de tracks'
 		if(tracks.isNil, {
@@ -52,8 +52,10 @@ CaosSampler {
 						this.register(name,copies);
 						2.yield;
 						this.loop(false);
-						this.out(defaultout);
 						1.yield;
+						this.out(defaultout);
+						1.5.yield;
+						if(defaultout == 50, {this.inform("CaosBox support On!")},{this.inform("CaosBox support Off!")});
 					});
 				};
 			}, {
@@ -67,11 +69,14 @@ CaosSampler {
 						this.register(name,copies);
 						2.yield;
 						this.loop(false);
-						this.out(defaultout);
 						1.yield;
+						this.out(defaultout);
+						1.5.yield;
+						if(defaultout == 50, {this.inform("CaosBox support On!")},{this.inform("CaosBox support Off!")});
 					});
 				}
 			});
+
 		}, {
 
 			this.inform("Track name already exists and was not registered, try another one!",0.1);
