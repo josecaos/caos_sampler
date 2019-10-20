@@ -6,7 +6,7 @@ CaosSampler {
 	//
 	var <>trackname, <>instances, <>buffer;
 	var <run1, <run2, <run3;
-	var <>masterOut = 0;
+	var defaultout = 0;
 
 	*new {
 
@@ -21,6 +21,10 @@ CaosSampler {
 		server = Server.local;
 		audiourl = coreurl +/+ "tracks/";
 
+			// soporte para CaosBox
+		if(~cbox_url.notNil,{
+			defaultout = 50;//salida hacia CaosBox
+		});
 		// Evita sobre escritura del array  'nombres de tracks'
 		if(tracks.isNil, {
 			tracks = Array.new(20);
@@ -31,14 +35,7 @@ CaosSampler {
 			ids = ids;
 			this.trackname_(name);
 		});
-		//
-		// Checa si CaosBox esta corriendo y rutea a su master, si no, sale por canal 0
-		if(~cbox_url.notNil,{
-			masterOut = 50;//salida hacia CaosBox
-		},{
-			masterOut = 0;//salida default
-		});
-		//
+
 		if( tracks.find([name]).isNil, {//con mismo nombre rechaza la creacion de la instancia
 
 			if(server.serverRunning != true ,{
@@ -55,6 +52,7 @@ CaosSampler {
 						this.register(name,copies);
 						2.yield;
 						this.loop(false);
+						this.out(defaultout);
 						1.yield;
 					});
 				};
@@ -69,6 +67,7 @@ CaosSampler {
 						this.register(name,copies);
 						2.yield;
 						this.loop(false);
+						this.out(defaultout);
 						1.yield;
 					});
 				}
@@ -85,23 +84,23 @@ CaosSampler {
 	loadTrack {|name,fileName,copies,startFrame|
 
 		var informPositive = this.inform("The file " ++ fileName ++ " has been loaded" ,0.015);
-		var buf;
+		var buf,defaultOut;
 
+		//
 		buf = Buffer.read(server,audiourl ++ fileName, startFrame, -1, informPositive);
 
 		this.buffer_(buf.bufnum);
 
-		^this.buildSynth(trackname,buffer,copies);
+		^this.buildSynth(trackname,buffer,defaultOut,copies);
 
 	}
 
-	buildSynth {|synthName, bufnumb, copies|
-		//sinte
-		SynthDef(synthName.asString.asSymbol,{|rate = 1, pan = 0, amp = 1, trigger = 0,out, startPos = 0, loop = 1, reset = 0|
+	buildSynth {|synthName, bufnumb,defaultOut, copies|
+
+		// Sinte instancia
+		SynthDef(synthName.asString.asSymbol,{|rate = 1, pan = 0, amp = 1, trigger = 0,out=0, startPos = 0, loop = 1, reset = 0|
 
 			var sample;
-
-			out = masterOut;
 
 			sample = PlayBuf.ar(2,bufnumb,rate,trigger,startPos,loop,reset);
 			Out.ar(out,Pan2.ar(sample,pan,amp));
@@ -528,6 +527,11 @@ CaosSampler {
 	*inform {|print = "CaosSampler written by @Ill_Slide ", tempoText = 0.025, breakLine = true|
 
 		this.inform(print,tempoText,breakLine);
+	}
+
+		paraleAhi {
+
+		^"Este Metodo lo hizo Michelle";
 	}
 
 }

@@ -6,15 +6,26 @@
 // Grabar en el buffer
 // reporducir
 // Ap licar Tgrains
+~seq = CaosBox;
+~seq.enviroment;
+~seq.play;
+~seq.guiAlpha(0.3);
+~seq.freqAnalyzer(true);
 
 ~sampler = CaosSampler;
-// s.scope;
 ~t=1
 ~track1 = CaosSampler.new;
-~track1.load("Track1","josecaos-set/josecaos-e4n4e99n-master.wav");
-~track1.out(1,0)
+~track1.load("Track1","josecaos-set/josecaos-e4n4e99n-master.wav",3);
 ~track1.play();
-~track1.toggleReverse(~t=0.05)
+~track1.out(2,54)//
+~track1.amp(2,0.5)//
+~track1.amp(1,1)//
+~track1.amp(1,0)//
+~track1.loop(true)//
+~track1.toggleReverse(1)
+~sampler.scope;
+
+~seq.autoFx(\grains,true,\normal,Array.series(10,0.1,0.1).scramble,Array.series(10,0.1,0.1));
 
 (
 Tdef(\fwrw,{
