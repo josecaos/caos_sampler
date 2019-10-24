@@ -42,10 +42,10 @@ Tdef('fwrw').stop
 // client <-> server  .local/share/SuperCollider/Help/Guides/structureEn.png
 //
 (
+~dur = 1;
 // declara Buffer
 s.waitForBoot {
-~dur = 4;
-	b = Buffer.alloc(server:s, numFrames:44100 * ~dur,numChannels: 2,
+	b = Buffer.alloc(server:s, numFrames:44100 * ~dur,numChannels: 1,
 		completionMessage:{"Done".postcln}	); // a four second 1 channel Buffer
 })
 
@@ -54,20 +54,21 @@ s.waitForBoot {
 SynthDef(\grabando, {|out = 0, bufnum = 0|
 	var in;
 	in = SoundIn.ar(0);
-	RecordBuf.ar(in, bufnum, doneAction: Done.freeSelf, loop: 1);
+	RecordBuf.ar(in, bufnum, doneAction: Done.freeSelf, loop: 0);
 }).add;
 );
 Synth(\grabando,[\bufnum,b]);
 // play
 (
-SynthDef(\play, {|out = 0, bufnum = 0|
+SynthDef(\play, {|out = 0, bufnum = 0,rate=1|
     var playbuf;
-    playbuf = PlayBuf.ar(1,bufnum);
+    playbuf = PlayBuf.ar(1,bufnum,rate:rate,loop:1);
     FreeSelfWhenDone.kr(playbuf); // libera el sinte al terminar
     Out.ar(out, playbuf);
 }).add;
 );
 Synth(\play,[\bufnum,b]);
+Synth(\play,[\rate,1]);
 // overdub
 // (
 // SynthDef(\help_RecordBuf_overdub, { arg out=0, bufnum=0;
