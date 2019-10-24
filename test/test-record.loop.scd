@@ -1,6 +1,6 @@
 //Test  record and loop
 
-// Ya existe un adelando del metodo grains, reviarlo
+// Ya existe un adelando del metodo grains, revisarlo
 
 // Crar el buffer
 // Grabar en el buffer
@@ -42,53 +42,50 @@ Tdef('fwrw').stop
 // client <-> server  .local/share/SuperCollider/Help/Guides/structureEn.png
 //
 (
-// allocate a Buffer
-s = Server.local;
-s.boot;
-b = Buffer.alloc(s, 44100 * 4, 1); // a four second 1 channel Buffer
-)
+// declara Buffer
+s.waitForBoot {
+~dur = 4;
+	b = Buffer.alloc(server:s, numFrames:44100 * ~dur,numChannels: 2,
+		completionMessage:{"Done".postcln}	); // a four second 1 channel Buffer
+})
 
-// record for four seconds
+// graba
 (
-SynthDef(\help_RecordBuf, { arg out = 0, bufnum = 0;
-    var formant;
-	formant = SoundIn.ar(0);
-    RecordBuf.ar(formant, bufnum, doneAction: Done.freeSelf, loop: 1);
-}).play(s,[\out, 0, \bufnum, b]);
-)
-
-// play it back
+SynthDef(\grabando, {|out = 0, bufnum = 0|
+	var in;
+	in = SoundIn.ar(0);
+	RecordBuf.ar(in, bufnum, doneAction: Done.freeSelf, loop: 1);
+}).add;
+);
+Synth(\grabando,[\bufnum,b]);
+// play
 (
-SynthDef(\help_RecordBuf_playback, { arg out = 0, bufnum = 0;
+SynthDef(\play, {|out = 0, bufnum = 0|
     var playbuf;
     playbuf = PlayBuf.ar(1,bufnum);
-    FreeSelfWhenDone.kr(playbuf); // frees the synth when the PlayBuf is finished
+    FreeSelfWhenDone.kr(playbuf); // libera el sinte al terminar
     Out.ar(out, playbuf);
-}).play(s, [\out, 0, \bufnum, b]);
-)
-
+}).add;
+);
+Synth(\play,[\bufnum,b]);
 // overdub
-(
-SynthDef(\help_RecordBuf_overdub, { arg out=0, bufnum=0;
-    var formant;
-    formant = Formant.ar(XLine.kr(400, 1000, 4), 2000, 800, 0.125);
-    // mixes equally with existing data
-    RecordBuf.ar(formant, bufnum, 0, 0.3, 0.5, doneAction: 2, loop: 1);
-}).play(s, [\out, 0, \bufnum, b]);
-)
-
-// play back the overdubbed version
-Synth.new(\help_RecordBuf_playback, [\out, 0, \bufnum, b], s);
-
-// write the contents of the buffer to a file (see Buffer for more options)
-(
-b.write(sampleFormat: 'int16');
-thisProcess.platform.recordingsDir +/+ "SC_" ++ Date.localtime.stamp ++ ".aiff"; // generated path
-)
-
-b.close; b.free; // cleanup
-
-
+// (
+// SynthDef(\help_RecordBuf_overdub, { arg out=0, bufnum=0;
+// 	var formant;
+// 	formant = Formant.ar(XLine.kr(400, 1000, 4), 2000, 800, 0.125);
+// 	// mixes equally with existing data
+// 	RecordBuf.ar(formant, bufnum, 0, 0.3, 0.5, doneAction: 2, loop: 1);
+// }).play(s, [\out, 0, \bufnum, b]);
+// )
+//
+// // play back the overdubbed version
+// Synth.new(\help_RecordBuf_playback, [\out, 0, \bufnum, b], s);
+//
+// // write the contents of the buffer to a file (see Buffer for more options)
+// (
+// b.write(sampleFormat: 'int16');
+// thisProcess.platform.recordingsDir +/+ "SC_" ++ Date.localtime.stamp ++ ".aiff"; // generated path
+// )
 
 
 // Avanzado
