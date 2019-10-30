@@ -6,7 +6,7 @@ CaosSampler {
 	//
 	var <>trackname, <>recordname, <>instances, <>buffer;
 	var <run1, <run2, <run3;
-	var defaultout = 0;
+	var defaultout = 0, >recInput;
 
 	*new {
 
@@ -15,7 +15,7 @@ CaosSampler {
 		^super.new;
 	}
 
-	setup {|name|
+	init {|name|
 		server = Server.local;
 		audiourl = coreurl +/+ "tracks/";
 
@@ -38,7 +38,7 @@ CaosSampler {
 	//
 	load {|name = "Default",fileName = "test-caos_sampler-115_bpm.wav",copies = 1, startFrame = 0|
 
-		this.setup(name);
+		this.init(name);
 
 		if( tracks.find([name]).isNil, {//con mismo nombre rechaza la creacion de la instancia
 
@@ -55,9 +55,11 @@ CaosSampler {
 
 			}, {
 
-				1.do({
-					this.loadSetup(name,fileName,copies,startFrame);
-				});
+				fork {
+					1.do({
+						this.loadSetup(name,fileName,copies,startFrame);
+					});
+				}
 
 			});
 
@@ -85,6 +87,7 @@ CaosSampler {
 			if(defaultout == 50, {this.inform("CaosBox support On!")},{this.inform("CaosBox support Off!")});
 		);
 	}
+
 	loadTrack {|name,fileName,copies,startFrame|
 
 		var informPositive = this.inform("The file " ++ fileName ++ " has been loaded" ,0.015);
@@ -448,7 +451,7 @@ CaosSampler {
 
 	}
 
-	*toggleReverse {|rate = 1|
+	toggleReverse {|rate = 1|
 
 		var res;
 
@@ -481,12 +484,65 @@ CaosSampler {
 	}
 	//
 	// looper
-	loadLooper {|name,loopDur=1|
+	loadLooper {|name = "Default",loopDur = 1|
+
+		this.init(name);
+
+		if( tracks.find([name]).isNil, {
+
+			if(server.serverRunning != true ,{
+
+				server.waitForBoot{
+
+					1.do({
+						this.inform("Server boot ...  ",0.075,true);
+						1.5.yield;
+						this.allocSetup(name, loopDur);
+					});
+				};
+
+			}, {
+
+				fork {
+					1.do({
+						this.allocSetup(name, loopDur);
+					});
+				}
+
+			});
+
+		}, {
+
+			this.inform("Track name already exists and was not registered, try another one!",0.1);
+
+		});
+
+
+		^"";
+	}
+
+	allocSetup {|name,loopDur|
+		^(
+			this.inform("CaosSampler buffer allocated",0.015,true);
+			0.5.yield;
+			this.allocBuf(loopDur);
+			1.yield;
+			this.register(name,1);
+			2.yield;
+			this.loop(true);
+			1.yield;
+			this.out(1,defaultout);
+			1.5.yield;
+			if(defaultout == 50, {this.inform("CaosBox support On!")},{this.inform("CaosBox support Off!")});
+		);
+	}
+
+	allocBuf {|loopDur=1|
 
 		var completionMessage = this.inform("A " ++ loopDur ++ " second buffer has been created" ,0.015);
 		var buf;
 
-		buf = Buffer.alloc(server,44100 *loopDur, 1,completionMessage	);
+		buf = Buffer.alloc(server,44100 *loopDur, 2,completionMessage	);
 
 		this.buffer_(buf.bufnum);
 
@@ -496,23 +552,30 @@ CaosSampler {
 
 	recordLoop {|inputType = \in|
 
-		var input;
-
 		this.recordname_(trackname ++ "-rec");
 
-		switch(input,
-			\in,{"graba entrada".postcln},
-			\mic,{"graba micro".postcln},
-			{"Use symbols:  \in or \mic only for inputType "}
+		switch(inputType,
+			\in,{this.recInput_(In.ar(defaultout))},
+			\mic,{this.recInput_(SoundIn.ar(0))},
+			{this.recInput_(nil)}
 		);
 
-		// SynthDef(recordname.asString.asSymbol, {|loop = 0|
-		// 	var in;
-		// 	in = SoundIn.ar(0);
-		// 	RecordBuf.ar(in, buffer, doneAction: Done.freeSelf, loop);
-		// }).add;
+		if(recInput != nil,{
 
-		^" XXX "+ recordname + " XXX ";
+			SynthDef(recordname.asString.asSymbol, {|loop = 0|
+				var in;
+				// in = recInput;
+				in = In.ar(0);
+				RecordBuf.ar(in, buffer, doneAction: Done.freeSelf,loop: loop);
+			}).add;
+
+		},{
+
+			this.inform("Use symbols 'in' or 'mic' only for inputType argument")
+
+		});
+
+		^("======>: " + recInput);
 	}
 	//Response
 	inform {|print = "CaosSampler written by @Ill_Slide ", tempoText = 0.025, breakLine = true|
