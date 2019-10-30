@@ -7,6 +7,7 @@ CaosSampler {
 	var <>trackname, <>instances, <>buffer;
 	var <run1, <run2, <run3;
 	var defaultout = 0;
+	var <buffer;
 
 	*new {
 
@@ -21,7 +22,7 @@ CaosSampler {
 		server = Server.local;
 		audiourl = coreurl +/+ "tracks/";
 
-			// CaosBox Support
+		// CaosBox Support
 		if(~cbox_url.notNil,{
 			defaultout = 50;
 		});
@@ -89,18 +90,18 @@ CaosSampler {
 	loadTrack {|name,fileName,copies,startFrame|
 
 		var informPositive = this.inform("The file " ++ fileName ++ " has been loaded" ,0.015);
-		var buf,defaultOut;
+		var buf;
 
 		//
 		buf = Buffer.read(server,audiourl ++ fileName, startFrame, -1, informPositive);
 
 		this.buffer_(buf.bufnum);
 
-		^this.buildSynth(trackname,buffer,defaultOut,copies);
+		^this.buildSynth(trackname,buffer);
 
 	}
 
-	buildSynth {|synthName, bufnumb,defaultOut, copies|
+	buildSynth {|synthName, bufnumb|
 
 		// Sinte instancia
 		SynthDef(synthName.asString.asSymbol,{|rate = 1, pan = 0, amp = 1, trigger = 0,out=0, startPos = 0, loop = 1, reset = 0|
@@ -177,17 +178,17 @@ CaosSampler {
 		^"";
 	}
 
-	grain {
-		var trate, dur, rate;
+	/*	grain {
+	var trate, dur, rate;
 
-		trate = 16;
-		dur = 4 / trate;
-		rate = 4;
+	trate = 16;
+	dur = 4 / trate;
+	rate = 4;
 
-		TGrains.ar(2, Impulse.ar(trate), buffer, rate, BufDur.kr(buffer), dur, 1, 0.75, 2);
+	TGrains.ar(2, Impulse.ar(trate), buffer, rate, BufDur.kr(buffer), dur, 1, 0.75, 2);
 
-		^"Granulando buffer número" + buffer ;
-	}
+	^"Granulando buffer número" + buffer ;
+	}*/
 
 	out {|instance, chan|
 
@@ -449,32 +450,6 @@ CaosSampler {
 
 	}
 
-	toggleReverse {|rate = 1|
-
-		var res;
-
-		switch(reverse,
-			0,{
-				res = rate * -1;
-				instances.collect({|item|
-					item.set(\rate,res);
-				});
-				reverse = reverse + 1;
-				this.inform("Tracks reversed: " ++ res ,0.001);
-			},
-			1,{
-				res = rate * 1;
-				instances.collect({|item|
-					item.set(\rate,res);
-				});
-				reverse = 0;//reset
-				this.inform("Tracks with normal rate: " ++ res ,0.001);
-			}
-		);
-
-		^"";
-	}
-
 	*toggleReverse {|rate = 1|
 
 		var res;
@@ -507,6 +482,34 @@ CaosSampler {
 
 	}
 	//
+	// looper
+	loadLooper {|name,loopDur=1|
+
+		var completionMessage = this.inform("A " ++ loopDur ++ " second buffer has been created" ,0.015);
+		var buf;
+
+		buf = Buffer.alloc(server,44100 *loopDur, 1,completionMessage	);
+
+		this.buffer_(buf.bufnum);
+
+		^this.buildSynth(trackname,buffer);
+
+		// ^this.inform("A " ++ loopDur ++ " second buffer has been created" ,0.015);
+	}
+
+	recordLoop {
+
+
+		// SynthDef(\grabando, {|out = 0, bufnum = 0|
+		// 	var in;
+		// 	in = SoundIn.ar(0);
+		// 	RecordBuf.ar(in, bufnum, doneAction: Done.freeSelf, loop: 0);
+		// }).add;
+		//
+		// Synth(\grabando,[\bufnum,b]);
+
+	}
+	//Response
 	inform {|print = "CaosSampler written by @Ill_Slide ", tempoText = 0.025, breakLine = true|
 
 		var txt = print.asArray;
@@ -529,14 +532,10 @@ CaosSampler {
 		}
 	}
 
-	*inform {|print = "CaosSampler written by @Ill_Slide ", tempoText = 0.025, breakLine = true|
+	*inform {|print = "CaosSampler written by @Ill_Slide ", tempoText = 0.25, breakLine = true|
 
 		this.inform(print,tempoText,breakLine);
-	}
 
-		paraleAhi {
-
-		^"Este Metodo lo hizo Michelle";
 	}
 
 }
