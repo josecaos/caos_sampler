@@ -4,10 +4,9 @@ CaosSampler {
 	classvar <>tracks, <ids, <all;
 	classvar reverse = 0;
 	//
-	var <>trackname, <>instances, <>buffer;
+	var <>trackname, <>recordname, <>instances, <>buffer;
 	var <run1, <run2, <run3;
 	var defaultout = 0;
-	var <buffer;
 
 	*new {
 
@@ -16,9 +15,7 @@ CaosSampler {
 		^super.new;
 	}
 
-	//
-	load {|name = "Default",fileName = "test-caos_sampler-115_bpm.wav",copies = 1, startFrame = 0|
-
+	setup {|name|
 		server = Server.local;
 		audiourl = coreurl +/+ "tracks/";
 
@@ -37,6 +34,12 @@ CaosSampler {
 			this.trackname_(name);
 		});
 
+	}
+	//
+	load {|name = "Default",fileName = "test-caos_sampler-115_bpm.wav",copies = 1, startFrame = 0|
+
+		this.setup(name);
+
 		if( tracks.find([name]).isNil, {//con mismo nombre rechaza la creacion de la instancia
 
 			if(server.serverRunning != true ,{
@@ -46,36 +49,16 @@ CaosSampler {
 					1.do({
 						this.inform("Server boot ...  ",0.075,true);
 						1.5.yield;
-						this.inform("CaosSampler instance created",0.015,true);
-						0.5.yield;
-						this.loadTrack(trackname,fileName,copies,startFrame);
-						2.5.yield;
-						this.register(name,copies);
-						2.yield;
-						this.loop(false);
-						1.yield;
-						this.out(defaultout);
-						1.5.yield;
-						if(defaultout == 50, {this.inform("CaosBox support On!")},{this.inform("CaosBox support Off!")});
+						this.loadSetup(name,fileName,copies,startFrame);
 					});
 				};
+
 			}, {
 
-				fork {
-					1.do({
-						this.inform(" .... CaosSampler instance created ",0.015,true);
-						1.yield;
-						this.loadTrack(trackname,fileName,copies,startFrame);
-						2.5.yield;
-						this.register(name,copies);
-						2.yield;
-						this.loop(false);
-						1.yield;
-						this.out(defaultout);
-						1.5.yield;
-						if(defaultout == 50, {this.inform("CaosBox support On!")},{this.inform("CaosBox support Off!")});
-					});
-				}
+				1.do({
+					this.loadSetup(name,fileName,copies,startFrame);
+				});
+
 			});
 
 		}, {
@@ -87,6 +70,21 @@ CaosSampler {
 		^"";
 	}
 
+	loadSetup {|name,fileName,copies,startFrame|
+		^(
+			this.inform("CaosSampler instance created",0.015,true);
+			0.5.yield;
+			this.loadTrack(trackname,fileName,copies,startFrame);
+			2.5.yield;
+			this.register(name,copies);
+			2.yield;
+			this.loop(false);
+			1.yield;
+			this.out(1,defaultout);
+			1.5.yield;
+			if(defaultout == 50, {this.inform("CaosBox support On!")},{this.inform("CaosBox support Off!")});
+		);
+	}
 	loadTrack {|name,fileName,copies,startFrame|
 
 		var informPositive = this.inform("The file " ++ fileName ++ " has been loaded" ,0.015);
@@ -494,20 +492,27 @@ CaosSampler {
 
 		^this.buildSynth(trackname,buffer);
 
-		// ^this.inform("A " ++ loopDur ++ " second buffer has been created" ,0.015);
 	}
 
-	recordLoop {
+	recordLoop {|inputType = \in|
 
+		var input;
 
-		// SynthDef(\grabando, {|out = 0, bufnum = 0|
+		this.recordname_(trackname ++ "-rec");
+
+		switch(input,
+			\in,{"graba entrada".postcln},
+			\mic,{"graba micro".postcln},
+			{"Use symbols:  \in or \mic only for inputType "}
+		);
+
+		// SynthDef(recordname.asString.asSymbol, {|loop = 0|
 		// 	var in;
 		// 	in = SoundIn.ar(0);
-		// 	RecordBuf.ar(in, bufnum, doneAction: Done.freeSelf, loop: 0);
+		// 	RecordBuf.ar(in, buffer, doneAction: Done.freeSelf, loop);
 		// }).add;
-		//
-		// Synth(\grabando,[\bufnum,b]);
 
+		^" XXX "+ recordname + " XXX ";
 	}
 	//Response
 	inform {|print = "CaosSampler written by @Ill_Slide ", tempoText = 0.025, breakLine = true|
