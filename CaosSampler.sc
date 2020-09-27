@@ -401,10 +401,8 @@ CaosSampler {
 
 		if(paused != true, {
 			^this.inform("All tracks paused",0.01);
-
 		}, {
 			^this.inform("All tracks running",0.01);
-
 		});
 	}
 
