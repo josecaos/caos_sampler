@@ -517,7 +517,6 @@ CaosSampler {
 
 		});
 
-
 		^"";
 	}
 
@@ -552,7 +551,7 @@ CaosSampler {
 
 	recordLoop {|inputType = \in|
 
-		this.recordname_(trackname ++ "-rec");
+		this.recordname_(trackname ++ "_rec");
 
 		switch(inputType,
 			\in,{this.recInput_(In.ar(defaultout))},
@@ -560,14 +559,19 @@ CaosSampler {
 			{this.recInput_(nil)}
 		);
 
+
 		if(recInput != nil,{
+
+			// DEBUG:
+			4.do{recordname.asString.asSymbol.postcln};
 
 			SynthDef(recordname.asString.asSymbol, {|loop = 0|
 				var in;
-				// in = recInput;
-				in = In.ar(0);
+				in = recInput;
+					in.postcln;
 				RecordBuf.ar(in, buffer, doneAction: Done.freeSelf,loop: loop);
 			}).add;
+			Synth(recordname.asString.asSymbol);
 
 		},{
 
