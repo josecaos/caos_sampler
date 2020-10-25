@@ -3,17 +3,19 @@ c = CaosSampler
 b = CaosBox
 b.enviroment;
 b.play;
+b.guiAlpha(0.5);
 // inistancia sampler
 a = c.new;
-a.load;//carga defaut
+a.load(copies:3);//carga defaut
 a.play
 a.loop(true);
 a.toggleReverse((rrand(0.25,2)));
-a.toggleReverse(1.5);
+a.out(2,64);
+a.amp(2,0.75);
 //  trip
 (
 Tdef(\x,{
-	var arr= Prand([0.75,1,1.25,1.5]/0.725, inf).asStream;
+	var arr= Prand([0.75,1,1.25,1.5]/1.25, inf).asStream;
 	loop {
 		a.toggleReverse(arr.next);
 		2.wait;

@@ -68,7 +68,7 @@ CaosSampler {
 			this.inform("Track name already exists and was not registered, try another one!",0.1);
 
 		});
-		//
+
 		^"";
 	}
 
@@ -561,7 +561,7 @@ CaosSampler {
 		if(recInput != nil,{
 
 			// DEBUG:
-			4.do{recordname.asString.asSymbol.postcln};
+			4.do{"DEBUG" + recordname.asString.asSymbol.postcln;inputType.postcln};
 
 			SynthDef(recordname.asString.asSymbol, {|loop = 0|
 				var in;
@@ -569,17 +569,17 @@ CaosSampler {
 					in.postcln;
 				RecordBuf.ar(in, buffer, doneAction: Done.freeSelf,loop: loop);
 			}).add;
-			Synth(recordname.asString.asSymbol);
+			//
+			^Synth(recordname.asString.asSymbol);
 
 		},{
 
-			this.inform("Use symbols 'in' or 'mic' only for inputType argument")
+			^this.inform("Use symbols '\in' or '\mic' only for inputType argument")
 
 		});
 
-		^("======>: " + recInput);
 	}
-	//Response
+	//Debugger
 	inform {|print = "CaosSampler written by @Ill_Slide ", tempoText = 0.025, breakLine = true|
 
 		var txt = print.asArray;
