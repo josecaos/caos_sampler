@@ -35,6 +35,21 @@ CaosSampler {
 		});
 
 	}
+	loadSetup {|name,fileName,copies,startFrame|
+		^(
+			this.inform("CaosSampler instance created",0.015,true);
+			0.5.yield;
+			this.loadTrack(trackname,fileName,copies,startFrame);
+			2.5.yield;
+			this.register(name,copies);
+			2.yield;
+			this.loop(false);
+			1.yield;
+			this.out(1,defaultout);
+			1.5.yield;
+			if(defaultout == 50, {this.inform("CaosBox support On!")},{this.inform("CaosBox support Off!")});
+		);
+	}
 	//
 	load {|name = "Default",fileName = "test-caos_sampler-115_bpm.wav",copies = 1, startFrame = 0|
 
@@ -72,22 +87,6 @@ CaosSampler {
 		^"";
 	}
 
-	loadSetup {|name,fileName,copies,startFrame|
-		^(
-			this.inform("CaosSampler instance created",0.015,true);
-			0.5.yield;
-			this.loadTrack(trackname,fileName,copies,startFrame);
-			2.5.yield;
-			this.register(name,copies);
-			2.yield;
-			this.loop(false);
-			1.yield;
-			this.out(1,defaultout);
-			1.5.yield;
-			if(defaultout == 50, {this.inform("CaosBox support On!")},{this.inform("CaosBox support Off!")});
-		);
-	}
-
 	loadTrack {|name,fileName,copies,startFrame|
 
 		var informPositive = this.inform("The file " ++ fileName ++ " has been loaded" ,0.015);
@@ -102,14 +101,13 @@ CaosSampler {
 
 	}
 
-	buildSynth {|synthName, bufnumb|
+	buildSynth {|synthName, bufnumber|
 
-		// Sinte instancia
 		SynthDef(synthName.asString.asSymbol,{|rate = 1, pan = 0, amp = 1, trigger = 0,out=0, startPos = 0, loop = 1, reset = 0|
 
 			var sample;
 
-			sample = PlayBuf.ar(2,bufnumb,rate,trigger,startPos,loop,reset);
+			sample = PlayBuf.ar(2,bufnumber,rate,trigger,startPos,loop,reset);
 			Out.ar(out,Pan2.ar(sample,pan,amp));
 
 		}).add;
@@ -539,7 +537,7 @@ CaosSampler {
 		var completionMessage = this.inform("A " ++ loopDur ++ " second buffer has been created" ,0.015);
 		var buf;
 
-		buf = Buffer.alloc(server,44100 *loopDur, 2,completionMessage	);
+		buf = Buffer.alloc(server,TempoClock.beatDur*loopDur, 2,completionMessage	);
 
 		this.buffer_(buf.bufnum);
 
@@ -557,7 +555,6 @@ CaosSampler {
 			{this.recInput_(nil)}
 		);
 
-
 		if(recInput != nil,{
 
 			// DEBUG:
@@ -566,7 +563,6 @@ CaosSampler {
 			SynthDef(recordname.asString.asSymbol, {|loop = 0|
 				var in;
 				in = recInput;
-					in.postcln;
 				RecordBuf.ar(in, buffer, doneAction: Done.freeSelf,loop: loop);
 			}).add;
 			//
