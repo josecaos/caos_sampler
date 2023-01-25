@@ -177,17 +177,24 @@ CaosSampler {
 		^"";
 	}
 
-	/*	grain {
-	var trate, dur, rate;
+	grain {
 
-	trate = 16;
-	dur = 4 / trate;
-	rate = 4;
+		SynthDef(\granos,{
 
-	TGrains.ar(2, Impulse.ar(trate), buffer, rate, BufDur.kr(buffer), dur, 1, 0.75, 2);
+			var trate, dur, rate,out;
 
-	^"Granulando buffer número" + buffer ;
-	}*/
+			trate = 16;
+			dur = 4 / trate;
+			rate = 4;
+			out = TGrains.ar(2, Impulse.ar(trate), buffer, rate, BufDur.kr(buffer), dur, 1, 0.75, 2);
+
+			Out.ar(0,out);
+		}).add;
+
+ 			Synth(\granos);
+
+		^ "Granulando buffer número" + buffer;
+	}
 
 	out {|instance, chan|
 
@@ -566,7 +573,7 @@ CaosSampler {
 				RecordBuf.ar(in, buffer, doneAction: Done.freeSelf,loop: loop);
 			}).add;
 			//
-			^Synth(recordname.asString.asSymbol);
+			^Synth(recordname.asString.asSymbol,addAction: 'addToTail');
 
 		},{
 
