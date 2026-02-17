@@ -4,7 +4,7 @@ CaosSampler {
 	classvar <>tracks, <ids, <all;
 	classvar reverse = 0;
 	//
-	var <>trackname, <>recordname, <>instances, <>buffer;
+	var <>trackname, <>recordname, <>instances, <>buffer, <>bufferInfo;
 	var <run1, <run2, <run3;
 	var defaultout = 0, >recInput;
 
@@ -96,6 +96,7 @@ CaosSampler {
 		buf = Buffer.read(server,audiourl ++ fileName, startFrame, -1, informPositive);
 
 		this.buffer_(buf.bufnum);
+		this.bufferInfo_(buf);
 
 		^this.buildSynth(trackname,buffer);
 
@@ -191,7 +192,7 @@ CaosSampler {
 			Out.ar(0,out);
 		}).add;
 
- 			Synth(\granos);
+		Synth(\granos);
 
 		^ "Granulando buffer número" + buffer;
 	}
@@ -465,7 +466,7 @@ CaosSampler {
 					item.set(\rate,res);
 				});
 				reverse = reverse + 1;
-				this.inform("Tracks reversed: " ++ res ,0.001);
+				^this.inform("Tracks reversed: " ++ res ,0.001);
 			},
 			1,{
 				res = rate * 1;
@@ -473,11 +474,10 @@ CaosSampler {
 					item.set(\rate,res);
 				});
 				reverse = 0;//reset
-				this.inform("Tracks with normal rate: " ++ res ,0.001);
+				^this.inform("Tracks with normal rate: " ++ res ,0.001);
 			}
 		);
 
-		^"";
 	}	//
 
 	*scope {|numChannels = 2, fromBus = 0|
@@ -605,7 +605,7 @@ CaosSampler {
 		}
 	}
 
-	*inform {|print = "CaosSampler written by @Ill_Slide ", tempoText = 0.25, breakLine = true|
+	*inform {|print = "CaosSampler written by @mixfuckedup ", tempoText = 0.25, breakLine = true|
 
 		this.inform(print,tempoText,breakLine);
 
