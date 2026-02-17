@@ -108,7 +108,7 @@ CaosSampler {
 
 			var sample;
 
-			sample = PlayBuf.ar(2,bufnumber,rate,trigger,startPos,loop,reset);
+			sample = PlayBuf.ar(2,bufnumber,rate,trigger,startPos,loop,reset,doneAction: 2);
 			Out.ar(out,Pan2.ar(sample,pan,amp));
 
 		}).add;
@@ -393,7 +393,7 @@ CaosSampler {
 
 		}, {
 
-			^this.inform("Track running",0.01);
+			^this.inform("Track" + trackname +"running",0.01);
 
 		});
 
@@ -478,14 +478,40 @@ CaosSampler {
 			}
 		);
 
-	}	//
+	}
+	//
+	chain {|nextTrack|
+		var synth = instances[0];
 
+		if(synth.isNil) {
+			this.inform("No instance available for track '%'".format(trackname), 0.015);
+			^this;
+		};
+
+		// Register NodeWatcher
+		NodeWatcher.register(synth);
+
+		synth.onFree({
+			if(nextTrack.instances.notEmpty) {
+				nextTrack.play(true);
+				fork {
+					1.wait;
+					this.inform("Chained track is running now: " ++ nextTrack.trackname);
+				}
+			} {
+				"Chained track '%' has no instance".format(nextTrack.trackname).warn;
+			};
+		});
+
+		^"Track " ++trackname ++ " Chained to " ++ nextTrack.trackname;
+	}
+	//
 	*scope {|numChannels = 2, fromBus = 0|
 
 		server.scope(numChannels,fromBus);
 
 	}
-	//
+
 	// looper
 	loadLooper {|name = "Default",loopDur = 1|
 

@@ -14,3 +14,7 @@
 ~track1.toggleReverse(~t); // Reverse track + copies
 ~sampler.scope; // view sampler oscilloscope
 ```
+### Get all methods
+```
+CaosSampler.browse;
+```
